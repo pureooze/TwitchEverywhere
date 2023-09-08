@@ -1,0 +1,14 @@
+bin/
+obj/
+/packages/
+
+# IDE
+.idea/
+riderModule.iml
+/_ReSharper.Caches/
+
+# AWS
+.aws-sam/
+
+# config
+appsettings.json
