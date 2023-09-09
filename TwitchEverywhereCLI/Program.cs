@@ -7,8 +7,8 @@ Console.WriteLine( "Hello, World!" );
 string[] channels = { "test" };
 TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( channels );
 TwitchConnectionOptions options = new(
-    Channel: "jaaski",
-    Tags: new string[] { "hello" },
+    Channel: "cohhcarnage",
+    Tags: new[] { "hello" },
     Message: "hello, world!" 
 );
 

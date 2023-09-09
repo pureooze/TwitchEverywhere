@@ -8,7 +8,7 @@ namespace TwitchEverywhere.Implementation;
 internal sealed partial class TwitchConnector : ITwitchConnector {
     private IAuthorizer m_authorizer = new Authorizer();
     private const int BUFFER_SIZE = 500;
-    private DateTime startTimestamp;
+    private DateTime m_startTimestamp;
     
     async Task<bool> ITwitchConnector.Connect(
         TwitchConnectionOptions options
@@ -101,7 +101,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
 
         byte[] compressedData = CompressWithBrotli( byteBuffer );
         
-        string path = $"{startTimestamp.ToUniversalTime().ToString( "yyyy-M-d_H-mm-ss" )}.bz";
+        string path = $"{m_startTimestamp.ToUniversalTime().ToString( "yyyy-M-d_H-mm-ss" )}.br";
         SaveBinaryDataToFile( path, compressedData );
     }
 
@@ -138,13 +138,13 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             .TrimEnd( ';' )
         );
 
-        startTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
+        m_startTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
         
         if( segments.Length <= 1 ) {
             throw new UnexpectedUserMessageException();
         }
 
-        return $"{displayName}, {segments[1]}, {startTimestamp}\n";
+        return $"{displayName}, {segments[1]}, {m_startTimestamp}\n";
     }
 
     private async Task<string> GetToken() {
