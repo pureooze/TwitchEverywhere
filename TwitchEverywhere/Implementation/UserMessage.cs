@@ -2,5 +2,6 @@ namespace TwitchEverywhere.Implementation;
 
 public record UserMessage(
     string DisplayName,
-    string Message
+    string Message,
+    DateTime Timestamp
 );
