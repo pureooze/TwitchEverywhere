@@ -2,12 +2,13 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System;
 
 namespace TwitchEverywhere.Implementation;
 
 internal sealed partial class TwitchConnector : ITwitchConnector {
     private IAuthorizer m_authorizer = new Authorizer();
-    private const int BUFFER_SIZE = 500;
+    private const int BUFFER_SIZE = 50;
     private DateTime m_startTimestamp;
     
     async Task<bool> ITwitchConnector.Connect(
@@ -84,14 +85,12 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             if( messageBuffer.Count > BUFFER_SIZE ) {
                 StringBuilder tempBuffer = new( messageBuffer.ReadAsString() );
                 messageBuffer.Clear();
-                WriteMessagesToStore( tempBuffer );
+                await WriteMessagesToStore( tempBuffer );
             }
         }
     }
 
-    private void WriteMessagesToStore(
-        StringBuilder buffer
-    ) {
+    private async Task WriteMessagesToStore(StringBuilder buffer) {
         if( buffer.Length == 0 ) {
             return;
         }
@@ -99,9 +98,9 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         string rawData = buffer.ToString();
         byte[] byteBuffer = Encoding.UTF8.GetBytes( rawData );
 
-        byte[] compressedData = CompressWithBrotli( byteBuffer );
+        byte[] compressedData = await CompressWithBrotli( byteBuffer );
         
-        string path = $"{m_startTimestamp.ToUniversalTime().ToString( "yyyy-M-d_H-mm-ss" )}.br";
+        string path = $"{m_startTimestamp.ToUniversalTime().ToString( "yyyy-M-d_H-mm-ss" )}.csv";
         SaveBinaryDataToFile( path, compressedData );
     }
 
@@ -113,13 +112,13 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         fileStream.Write( compressedData, 0, compressedData.Length );
     }
 
-    private static byte[] CompressWithBrotli(
+    private static async Task<byte[]> CompressWithBrotli(
         byte[] byteBuffer
     ) {
         using MemoryStream outputStream = new();
-        using BrotliStream brotliStream = new( outputStream, CompressionMode.Compress );
-        brotliStream.Write(byteBuffer, 0, byteBuffer.Length);
-        brotliStream.Close(); // Close the BrotliStream to finalize compression
+        await using BrotliStream brotliStream = new( outputStream, CompressionLevel.SmallestSize );
+        await brotliStream.WriteAsync(byteBuffer, 0, byteBuffer.Length, default);
+        brotliStream.Close();
         return outputStream.ToArray();
     }
 
@@ -144,7 +143,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             throw new UnexpectedUserMessageException();
         }
 
-        return $"{displayName}, {segments[1]}, {m_startTimestamp}\n";
+        return $"{m_startTimestamp}, {displayName}, {segments[1]}\n";
     }
 
     private async Task<string> GetToken() {
