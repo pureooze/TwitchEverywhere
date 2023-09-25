@@ -7,14 +7,34 @@ using System;
 namespace TwitchEverywhere.Implementation;
 
 internal sealed partial class TwitchConnector : ITwitchConnector {
-    private IAuthorizer m_authorizer = new Authorizer();
-    private const int BUFFER_SIZE = 50;
+    private readonly IAuthorizer m_authorizer;
+    private readonly ICompressor m_compressor;
+    private readonly int m_bufferSize;
+    private readonly Action<string> m_messageCallback;
     private DateTime m_startTimestamp;
-    
-    async Task<bool> ITwitchConnector.Connect(
-        TwitchConnectionOptions options
+    private Action<string> m_callback;
+
+    public TwitchConnector(
+        IAuthorizer authorizer,
+        ICompressor compressor,
+        int bufferSize
     ) {
-        string token = await GetToken();
+        m_authorizer = authorizer;
+        m_compressor = compressor;
+        m_bufferSize = bufferSize;
+        m_callback = delegate(
+            string s
+        ) {
+            Console.WriteLine( s );
+        };
+    }
+    
+    async Task<bool> ITwitchConnector.Connect( 
+        TwitchConnectionOptions options, 
+        Action<string> messageCallback
+    ) {
+        m_callback = messageCallback;
+        string token = await m_authorizer.GetToken();
         using ClientWebSocket ws = new();
         
         await ConnectToWebsocket( ws, token, options );
@@ -26,7 +46,6 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         string token,
         TwitchConnectionOptions options
     ) {
-        
         await ws.ConnectAsync(
             uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"), 
             cancellationToken: CancellationToken.None
@@ -69,8 +88,6 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
                 index: 0, 
                 count: result.Count 
             );
-            
-            Console.WriteLine( "response: " + response );
 
             // keep alive, let twitch know we are still listening
             if( response.Contains("PING :tmi.twitch.tv") ) {
@@ -80,9 +97,10 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
                 string message = GetUserMessage( response, options.Channel );
                 messageBuffer.AddToBuffer( message );
+                m_callback( message );
             }
             
-            if( messageBuffer.Count > BUFFER_SIZE ) {
+            if( messageBuffer.Count > m_bufferSize ) {
                 StringBuilder tempBuffer = new( messageBuffer.ReadAsString() );
                 messageBuffer.Clear();
                 await WriteMessagesToStore( tempBuffer );
@@ -90,7 +108,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         }
     }
 
-    private async Task WriteMessagesToStore(StringBuilder buffer) {
+    private async Task WriteMessagesToStore( StringBuilder buffer ) {
         if( buffer.Length == 0 ) {
             return;
         }
@@ -98,7 +116,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         string rawData = buffer.ToString();
         byte[] byteBuffer = Encoding.UTF8.GetBytes( rawData );
 
-        byte[] compressedData = await CompressWithBrotli( byteBuffer );
+        byte[] compressedData = await m_compressor.Compress( byteBuffer );
         
         string path = $"{m_startTimestamp.ToUniversalTime().ToString( "yyyy-M-d_H-mm-ss" )}.csv";
         SaveBinaryDataToFile( path, compressedData );
@@ -110,16 +128,6 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     ) {
         using FileStream fileStream = new (path, FileMode.Create);
         fileStream.Write( compressedData, 0, compressedData.Length );
-    }
-
-    private static async Task<byte[]> CompressWithBrotli(
-        byte[] byteBuffer
-    ) {
-        using MemoryStream outputStream = new();
-        await using BrotliStream brotliStream = new( outputStream, CompressionLevel.SmallestSize );
-        await brotliStream.WriteAsync(byteBuffer, 0, byteBuffer.Length, default);
-        brotliStream.Close();
-        return outputStream.ToArray();
     }
 
     private string GetUserMessage( string response, string channel ) {
@@ -146,11 +154,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         return $"{m_startTimestamp}, {displayName}, {segments[1]}\n";
     }
 
-    private async Task<string> GetToken() {
-        return await m_authorizer.GetToken();
-    }
-
-    private static async Task SendMessage(
+    private async Task SendMessage(
         WebSocket socket,
         string message
     ) {

@@ -5,12 +5,24 @@ using System.Text;
 namespace TwitchEverywhere.Implementation; 
 
 internal class Authorizer : IAuthorizer {
-    private static string ACCESS_TOKEN = "";
-    private static string REFRESH_TOKEN = "";
-    private const string CLIENT_ID = "";
-    private const string CLIENT_SECRET = "";
+    private string m_accessToken;
+    private string m_refreshToken;
+    private readonly string m_clientId;
+    private readonly string m_clientSecret;
     private const string CLIENT_GRANT_TYPE = "refresh_token";
 
+    public Authorizer( 
+        string accessToken,
+        string refreshToken,
+        string clientId,
+        string clientSecret
+    ) {
+        m_accessToken = accessToken;
+        m_refreshToken = refreshToken;
+        m_clientId = clientId;
+        m_clientSecret = clientSecret;
+    }
+    
     public async Task<string> GetToken() {
         TwitchRefreshTokenResponse? response = await RefreshToken();
 
@@ -18,10 +30,10 @@ internal class Authorizer : IAuthorizer {
             throw new InvalidTokenResponseException();
         }
         
-        ACCESS_TOKEN = response.AccessToken;
-        REFRESH_TOKEN = response.RefreshToken;
+        m_accessToken = response.AccessToken;
+        m_refreshToken = response.RefreshToken;
         
-        return ACCESS_TOKEN;
+        return m_accessToken;
     }
 
     private async Task<TwitchRefreshTokenResponse?> RefreshToken() {
@@ -31,7 +43,7 @@ internal class Authorizer : IAuthorizer {
             requestUri: new Uri( "https://id.twitch.tv/oauth2/token" )
         );
 
-        string content = $"client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&grant_type={CLIENT_GRANT_TYPE}&refresh_token={REFRESH_TOKEN}";
+        string content = $"client_id={m_clientId}&client_secret={m_clientSecret}&grant_type={CLIENT_GRANT_TYPE}&refresh_token={m_refreshToken}";
         
         request.Content = new StringContent(
             content: content,

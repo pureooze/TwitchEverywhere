@@ -2,6 +2,9 @@ namespace TwitchEverywhere;
 
 public sealed record TwitchConnectionOptions(
     string Channel,
-    string[] Tags,
-    string Message
+    string? AccessToken,
+    string? RefreshToken,
+    string? ClientId,
+    string? ClientSecret,
+    int BufferSize
 );

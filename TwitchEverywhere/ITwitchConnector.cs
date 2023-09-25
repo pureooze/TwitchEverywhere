@@ -4,6 +4,7 @@ namespace TwitchEverywhere;
 
 public interface ITwitchConnector {
     internal Task<bool> Connect(
-        TwitchConnectionOptions options
+        TwitchConnectionOptions options,
+        Action<string> messageCallback
     );
 }

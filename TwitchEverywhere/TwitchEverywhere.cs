@@ -4,28 +4,37 @@ using TwitchEverywhere.Implementation;
 namespace TwitchEverywhere;
 
 public sealed class TwitchEverywhere {
-    private string[] m_channels;
-    private ITwitchConnector m_twitchConnector;
-    
-    public TwitchEverywhere(
-        string[] channels
-    ) {
-        m_channels = channels;
-        m_twitchConnector = new TwitchConnector();
-    }
+    private readonly ITwitchConnector m_twitchConnector;
+    private readonly TwitchConnectionOptions m_options;
 
-    public async Task<bool> TryConnectToChannel(
+    public TwitchEverywhere(
         TwitchConnectionOptions options
     ) {
+        m_options = options;
+
+        IAuthorizer authorizer = new Authorizer(
+            accessToken: m_options.AccessToken ?? "",
+            refreshToken: m_options.RefreshToken ?? "",
+            clientId: m_options.ClientId ?? "",
+            clientSecret: m_options.ClientSecret ?? ""
+        );
+
+        ICompressor compressor = new BrotliCompressor();
+        
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer, 
+            compressor: compressor,
+            bufferSize: options.BufferSize
+        );
+    }
+
+    public async Task<bool> TryConnectToChannel( Action<string> messageCallback ) {
         // try connecting
         bool connectionSuccess = await m_twitchConnector.Connect(
-            options
+            m_options,
+            messageCallback
         );
-        if ( !connectionSuccess ) {
-            return false;
-        }
         
-        // if we cant connect, then it was a fail
-        return false;
+        return connectionSuccess;
     }
 }

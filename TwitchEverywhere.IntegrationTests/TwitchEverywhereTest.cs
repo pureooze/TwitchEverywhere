@@ -6,21 +6,22 @@ public class TwitchEverywhereTest {
 
     [SetUp]
     public void Setup() {
+        TwitchConnectionOptions options = new(
+            Channel: "TestConnection",
+            AccessToken: "accessToken",
+            RefreshToken: "refreshToken",
+            ClientId: "clientId",
+            ClientSecret: "clientSecret",
+            BufferSize: 20
+        );
+        
         m_twitchEverywhereTest = new TwitchEverywhere(
-            channels: new[] { "test" }
+            options: options
         );
     }
 
     [Test]
     public async Task NoOptions_TryConnectToChannel_ReturnsFail() {
-        TwitchConnectionOptions options = new(
-            Channel: "TestConnection",
-            Tags: new[] { "tag1" },
-            Message: "Hello!"
-        );
-
-        await m_twitchEverywhereTest.TryConnectToChannel(
-            options: options
-        );
+        await m_twitchEverywhereTest.TryConnectToChannel();
     }
 }
