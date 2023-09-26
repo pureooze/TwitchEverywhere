@@ -1,6 +1,7 @@
 using System.IO.Compression;
+using TwitchEverywhere;
 
-namespace TwitchEverywhere.Implementation; 
+namespace TwitchEverywhereCLI.Implementation; 
 
 internal class BrotliCompressor : ICompressor {
     async Task<byte[]> ICompressor.Compress(

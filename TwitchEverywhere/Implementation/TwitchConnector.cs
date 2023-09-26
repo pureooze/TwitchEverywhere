@@ -8,20 +8,13 @@ namespace TwitchEverywhere.Implementation;
 
 internal sealed partial class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
-    private readonly ICompressor m_compressor;
-    private readonly int m_bufferSize;
-    private readonly Action<string> m_messageCallback;
     private DateTime m_startTimestamp;
     private Action<string> m_callback;
 
     public TwitchConnector(
-        IAuthorizer authorizer,
-        ICompressor compressor,
-        int bufferSize
+        IAuthorizer authorizer
     ) {
         m_authorizer = authorizer;
-        m_compressor = compressor;
-        m_bufferSize = bufferSize;
         m_callback = delegate(
             string s
         ) {
@@ -52,24 +45,23 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         );
         byte[] buffer = new byte[4096];
 
-        await SendMessage( socket: ws, message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" );
+        await SendMessage( 
+            socket: ws, 
+            message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" 
+        );
         Thread.Sleep(millisecondsTimeout: 1000);
         await SendMessage( socket: ws, message: $"PASS oauth:{token}" );
         await SendMessage( socket: ws, message: "NICK chatreaderbot" );
         await SendMessage( socket: ws, message: $"JOIN #{options.Channel}" );
-
-        MessageBuffer messageBuffer = new( buffer: new StringBuilder() );
-        
         
         while (ws.State == WebSocketState.Open) {
-            await ReceiveWebSocketResponse( ws: ws, buffer: buffer, options: options, messageBuffer: messageBuffer );
+            await ReceiveWebSocketResponse( ws: ws, buffer: buffer, options: options );
         }
     }
     private async Task ReceiveWebSocketResponse(
         ClientWebSocket ws,
         byte[] buffer,
-        TwitchConnectionOptions options,
-        MessageBuffer messageBuffer
+        TwitchConnectionOptions options
     ) {
         WebSocketReceiveResult result = await ws.ReceiveAsync(
             buffer: buffer, 
@@ -96,38 +88,9 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
 
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
                 string message = GetUserMessage( response, options.Channel );
-                messageBuffer.AddToBuffer( message );
-                m_callback( message );
-            }
-            
-            if( messageBuffer.Count > m_bufferSize ) {
-                StringBuilder tempBuffer = new( messageBuffer.ReadAsString() );
-                messageBuffer.Clear();
-                await WriteMessagesToStore( tempBuffer );
+                m_callback( "USER-MESSAGE: " + message );
             }
         }
-    }
-
-    private async Task WriteMessagesToStore( StringBuilder buffer ) {
-        if( buffer.Length == 0 ) {
-            return;
-        }
-
-        string rawData = buffer.ToString();
-        byte[] byteBuffer = Encoding.UTF8.GetBytes( rawData );
-
-        byte[] compressedData = await m_compressor.Compress( byteBuffer );
-        
-        string path = $"{m_startTimestamp.ToUniversalTime().ToString( "yyyy-M-d_H-mm-ss" )}.csv";
-        SaveBinaryDataToFile( path, compressedData );
-    }
-
-    private void SaveBinaryDataToFile(
-        string path,
-        byte[] compressedData
-    ) {
-        using FileStream fileStream = new (path, FileMode.Create);
-        fileStream.Write( compressedData, 0, compressedData.Length );
     }
 
     private string GetUserMessage( string response, string channel ) {
@@ -172,32 +135,4 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     
     [GeneratedRegex("tmi-sent-ts([^;]*);")]
     private static partial Regex MessageTimestampPattern();
-
-    private sealed class MessageBuffer {
-        public MessageBuffer(
-            StringBuilder buffer
-        ) {
-            Buffer = buffer;
-            Count = 0;
-        }
-
-        public void AddToBuffer(
-            string message
-        ) {
-            Buffer.Append( message );
-            Count += 1;
-        }
-
-        public void Clear() {
-            Buffer.Clear();
-            Count = 0;
-        }
-
-        private StringBuilder Buffer { get; }
-        public int Count { get; private set; }
-
-        public string ReadAsString() {
-            return Buffer.ToString();
-        }
-    };
 }

@@ -18,23 +18,19 @@ public sealed class TwitchEverywhere {
             clientId: m_options.ClientId ?? "",
             clientSecret: m_options.ClientSecret ?? ""
         );
-
-        ICompressor compressor = new BrotliCompressor();
         
         m_twitchConnector = new TwitchConnector( 
-            authorizer: authorizer, 
-            compressor: compressor,
-            bufferSize: options.BufferSize
+            authorizer: authorizer 
         );
     }
 
-    public async Task<bool> TryConnectToChannel( Action<string> messageCallback ) {
+    public async Task ConnectToChannel(
+        Action<string> messageCallback
+    ) {
         // try connecting
-        bool connectionSuccess = await m_twitchConnector.Connect(
+        await m_twitchConnector.Connect(
             m_options,
             messageCallback
         );
-        
-        return connectionSuccess;
     }
 }

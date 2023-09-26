@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere", "TwitchEverywhere\TwitchEverywhere.csproj", "{545E1F17-E7FC-49CC-A731-C29815FE7B36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{610B0EA8-9FCD-4A57-9B14-F3E395514A9C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere.IntegrationTests", "TwitchEverywhere.IntegrationTests\TwitchEverywhere.IntegrationTests.csproj", "{6FFE5A11-7DF2-43EB-8EF7-F51711E2A831}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere.UnitTests", "TwitchEverywhere.UnitTests\TwitchEverywhere.UnitTests.csproj", "{47AAD1FC-484E-4E46-89C8-9FE1BA705154}"
@@ -20,10 +18,6 @@ Global
 		{545E1F17-E7FC-49CC-A731-C29815FE7B36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{545E1F17-E7FC-49CC-A731-C29815FE7B36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{545E1F17-E7FC-49CC-A731-C29815FE7B36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{610B0EA8-9FCD-4A57-9B14-F3E395514A9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{610B0EA8-9FCD-4A57-9B14-F3E395514A9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{610B0EA8-9FCD-4A57-9B14-F3E395514A9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{610B0EA8-9FCD-4A57-9B14-F3E395514A9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6FFE5A11-7DF2-43EB-8EF7-F51711E2A831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6FFE5A11-7DF2-43EB-8EF7-F51711E2A831}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FFE5A11-7DF2-43EB-8EF7-F51711E2A831}.Release|Any CPU.ActiveCfg = Release|Any CPU

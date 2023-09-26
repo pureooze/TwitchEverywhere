@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.Configuration;
 using TwitchEverywhere;
+using TwitchConnection = TwitchEverywhereCLI.TwitchConnection;
 
 Console.WriteLine( "Hello, World!" );
 
@@ -14,21 +15,16 @@ string? accessToken = config["AccessToken"];
 string? refreshToken = config["RefreshToken"];
 string? clientId = config["ClientId"];
 string? clientSecret = config["ClientSecret"];
-int bufferSize = int.Parse( config["BufferSize"] ?? "50" );
+string? channel = config["Channel"] ?? "";
 
 TwitchConnectionOptions options = new(
-    Channel: "jaaski",
+    Channel: channel,
     AccessToken: accessToken,
     RefreshToken: refreshToken,
     ClientId: clientId,
     ClientSecret: clientSecret,
-    BufferSize: bufferSize
+    BufferSize: 5
 );
 
-TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( options );
-
-await twitchEverywhere.TryConnectToChannel( message => {
-    Console.WriteLine( message );
-    
-    
-});
+TwitchConnection twitchConnection = new();
+await twitchConnection.Connect( options );

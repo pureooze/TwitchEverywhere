@@ -3,6 +3,11 @@ namespace TwitchEverywhere.IntegrationTests;
 [TestFixture]
 public class TwitchEverywhereTest {
     private TwitchEverywhere m_twitchEverywhereTest;
+    private readonly Action<string> m_callback = delegate(
+        string s
+    ) {
+        Assert.That( s, Is.Not.Null );
+    };
 
     [SetUp]
     public void Setup() {
@@ -22,6 +27,6 @@ public class TwitchEverywhereTest {
 
     [Test]
     public async Task NoOptions_TryConnectToChannel_ReturnsFail() {
-        await m_twitchEverywhereTest.TryConnectToChannel();
+        await m_twitchEverywhereTest.ConnectToChannel( m_callback );
     }
 }

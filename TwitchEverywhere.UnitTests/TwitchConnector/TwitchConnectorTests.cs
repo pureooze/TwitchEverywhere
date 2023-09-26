@@ -13,7 +13,13 @@ public class TwitchConnectorTests {
         ClientSecret: "clientSecret",
         BufferSize: 20
     );
-
+    
+    private readonly Action<string> m_callback = delegate(
+        string s
+    ) {
+        Assert.That( s, Is.Not.Null );
+    };
+    
     [SetUp]
     public void Setup() {
         IAuthorizer authorizer = new Authorizer(
@@ -22,18 +28,14 @@ public class TwitchConnectorTests {
             clientId: m_options.ClientId ?? "",
             clientSecret: m_options.ClientSecret ?? ""
         );
-        
-        ICompressor compressor = new BrotliCompressor();
-        
+
         m_twitchConnector = new Implementation.TwitchConnector( 
-            authorizer: authorizer, 
-            compressor: compressor, 
-            bufferSize: 20
+            authorizer: authorizer
         );
     }
 
     [Test]
     public void NoOptions_TryConnectToChannel_ReturnsFail() {
-        m_twitchConnector.Connect(m_options);
+        m_twitchConnector.Connect(m_options, m_callback);
     }
 }
