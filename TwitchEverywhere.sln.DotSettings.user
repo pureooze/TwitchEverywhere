@@ -7,6 +7,7 @@
     &lt;Project Location="C:\Users\uzi\RiderProjects\TwitchEverywhere\TwitchEverywhere.IntegrationTests" Presentation="&amp;lt;TwitchEverywhere.IntegrationTests&amp;gt;" /&gt;&#xD;
     &lt;TestAncestor&gt;&#xD;
       &lt;TestId&gt;NUnit3x::47AAD1FC-484E-4E46-89C8-9FE1BA705154::net7.0::TwitchEverywhere.UnitTests.TwitchConnector.TwitchConnectorTests.NoOptions_TryConnectToChannel_ReturnsFail&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::47AAD1FC-484E-4E46-89C8-9FE1BA705154::net7.0::TwitchEverywhere.UnitTests.TwitchConnector.TwitchConnectorTests&lt;/TestId&gt;&#xD;
     &lt;/TestAncestor&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

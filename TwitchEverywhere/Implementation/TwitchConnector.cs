@@ -7,14 +7,27 @@ using System;
 namespace TwitchEverywhere.Implementation;
 
 internal sealed partial class TwitchConnector : ITwitchConnector {
-    private IAuthorizer m_authorizer = new Authorizer();
-    private const int BUFFER_SIZE = 50;
+    private readonly IAuthorizer m_authorizer;
     private DateTime m_startTimestamp;
-    
-    async Task<bool> ITwitchConnector.Connect(
-        TwitchConnectionOptions options
+    private Action<string> m_callback;
+
+    public TwitchConnector(
+        IAuthorizer authorizer
     ) {
-        string token = await GetToken();
+        m_authorizer = authorizer;
+        m_callback = delegate(
+            string s
+        ) {
+            Console.WriteLine( s );
+        };
+    }
+    
+    async Task<bool> ITwitchConnector.Connect( 
+        TwitchConnectionOptions options, 
+        Action<string> messageCallback
+    ) {
+        m_callback = messageCallback;
+        string token = await m_authorizer.GetToken();
         using ClientWebSocket ws = new();
         
         await ConnectToWebsocket( ws, token, options );
@@ -26,31 +39,29 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         string token,
         TwitchConnectionOptions options
     ) {
-        
         await ws.ConnectAsync(
             uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"), 
             cancellationToken: CancellationToken.None
         );
         byte[] buffer = new byte[4096];
 
-        await SendMessage( socket: ws, message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" );
+        await SendMessage( 
+            socket: ws, 
+            message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" 
+        );
         Thread.Sleep(millisecondsTimeout: 1000);
         await SendMessage( socket: ws, message: $"PASS oauth:{token}" );
         await SendMessage( socket: ws, message: "NICK chatreaderbot" );
         await SendMessage( socket: ws, message: $"JOIN #{options.Channel}" );
-
-        MessageBuffer messageBuffer = new( buffer: new StringBuilder() );
-        
         
         while (ws.State == WebSocketState.Open) {
-            await ReceiveWebSocketResponse( ws: ws, buffer: buffer, options: options, messageBuffer: messageBuffer );
+            await ReceiveWebSocketResponse( ws: ws, buffer: buffer, options: options );
         }
     }
     private async Task ReceiveWebSocketResponse(
         ClientWebSocket ws,
         byte[] buffer,
-        TwitchConnectionOptions options,
-        MessageBuffer messageBuffer
+        TwitchConnectionOptions options
     ) {
         WebSocketReceiveResult result = await ws.ReceiveAsync(
             buffer: buffer, 
@@ -69,8 +80,6 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
                 index: 0, 
                 count: result.Count 
             );
-            
-            Console.WriteLine( "response: " + response );
 
             // keep alive, let twitch know we are still listening
             if( response.Contains("PING :tmi.twitch.tv") ) {
@@ -79,47 +88,9 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
 
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
                 string message = GetUserMessage( response, options.Channel );
-                messageBuffer.AddToBuffer( message );
-            }
-            
-            if( messageBuffer.Count > BUFFER_SIZE ) {
-                StringBuilder tempBuffer = new( messageBuffer.ReadAsString() );
-                messageBuffer.Clear();
-                await WriteMessagesToStore( tempBuffer );
+                m_callback( "USER-MESSAGE: " + message );
             }
         }
-    }
-
-    private async Task WriteMessagesToStore(StringBuilder buffer) {
-        if( buffer.Length == 0 ) {
-            return;
-        }
-
-        string rawData = buffer.ToString();
-        byte[] byteBuffer = Encoding.UTF8.GetBytes( rawData );
-
-        byte[] compressedData = await CompressWithBrotli( byteBuffer );
-        
-        string path = $"{m_startTimestamp.ToUniversalTime().ToString( "yyyy-M-d_H-mm-ss" )}.csv";
-        SaveBinaryDataToFile( path, compressedData );
-    }
-
-    private void SaveBinaryDataToFile(
-        string path,
-        byte[] compressedData
-    ) {
-        using FileStream fileStream = new (path, FileMode.Create);
-        fileStream.Write( compressedData, 0, compressedData.Length );
-    }
-
-    private static async Task<byte[]> CompressWithBrotli(
-        byte[] byteBuffer
-    ) {
-        using MemoryStream outputStream = new();
-        await using BrotliStream brotliStream = new( outputStream, CompressionLevel.SmallestSize );
-        await brotliStream.WriteAsync(byteBuffer, 0, byteBuffer.Length, default);
-        brotliStream.Close();
-        return outputStream.ToArray();
     }
 
     private string GetUserMessage( string response, string channel ) {
@@ -146,11 +117,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         return $"{m_startTimestamp}, {displayName}, {segments[1]}\n";
     }
 
-    private async Task<string> GetToken() {
-        return await m_authorizer.GetToken();
-    }
-
-    private static async Task SendMessage(
+    private async Task SendMessage(
         WebSocket socket,
         string message
     ) {
@@ -168,32 +135,4 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     
     [GeneratedRegex("tmi-sent-ts([^;]*);")]
     private static partial Regex MessageTimestampPattern();
-
-    private sealed class MessageBuffer {
-        public MessageBuffer(
-            StringBuilder buffer
-        ) {
-            Buffer = buffer;
-            Count = 0;
-        }
-
-        public void AddToBuffer(
-            string message
-        ) {
-            Buffer.Append( message );
-            Count += 1;
-        }
-
-        public void Clear() {
-            Buffer.Clear();
-            Count = 0;
-        }
-
-        private StringBuilder Buffer { get; }
-        public int Count { get; private set; }
-
-        public string ReadAsString() {
-            return Buffer.ToString();
-        }
-    };
 }
