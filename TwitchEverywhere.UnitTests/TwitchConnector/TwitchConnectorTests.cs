@@ -5,6 +5,8 @@ namespace TwitchEverywhere.UnitTests.TwitchConnector;
 [TestFixture]
 public class TwitchConnectorTests {
     private ITwitchConnector m_twitchConnector;
+    private IWebSocketConnection m_webSocketConnection;
+    
     private readonly TwitchConnectionOptions m_options = new(
         Channel: "TestConnection",
         AccessToken: "accessToken",
@@ -30,12 +32,14 @@ public class TwitchConnectorTests {
         );
 
         m_twitchConnector = new Implementation.TwitchConnector( 
-            authorizer: authorizer
+            authorizer: authorizer,
+            webSocketConnection: m_webSocketConnection
         );
     }
 
     [Test]
-    public void NoOptions_TryConnectToChannel_ReturnsFail() {
-        m_twitchConnector.Connect(m_options, m_callback);
+    public async Task ValidOptions_Connect_ReturnsTrue() {
+        bool result = await m_twitchConnector.TryConnect( m_options, m_callback );
+        Assert.That( result, Is.True );
     }
 }

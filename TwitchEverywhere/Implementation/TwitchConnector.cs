@@ -8,13 +8,16 @@ namespace TwitchEverywhere.Implementation;
 
 internal sealed partial class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
+    private readonly IWebSocketConnection m_webSocketConnection;
     private DateTime m_startTimestamp;
     private Action<string> m_callback;
 
     public TwitchConnector(
-        IAuthorizer authorizer
+        IAuthorizer authorizer,
+        IWebSocketConnection webSocketConnection
     ) {
         m_authorizer = authorizer;
+        m_webSocketConnection = webSocketConnection;
         m_callback = delegate(
             string s
         ) {
@@ -22,20 +25,19 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         };
     }
     
-    async Task<bool> ITwitchConnector.Connect( 
+    async Task<bool> ITwitchConnector.TryConnect( 
         TwitchConnectionOptions options, 
         Action<string> messageCallback
     ) {
         m_callback = messageCallback;
         string token = await m_authorizer.GetToken();
-        using ClientWebSocket ws = new();
         
-        await ConnectToWebsocket( ws, token, options );
+        await ConnectToWebsocket( m_webSocketConnection, token, options );
         return true;
     }
 
     private async Task ConnectToWebsocket(
-        ClientWebSocket ws,
+        IWebSocketConnection ws,
         string token,
         TwitchConnectionOptions options
     ) {
@@ -46,20 +48,20 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         byte[] buffer = new byte[4096];
 
         await SendMessage( 
-            socket: ws, 
+            socketConnection: ws, 
             message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" 
         );
         Thread.Sleep(millisecondsTimeout: 1000);
-        await SendMessage( socket: ws, message: $"PASS oauth:{token}" );
-        await SendMessage( socket: ws, message: "NICK chatreaderbot" );
-        await SendMessage( socket: ws, message: $"JOIN #{options.Channel}" );
+        await SendMessage( socketConnection: ws, message: $"PASS oauth:{token}" );
+        await SendMessage( socketConnection: ws, message: "NICK chatreaderbot" );
+        await SendMessage( socketConnection: ws, message: $"JOIN #{options.Channel}" );
         
         while (ws.State == WebSocketState.Open) {
             await ReceiveWebSocketResponse( ws: ws, buffer: buffer, options: options );
         }
     }
     private async Task ReceiveWebSocketResponse(
-        ClientWebSocket ws,
+        IWebSocketConnection ws,
         byte[] buffer,
         TwitchConnectionOptions options
     ) {
@@ -68,7 +70,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             cancellationToken: CancellationToken.None
         );
             
-        if (result.MessageType == WebSocketMessageType.Close) {
+        if ( result.MessageType == WebSocketMessageType.Close ) {
             await ws.CloseAsync(
                 closeStatus: WebSocketCloseStatus.NormalClosure, 
                 statusDescription: null, 
@@ -118,11 +120,11 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     }
 
     private async Task SendMessage(
-        WebSocket socket,
+        IWebSocketConnection socketConnection,
         string message
     ) {
         Console.WriteLine( "WRITING: " + message );
-        await socket.SendAsync(
+        await socketConnection.SendAsync(
             buffer: Encoding.ASCII.GetBytes(message), 
             messageType: WebSocketMessageType.Text, 
             endOfMessage: true, 

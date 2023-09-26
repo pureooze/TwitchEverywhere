@@ -20,15 +20,15 @@ public sealed class TwitchEverywhere {
         );
         
         m_twitchConnector = new TwitchConnector( 
-            authorizer: authorizer 
+            authorizer: authorizer,
+            webSocketConnection: new WebSocketConnection()
         );
     }
 
     public async Task ConnectToChannel(
         Action<string> messageCallback
     ) {
-        // try connecting
-        await m_twitchConnector.Connect(
+        await m_twitchConnector.TryConnect(
             m_options,
             messageCallback
         );
