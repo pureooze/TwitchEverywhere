@@ -23,6 +23,8 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         ) {
             Console.WriteLine( s );
         };
+        
+        m_startTimestamp = DateTime.Now;
     }
     
     async Task<bool> ITwitchConnector.TryConnect( 
@@ -90,7 +92,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
 
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
                 string message = GetUserMessage( response, options.Channel );
-                m_callback( "USER-MESSAGE: " + message );
+                m_callback( message );
             }
         }
     }
@@ -103,20 +105,60 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             .Value
             .Split( "=" )[1]
             .TrimEnd( ';' );
-
+        
+        string[] emoteLookup = EmoteLocationPattern()
+            .Match( response )
+            .Value
+            .Split( "=" )[1]
+            .TrimEnd( ';' )
+            .Split('/');
+        
         long rawTimestamp = Convert.ToInt64(
             MessageTimestampPattern().Match( response ).Value
             .Split( "=" )[1]
             .TrimEnd( ';' )
         );
 
-        m_startTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
-        
+        string message = segments[1].Trim( '\r', '\n' );
+        string messageWithEmotes = GetMessageWithEmotes( message: message, emoteLookup: emoteLookup );
+
+        DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
+        TimeSpan timeSinceStartOfStream = messageTimestamp - m_startTimestamp;
+
         if( segments.Length <= 1 ) {
             throw new UnexpectedUserMessageException();
         }
 
-        return $"{m_startTimestamp}, {displayName}, {segments[1]}\n";
+        return $"{{ timestamp: \"{messageTimestamp}\", sinceStartOfStream: \"{timeSinceStartOfStream.Ticks}\", displayName: \"{displayName}\", message: \"{messageWithEmotes}\" }}";
+    }
+
+    private static string GetMessageWithEmotes(
+        string message,
+        IEnumerable<string> emoteLookup
+    ) {
+        Dictionary<string, string> replacementDict = new();
+        
+        foreach( string emote in emoteLookup ) {
+            string[] emoteData = emote.Split( ':' );
+            string emoteId = emoteData[0];
+            string[] locations = emoteData[1].Split(',');
+
+            string[] firstLocation = locations[0].Split( '-' );
+            int start = int.Parse( firstLocation[0] );
+            int end = int.Parse( firstLocation[1] );
+            string wordToReplace = message.Substring( start, end - start + 1 );
+             
+            // the space prefix is important, it makes sure we are not substituting substrings that are not emotes
+            replacementDict.Add( $" {wordToReplace}", $" <img src=\"https://static-cdn.jtvnw.net/emoticons/v2/{emoteId}/static/light/1.0\" alt=\"\" />" );
+        }
+        
+        string modifiedString = message;
+        
+        foreach (KeyValuePair<string, string> kvp in replacementDict) {
+            modifiedString = modifiedString.Replace(kvp.Key, kvp.Value);
+        }
+        
+        return modifiedString;
     }
 
     private async Task SendMessage(
@@ -137,4 +179,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     
     [GeneratedRegex("tmi-sent-ts([^;]*);")]
     private static partial Regex MessageTimestampPattern();
+    
+    [GeneratedRegex("emotes([^;]*);")]
+    private static partial Regex EmoteLocationPattern();
 }
