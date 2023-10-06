@@ -3,13 +3,14 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System;
+using System.Collections;
 
 namespace TwitchEverywhere.Implementation;
 
 internal sealed partial class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
     private readonly IWebSocketConnection m_webSocketConnection;
-    private DateTime m_startTimestamp;
+    private DateTime m_startTimestamp = DateTime.Now;
     private Action<string> m_callback;
 
     public TwitchConnector(
@@ -90,9 +91,24 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
 
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
                 string message = GetUserMessage( response, options.Channel );
-                m_callback( "USER-MESSAGE: " + message );
+                m_callback( $"MESSAGE {message}" );
+            }
+            
+            if( response.Contains( $" CLEARCHAT #{options.Channel}" ) ) {
+                string message = GetClearUserMessage( response, options.Channel );
+                m_callback( $"CLEARCHAT {message}" );
             }
         }
+    }
+
+    private string GetClearUserMessage(
+        string response,
+        string channel
+    ) {
+        string[] segments = response.Split( $"CLEARCHAT #{channel} :" );
+        string message = segments[1].Trim( '\r', '\n' );
+
+        return message;
     }
 
     private string GetUserMessage( string response, string channel ) {
@@ -103,6 +119,14 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             .Value
             .Split( "=" )[1]
             .TrimEnd( ';' );
+        
+        string badges = BadgesPattern()
+            .Match( response )
+            .Value
+            .Split( "=" )[1]
+            .TrimEnd( ';' );
+
+        string parsedBadges = GetBadges( badges );
 
         long rawTimestamp = Convert.ToInt64(
             MessageTimestampPattern().Match( response ).Value
@@ -110,13 +134,46 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             .TrimEnd( ';' )
         );
 
-        m_startTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
+        DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
+        TimeSpan timeSinceStartOfStream = messageTimestamp - m_startTimestamp;
+        
+        string message = segments[1].Trim( '\r', '\n' );
         
         if( segments.Length <= 1 ) {
             throw new UnexpectedUserMessageException();
         }
 
-        return $"{m_startTimestamp}, {displayName}, {segments[1]}\n";
+        return $"{{ timestamp: \"{messageTimestamp.ToString("o")}\", sinceStartOfStream: \"{timeSinceStartOfStream.Ticks}\", displayName: \"{displayName}\", message: \"{message}\", badges: {parsedBadges} }}";
+    }
+
+    private string GetBadges(
+        string badges
+    ) {
+        string parsedBadges = "";
+        string[] badgeList = badges.Split( ',' );
+
+        if( string.IsNullOrEmpty( badges ) ) {
+            return "[]";
+        }
+
+
+        parsedBadges += "[";
+        for( int index = 0; index < badgeList.Length; index++ ) {
+            string badge = badgeList[index];
+            string[] badgeInfo = badge.Split( '/' );
+
+            if( badgeInfo.Length == 2 ) {
+                parsedBadges += $"{{ \"name\": \"{badgeInfo[0]}\", \"version\": \"{badgeInfo[1]}\"}}";
+            }
+            
+
+            if( index < badgeList.Length - 1 ) {
+                parsedBadges += ",";
+            }
+        }
+
+        parsedBadges += "]";
+        return parsedBadges;
     }
 
     private async Task SendMessage(
@@ -137,4 +194,10 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     
     [GeneratedRegex("tmi-sent-ts([^;]*);")]
     private static partial Regex MessageTimestampPattern();
+    
+    [GeneratedRegex("id([^;]*);")]
+    private static partial Regex MessageIdPattern();
+    
+    [GeneratedRegex("badges([^;]*);")]
+    private static partial Regex BadgesPattern();
 }

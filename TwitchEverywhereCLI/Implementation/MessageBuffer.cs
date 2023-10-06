@@ -13,6 +13,9 @@ internal sealed class MessageBuffer {
     public void AddToBuffer(
         string message
     ) {
+        if( this.Count >= 0 ) {
+            Buffer.Append( "," );
+        }
         Buffer.Append( message );
         Count += 1;
     }
