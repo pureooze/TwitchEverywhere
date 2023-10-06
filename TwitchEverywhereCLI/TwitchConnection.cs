@@ -7,10 +7,11 @@ namespace TwitchEverywhereCLI;
 internal class TwitchConnection {
 
     private readonly MessageBuffer m_messageBuffer = new( buffer: new StringBuilder() );
+    private readonly MessageBuffer m_clearChat = new( buffer: new StringBuilder() );
     private readonly ICompressor m_compressor = new BrotliCompressor();
     private DateTime m_startTimestamp = DateTime.UtcNow;
 
-    private const int BUFFER_SIZE = 5;
+    private const int BUFFER_SIZE = 3;
 
     public async Task Connect( TwitchConnectionOptions options ) {
         TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( options );
@@ -27,7 +28,7 @@ internal class TwitchConnection {
 
         byte[] compressedData = await m_compressor.Compress( byteBuffer );
     
-        string path = $"{startTimestamp.ToUniversalTime():yyyy-M-d_H-mm-ss}.csv";
+        string path = $"{startTimestamp.ToUniversalTime():yyyy-M-d_H-mm-ss}.json";
         SaveBinaryDataToFile( path, compressedData );
     }
 
@@ -42,8 +43,6 @@ internal class TwitchConnection {
     private async void MessageCallback(
         string message
     ) {
-        Console.WriteLine( message );
-        
         if( m_messageBuffer.Count == BUFFER_SIZE ) {
             StringBuilder tempBuffer = new( m_messageBuffer.ReadAsString() );
             DateTime tempStartTimestamp = new( m_startTimestamp.Ticks );
@@ -51,7 +50,15 @@ internal class TwitchConnection {
             m_startTimestamp = DateTime.UtcNow;
             await WriteMessagesToStore( tempBuffer, tempStartTimestamp );
         }
+
+        if( message.StartsWith( "CLEARCHAT" ) ) {
+            Console.WriteLine( $"Clear: {message}" );
+            m_clearChat.AddToBuffer( message );
+        } else {
+            string[] segments = message.Split( $"MESSAGE" );
+            Console.WriteLine( $"Message: {segments[1]}" );
+            m_messageBuffer.AddToBuffer( segments[1] );
+        }
         
-        m_messageBuffer.AddToBuffer( message );
     }
 }
