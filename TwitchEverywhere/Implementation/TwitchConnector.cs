@@ -181,8 +181,6 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             Badges: parsedBadges,
             MessageType: MessageType.PrivMsg
         );
-
-        // return $"{{ timestamp: \"{messageTimestamp.ToString("o")}\", sinceStartOfStream: \"{timeSinceStartOfStream.Ticks}\", displayName: \"{displayName}\", message: \"{message}\", badges: {parsedBadges} }}";
     }
 
     private IImmutableList<Badge> GetBadges(
@@ -202,12 +200,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
 
             if( badgeInfo.Length == 2 ) {
                 parsedBadges.Add( new Badge( Name: badgeInfo[0], Version: badgeInfo[1] ) );
-                // parsedBadges += $"{{ \"name\": \"{badgeInfo[0]}\", \"version\": \"{badgeInfo[1]}\"}}";
             }
-            //
-            // if( index < badgeList.Length - 1 ) {
-            //     parsedBadges += ",";
-            // }
         }
 
         return parsedBadges.ToImmutableList();
