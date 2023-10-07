@@ -4,14 +4,17 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System;
 using System.Collections;
+using System.Collections.Immutable;
+using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.Implementation;
 
 internal sealed partial class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
     private readonly IWebSocketConnection m_webSocketConnection;
-    private DateTime m_startTimestamp = DateTime.Now;
-    private Action<string> m_callback;
+    private readonly DateTime m_startTimestamp = DateTime.Now;
+    private Action<PrivMessage> m_privCallback;
+    private Action<ClearMessage> m_clearCallback;
 
     public TwitchConnector(
         IAuthorizer authorizer,
@@ -19,18 +22,27 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     ) {
         m_authorizer = authorizer;
         m_webSocketConnection = webSocketConnection;
-        m_callback = delegate(
-            string s
+        m_privCallback = delegate(
+            PrivMessage message
         ) {
-            Console.WriteLine( s );
+            Console.WriteLine( message.Text );
+        };
+        
+        m_clearCallback = delegate(
+            ClearMessage message
+        ) {
+            Console.WriteLine( message.UserId );
         };
     }
     
     async Task<bool> ITwitchConnector.TryConnect( 
         TwitchConnectionOptions options, 
-        Action<string> messageCallback
+        Action<PrivMessage> privCallback,
+        Action<ClearMessage> clearCallback
     ) {
-        m_callback = messageCallback;
+        m_privCallback = privCallback;
+        m_clearCallback = clearCallback;
+        
         string token = await m_authorizer.GetToken();
         
         await ConnectToWebsocket( m_webSocketConnection, token, options );
@@ -90,28 +102,46 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             }
 
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
-                string message = GetUserMessage( response, options.Channel );
-                m_callback( $"MESSAGE {message}" );
+                PrivMessage privMsg = GetUserMessage( response, options.Channel );
+                m_privCallback( privMsg );
             }
             
             if( response.Contains( $" CLEARCHAT #{options.Channel}" ) ) {
-                string message = GetClearUserMessage( response, options.Channel );
-                m_callback( $"CLEARCHAT {message}" );
+                ClearMessage message = GetClearChatMessage( response, options.Channel );
+                m_clearCallback( message );
             }
         }
     }
 
-    private string GetClearUserMessage(
+    private ClearMessage GetClearChatMessage(
         string response,
         string channel
     ) {
         string[] segments = response.Split( $"CLEARCHAT #{channel} :" );
+
+        string duration = DurationPattern()
+            .Match( response )
+            .Value
+            .Split( "=" )[1]
+            .TrimEnd( ';' );
+
+        long rawTimestamp = Convert.ToInt64(
+            MessageTimestampPattern().Match( response ).Value
+                .Split( "=" )[1]
+        );
+
+        DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
         string message = segments[1].Trim( '\r', '\n' );
 
-        return message;
+        return new ClearMessage(
+            Duration: Int64.Parse( duration ),
+            RoomId: channel,
+            UserId: String.IsNullOrEmpty(message) ? null : message,
+            Timestamp: messageTimestamp
+        );
     }
 
-    private string GetUserMessage( string response, string channel ) {
+    private PrivMessage GetUserMessage( string response, string channel ) {
         string[] segments = response.Split( $"PRIVMSG #{channel} :" );
  
         string displayName = DisplayNamePattern()
@@ -126,7 +156,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             .Split( "=" )[1]
             .TrimEnd( ';' );
 
-        string parsedBadges = GetBadges( badges );
+        IImmutableList<Badge> parsedBadges = GetBadges( badges );
 
         long rawTimestamp = Convert.ToInt64(
             MessageTimestampPattern().Match( response ).Value
@@ -143,37 +173,44 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             throw new UnexpectedUserMessageException();
         }
 
-        return $"{{ timestamp: \"{messageTimestamp.ToString("o")}\", sinceStartOfStream: \"{timeSinceStartOfStream.Ticks}\", displayName: \"{displayName}\", message: \"{message}\", badges: {parsedBadges} }}";
+        return new PrivMessage(
+            Text: message,
+            Timestamp: messageTimestamp,
+            SinceStartOfStream: timeSinceStartOfStream,
+            DisplayName: displayName,
+            Badges: parsedBadges,
+            MessageType: MessageType.PrivMsg
+        );
+
+        // return $"{{ timestamp: \"{messageTimestamp.ToString("o")}\", sinceStartOfStream: \"{timeSinceStartOfStream.Ticks}\", displayName: \"{displayName}\", message: \"{message}\", badges: {parsedBadges} }}";
     }
 
-    private string GetBadges(
+    private IImmutableList<Badge> GetBadges(
         string badges
     ) {
-        string parsedBadges = "";
         string[] badgeList = badges.Split( ',' );
 
         if( string.IsNullOrEmpty( badges ) ) {
-            return "[]";
+            return Array.Empty<Badge>().ToImmutableList();
         }
 
+        List<Badge> parsedBadges = new();
 
-        parsedBadges += "[";
         for( int index = 0; index < badgeList.Length; index++ ) {
             string badge = badgeList[index];
             string[] badgeInfo = badge.Split( '/' );
 
             if( badgeInfo.Length == 2 ) {
-                parsedBadges += $"{{ \"name\": \"{badgeInfo[0]}\", \"version\": \"{badgeInfo[1]}\"}}";
+                parsedBadges.Add( new Badge( Name: badgeInfo[0], Version: badgeInfo[1] ) );
+                // parsedBadges += $"{{ \"name\": \"{badgeInfo[0]}\", \"version\": \"{badgeInfo[1]}\"}}";
             }
-            
-
-            if( index < badgeList.Length - 1 ) {
-                parsedBadges += ",";
-            }
+            //
+            // if( index < badgeList.Length - 1 ) {
+            //     parsedBadges += ",";
+            // }
         }
 
-        parsedBadges += "]";
-        return parsedBadges;
+        return parsedBadges.ToImmutableList();
     }
 
     private async Task SendMessage(
@@ -192,7 +229,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     [GeneratedRegex("display-name([^;]*);")]
     private static partial Regex DisplayNamePattern();
     
-    [GeneratedRegex("tmi-sent-ts([^;]*);")]
+    [GeneratedRegex("tmi-sent-ts=([0-9]+)")]
     private static partial Regex MessageTimestampPattern();
     
     [GeneratedRegex("id([^;]*);")]
@@ -200,4 +237,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     
     [GeneratedRegex("badges([^;]*);")]
     private static partial Regex BadgesPattern();
+    
+    [GeneratedRegex("duration([^;]*);")]
+    private static partial Regex DurationPattern();
 }
