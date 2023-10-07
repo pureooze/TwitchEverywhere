@@ -1,5 +1,6 @@
 using System.Text;
 using TwitchEverywhere;
+using TwitchEverywhere.Types;
 using TwitchEverywhereCLI.Implementation;
 
 namespace TwitchEverywhereCLI; 
@@ -15,10 +16,10 @@ internal class TwitchConnection {
 
     public async Task Connect( TwitchConnectionOptions options ) {
         TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( options );
-        await twitchEverywhere.ConnectToChannel( MessageCallback );
+        await twitchEverywhere.ConnectToChannel( PrivMessageCallback, ClearMessageCallback );
     }
 
-    private async Task WriteMessagesToStore( StringBuilder buffer, DateTime startTimestamp ) {
+    private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
         if( buffer.Length == 0 ) {
             return;
         }
@@ -28,7 +29,7 @@ internal class TwitchConnection {
 
         byte[] compressedData = await m_compressor.Compress( byteBuffer );
     
-        string path = $"{startTimestamp.ToUniversalTime():yyyy-M-d_H-mm-ss}.json";
+        string path = $"{fileName}-{startTimestamp.ToUniversalTime():yyyy-M-d_H-mm-ss}.json";
         SaveBinaryDataToFile( path, compressedData );
     }
 
@@ -40,25 +41,38 @@ internal class TwitchConnection {
         fileStream.Write( compressedData, 0, compressedData.Length );
     }
     
-    private async void MessageCallback(
-        string message
+    private async void PrivMessageCallback(
+        PrivMessage privMessage
     ) {
         if( m_messageBuffer.Count == BUFFER_SIZE ) {
-            StringBuilder tempBuffer = new( m_messageBuffer.ReadAsString() );
-            DateTime tempStartTimestamp = new( m_startTimestamp.Ticks );
-            m_messageBuffer.Clear();
-            m_startTimestamp = DateTime.UtcNow;
-            await WriteMessagesToStore( tempBuffer, tempStartTimestamp );
-        }
-
-        if( message.StartsWith( "CLEARCHAT" ) ) {
-            Console.WriteLine( $"Clear: {message}" );
-            m_clearChat.AddToBuffer( message );
-        } else {
-            string[] segments = message.Split( $"MESSAGE" );
-            Console.WriteLine( $"Message: {segments[1]}" );
-            m_messageBuffer.AddToBuffer( segments[1] );
+            await WriteToStore( m_messageBuffer, MessageType.PrivMsg );
         }
         
+        Console.WriteLine( $"Message: {privMessage.Text}" );
+        m_messageBuffer.AddToBuffer( privMessage.Text );
+    }
+
+    private async void ClearMessageCallback(
+        ClearMessage clearMessage
+    ) {
+        if( m_clearChat.Count == BUFFER_SIZE ) {
+            await WriteToStore( m_messageBuffer, MessageType.ClearChat );
+        }
+        
+        Console.WriteLine( $"Clear: On {clearMessage.Timestamp} the user {clearMessage.UserId} was muted/banned for {clearMessage.Duration} seconds" );
+        
+        if( clearMessage.UserId != null ) {
+            m_clearChat.AddToBuffer( clearMessage.UserId );
+        }
+    }
+
+    private async Task WriteToStore(
+        MessageBuffer messageBuffer, MessageType type 
+    ) {
+        StringBuilder tempBuffer = new( messageBuffer.ReadAsString() );
+        DateTime tempStartTimestamp = new( m_startTimestamp.Ticks );
+        messageBuffer.Clear();
+        m_startTimestamp = DateTime.UtcNow;
+        await SaveBufferToFile( $"{type}", tempBuffer, tempStartTimestamp );
     }
 }

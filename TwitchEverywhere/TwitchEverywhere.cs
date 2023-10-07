@@ -1,5 +1,6 @@
 ﻿using System.Net.WebSockets;
 using TwitchEverywhere.Implementation;
+using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere;
 
@@ -26,11 +27,13 @@ public sealed class TwitchEverywhere {
     }
 
     public async Task ConnectToChannel(
-        Action<string> messageCallback
+        Action<PrivMessage> privCallback,
+        Action<ClearMessage> clearCallback
     ) {
         await m_twitchConnector.TryConnect(
-            m_options,
-            messageCallback
+            options: m_options,
+            privCallback: privCallback,
+            clearCallback: clearCallback
         );
     }
 }
