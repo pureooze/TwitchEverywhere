@@ -9,7 +9,7 @@ using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.Implementation;
 
-internal sealed partial class TwitchConnector : ITwitchConnector {
+internal sealed class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
     private readonly IWebSocketConnection m_webSocketConnection;
     private readonly DateTime m_startTimestamp = DateTime.Now;
@@ -26,13 +26,19 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         m_privCallback = delegate(
             PrivMsg message
         ) {
-            Console.WriteLine( message.Text );
+            Console.WriteLine( $"PrivMsg: {message.Text}" );
         };
         
         m_clearChatCallback = delegate(
             ClearChat message
         ) {
-            Console.WriteLine( message.UserId );
+            Console.WriteLine( $"ClearChat: {message.UserId}" );
+        };
+        
+        m_clearMsgCallback = delegate(
+            ClearMsg message
+        ) {
+            Console.WriteLine( $"ClearMsg: {message.TargetMessageId}" );
         };
     }
     
@@ -44,6 +50,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     ) {
         m_privCallback = privCallback;
         m_clearChatCallback = clearChatCallback;
+        m_clearMsgCallback = clearMsgCallback;
         
         string token = await m_authorizer.GetToken();
         
@@ -68,7 +75,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         );
         Thread.Sleep(millisecondsTimeout: 1000);
         await SendMessage( socketConnection: ws, message: $"PASS oauth:{token}" );
-        await SendMessage( socketConnection: ws, message: "NICK chatreaderbot" );
+        await SendMessage( socketConnection: ws, message: $"NICK {options.ClientName}" );
         await SendMessage( socketConnection: ws, message: $"JOIN #{options.Channel}" );
         
         while (ws.State == WebSocketState.Open) {
@@ -171,9 +178,9 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         string message = segments[1].Trim( '\r', '\n' );
 
         return new ClearChat(
-            Duration: Int64.Parse( duration ),
+            Duration: long.Parse( duration ),
             RoomId: channel,
-            UserId: String.IsNullOrEmpty(message) ? null : message,
+            UserId: string.IsNullOrEmpty(message) ? null : message,
             Timestamp: messageTimestamp
         );
     }
@@ -283,7 +290,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         };
     }
 
-    private string GetValueFromResponse(
+    private static string GetValueFromResponse(
         string response,
         Regex pattern
     ) {
@@ -298,7 +305,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         return result;
     }
 
-    private IImmutableList<Badge> GetBadges(
+    private static IImmutableList<Badge> GetBadges(
         string badges
     ) {
         string[] badgeList = badges.Split( ',' );
@@ -321,7 +328,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         return parsedBadges.ToImmutableList();
     }
 
-    private async Task SendMessage(
+    private async static Task SendMessage(
         IWebSocketConnection socketConnection,
         string message
     ) {
