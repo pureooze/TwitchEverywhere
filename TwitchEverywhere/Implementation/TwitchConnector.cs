@@ -205,7 +205,10 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         string subscriber = GetValueFromResponse( response, SubscriberPattern );
         string turbo = GetValueFromResponse( response, TurboPattern );
         string userId = GetValueFromResponse( response, UserIdPattern );
-        string userType = GetValueFromResponse( response, UserTypePattern );
+        
+        string userTypeText = GetValueFromResponse( response, UserTypePattern );
+        UserType userType = GetUserType( userTypeText );
+        
         string vip = GetValueFromResponse( response, VipPattern );
         string isMod = GetValueFromResponse( response, ModPattern );
         string color = GetValueFromResponse( response, ColorPattern );
@@ -245,28 +248,39 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             DisplayName: displayName,
             Emotes: emotes,
             Id: id,
-            Mod: isMod != "0",
+            Mod: int.Parse( isMod ) == 1,
             PinnedChatPaidAmount: string.IsNullOrEmpty( pinnedChatPaidAmount ) ? null : long.Parse( pinnedChatPaidAmount ),
             PinnedChatPaidCurrency: pinnedChatPaidCurrency,
-            PinnedChatPaidExponent: pinnedChatPaidExponent,
+            PinnedChatPaidExponent: string.IsNullOrEmpty( pinnedChatPaidExponent ) ? null : int.Parse( pinnedChatPaidExponent ),
             PinnedChatPaidLevel: pinnedChatPaidLevelParseResult ? pinnedChatPaidLevel : null,
-            PinnedChatPaidIsSystemMessage: pinnedChatPaidIsSystemMessage,
+            PinnedChatPaidIsSystemMessage: !string.IsNullOrEmpty( pinnedChatPaidIsSystemMessage ),
             ReplyParentMsgId: replyParentMsgId,
             ReplyParentUserId: replyParentUserId,
             ReplyParentUserLogin: replyParentUserLogin,
             ReplyParentDisplayName: replyParentDisplayName,
             ReplyThreadParentMsg: replyThreadParentMsg,
             RoomId: roomId,
-            Subscriber: subscriber,
+            Subscriber: int.Parse( subscriber ) == 1,
             Timestamp: messageTimestamp,
-            Turbo: turbo,
+            Turbo: int.Parse( turbo ) == 1,
             UserId: userId,
             UserType: userType,
-            Vip: vip,
+            Vip: !string.IsNullOrEmpty( vip ),
             SinceStartOfStream: timeSinceStartOfStream,
             Text: message,
             MessageType: MessageType.PrivMsg
         );
+    }
+    private static UserType GetUserType(
+        string userTypeText
+    ) {
+        return userTypeText switch {
+            "mod" => UserType.Mod,
+            "admin" => UserType.Admin,
+            "global_mod" => UserType.GlobalMod,
+            "staff" => UserType.Staff,
+            _ => UserType.Normal
+        };
     }
 
     private string GetValueFromResponse(
