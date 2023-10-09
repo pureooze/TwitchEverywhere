@@ -9,12 +9,13 @@ using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.Implementation;
 
-internal sealed partial class TwitchConnector : ITwitchConnector {
+internal sealed class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
     private readonly IWebSocketConnection m_webSocketConnection;
     private readonly DateTime m_startTimestamp = DateTime.Now;
-    private Action<PrivMessage> m_privCallback;
-    private Action<ClearMessage> m_clearCallback;
+    private Action<PrivMsg> m_privCallback;
+    private Action<ClearChat> m_clearChatCallback;
+    private Action<ClearMsg> m_clearMsgCallback;
 
     public TwitchConnector(
         IAuthorizer authorizer,
@@ -23,25 +24,33 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         m_authorizer = authorizer;
         m_webSocketConnection = webSocketConnection;
         m_privCallback = delegate(
-            PrivMessage message
+            PrivMsg message
         ) {
-            Console.WriteLine( message.Text );
+            Console.WriteLine( $"PrivMsg: {message.Text}" );
         };
         
-        m_clearCallback = delegate(
-            ClearMessage message
+        m_clearChatCallback = delegate(
+            ClearChat message
         ) {
-            Console.WriteLine( message.UserId );
+            Console.WriteLine( $"ClearChat: {message.UserId}" );
+        };
+        
+        m_clearMsgCallback = delegate(
+            ClearMsg message
+        ) {
+            Console.WriteLine( $"ClearMsg: {message.TargetMessageId}" );
         };
     }
     
     async Task<bool> ITwitchConnector.TryConnect( 
         TwitchConnectionOptions options, 
-        Action<PrivMessage> privCallback,
-        Action<ClearMessage> clearCallback
+        Action<PrivMsg> privCallback,
+        Action<ClearChat> clearChatCallback,
+        Action<ClearMsg> clearMsgCallback
     ) {
         m_privCallback = privCallback;
-        m_clearCallback = clearCallback;
+        m_clearChatCallback = clearChatCallback;
+        m_clearMsgCallback = clearMsgCallback;
         
         string token = await m_authorizer.GetToken();
         
@@ -66,7 +75,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         );
         Thread.Sleep(millisecondsTimeout: 1000);
         await SendMessage( socketConnection: ws, message: $"PASS oauth:{token}" );
-        await SendMessage( socketConnection: ws, message: "NICK chatreaderbot" );
+        await SendMessage( socketConnection: ws, message: $"NICK {options.ClientName}" );
         await SendMessage( socketConnection: ws, message: $"JOIN #{options.Channel}" );
         
         while (ws.State == WebSocketState.Open) {
@@ -102,18 +111,53 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             }
 
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
-                PrivMessage privMsg = GetUserMessage( response, options.Channel );
+                PrivMsg privMsg = GetUserMessage( response, options.Channel );
                 m_privCallback( privMsg );
             }
             
             if( response.Contains( $" CLEARCHAT #{options.Channel}" ) ) {
-                ClearMessage message = GetClearChatMessage( response, options.Channel );
-                m_clearCallback( message );
+                ClearChat chat = GetClearChatMessage( response, options.Channel );
+                m_clearChatCallback( chat );
+            }
+            
+            if( response.Contains( $" CLEARMSG #{options.Channel}" ) ) {
+                ClearMsg chat = GetClearMsgMessage( response, options.Channel );
+                m_clearMsgCallback( chat );
             }
         }
     }
+    private ClearMsg GetClearMsgMessage(
+        string response,
+        string channel
+    ) {
+        string login = LoginPattern
+            .Match( response )
+            .Value
+            .Split( "=" )[1]
+            .TrimEnd( ';' );
+        
+        string targetMessageId = TargetMessageIdPattern
+            .Match( response )
+            .Value
+            .Split( "=" )[1]
+            .TrimEnd( ';' );
+        
+        long rawTimestamp = Convert.ToInt64(
+            MessageTimestampPattern.Match( response ).Value
+                .Split( "=" )[1]
+        );
 
-    private ClearMessage GetClearChatMessage(
+        DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
+        
+        return new ClearMsg(
+            Login: login,
+            RoomId: channel,
+            TargetMessageId: targetMessageId,
+            Timestamp: messageTimestamp
+        );
+    }
+
+    private ClearChat GetClearChatMessage(
         string response,
         string channel
     ) {
@@ -124,7 +168,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             .Value
             .Split( "=" )[1]
             .TrimEnd( ';' );
-
+        
         long rawTimestamp = Convert.ToInt64(
             MessageTimestampPattern.Match( response ).Value
                 .Split( "=" )[1]
@@ -133,29 +177,57 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
         string message = segments[1].Trim( '\r', '\n' );
 
-        return new ClearMessage(
-            Duration: Int64.Parse( duration ),
+        return new ClearChat(
+            Duration: long.Parse( duration ),
             RoomId: channel,
-            UserId: String.IsNullOrEmpty(message) ? null : message,
+            UserId: string.IsNullOrEmpty(message) ? null : message,
             Timestamp: messageTimestamp
         );
     }
 
-    private PrivMessage GetUserMessage( string response, string channel ) {
+    private PrivMsg GetUserMessage( string response, string channel ) {
         string[] segments = response.Split( $"PRIVMSG #{channel} :" );
- 
-        string displayName = DisplayNamePattern
-            .Match( response )
-            .Value
-            .Split( "=" )[1]
-            .TrimEnd( ';' );
         
-        string badges = BadgesPattern
+        string displayName = GetValueFromResponse( response, DisplayNamePattern );
+        string badges = GetValueFromResponse( response, BadgesPattern );
+        string emotes = GetValueFromResponse( response, EmotesPattern );
+        string id = GetValueFromResponse( response, IdPattern );
+        string pinnedChatPaidAmount = GetValueFromResponse( response, PinnedChatPaidAmountPattern );
+        string pinnedChatPaidCurrency = GetValueFromResponse( response, PinnedChatPaidCurrencyPattern );
+        string pinnedChatPaidExponent = GetValueFromResponse( response, PinnedChatPaidExponentPattern );
+
+        string pinnedChatPaidLevelText = GetValueFromResponse( response, PinnedChatPaidLevelPattern );
+        PinnedChatPaidLevel? pinnedChatPaidLevel = GetPinnedChatPaidLevelType( pinnedChatPaidLevelText );
+        
+        string pinnedChatPaidIsSystemMessage = GetValueFromResponse( response, PinnedChatPaidIsSystemMessagePattern );
+        string replyParentMsgId = GetValueFromResponse( response, ReplyParentMsgIdPattern );
+        string replyParentUserId = GetValueFromResponse( response, ReplyParentUserIdPattern );
+        string replyParentUserLogin = GetValueFromResponse( response, ReplyParentUserLoginPattern );        
+        string replyParentDisplayName = GetValueFromResponse( response, ReplyParentDisplayNamePattern );
+        string replyThreadParentMsg = GetValueFromResponse( response, ReplyThreadParentMsgPattern );
+        string roomId = GetValueFromResponse( response, RoomIdPattern );
+        string subscriber = GetValueFromResponse( response, SubscriberPattern );
+        string turbo = GetValueFromResponse( response, TurboPattern );
+        string userId = GetValueFromResponse( response, UserIdPattern );
+        
+        string userTypeText = GetValueFromResponse( response, UserTypePattern );
+        UserType userType = GetUserType( userTypeText );
+        
+        string vip = GetValueFromResponse( response, VipPattern );
+        string isMod = GetValueFromResponse( response, ModPattern );
+        string color = GetValueFromResponse( response, ColorPattern );
+        
+        string[] bitsArray = BitsPattern
             .Match( response )
             .Value
-            .Split( "=" )[1]
-            .TrimEnd( ';' );
+            .Split( "=" );
 
+        string bits = string.Empty;
+        if( bits.Length > 1 ) {
+            bits = bitsArray.ElementAt( 1 ).TrimEnd( ';' );
+            Console.WriteLine($"BITS: {bits}");
+        }
+        
         IImmutableList<Badge> parsedBadges = GetBadges( badges );
 
         long rawTimestamp = Convert.ToInt64(
@@ -173,17 +245,81 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
             throw new UnexpectedUserMessageException();
         }
 
-        return new PrivMessage(
-            Text: message,
-            Timestamp: messageTimestamp,
-            SinceStartOfStream: timeSinceStartOfStream,
-            DisplayName: displayName,
+        return new PrivMsg(
             Badges: parsedBadges,
+            Bits: bits,
+            Color: color,
+            DisplayName: displayName,
+            Emotes: emotes,
+            Id: id,
+            Mod: int.Parse( isMod ) == 1,
+            PinnedChatPaidAmount: string.IsNullOrEmpty( pinnedChatPaidAmount ) ? null : long.Parse( pinnedChatPaidAmount ),
+            PinnedChatPaidCurrency: pinnedChatPaidCurrency,
+            PinnedChatPaidExponent: string.IsNullOrEmpty( pinnedChatPaidExponent ) ? null : int.Parse( pinnedChatPaidExponent ),
+            PinnedChatPaidLevel: pinnedChatPaidLevel,
+            PinnedChatPaidIsSystemMessage: !string.IsNullOrEmpty( pinnedChatPaidIsSystemMessage ),
+            ReplyParentMsgId: replyParentMsgId,
+            ReplyParentUserId: replyParentUserId,
+            ReplyParentUserLogin: replyParentUserLogin,
+            ReplyParentDisplayName: replyParentDisplayName,
+            ReplyThreadParentMsg: replyThreadParentMsg,
+            RoomId: roomId,
+            Subscriber: int.Parse( subscriber ) == 1,
+            Timestamp: messageTimestamp,
+            Turbo: int.Parse( turbo ) == 1,
+            UserId: userId,
+            UserType: userType,
+            Vip: !string.IsNullOrEmpty( vip ),
+            SinceStartOfStream: timeSinceStartOfStream,
+            Text: message,
             MessageType: MessageType.PrivMsg
         );
     }
+    private static PinnedChatPaidLevel? GetPinnedChatPaidLevelType(
+        string pinnedChatPaidLevelText
+    ) {
+        return pinnedChatPaidLevelText switch {
+            "ONE" => PinnedChatPaidLevel.One,
+            "TWO" => PinnedChatPaidLevel.Two,
+            "THREE" => PinnedChatPaidLevel.Three,
+            "FOUR" => PinnedChatPaidLevel.Four,
+            "FIVE" => PinnedChatPaidLevel.Five,
+            "SIX" => PinnedChatPaidLevel.Six,
+            "SEVEN" => PinnedChatPaidLevel.Seven,
+            "EIGHT" => PinnedChatPaidLevel.Eight,
+            "NINE" => PinnedChatPaidLevel.Nine,
+            "TEN" => PinnedChatPaidLevel.Ten,
+            _ => null
+        };
+    }
+    private static UserType GetUserType(
+        string userTypeText
+    ) {
+        return userTypeText switch {
+            "mod" => UserType.Mod,
+            "admin" => UserType.Admin,
+            "global_mod" => UserType.GlobalMod,
+            "staff" => UserType.Staff,
+            _ => UserType.Normal
+        };
+    }
 
-    private IImmutableList<Badge> GetBadges(
+    private static string GetValueFromResponse(
+        string response,
+        Regex pattern
+    ) {
+        Match match = pattern
+            .Match( response );
+
+        string result = string.Empty;
+        if( match.Success ) {
+            result = match.Value.Split( "=" )[1].TrimEnd( ';' );
+        }
+
+        return result;
+    }
+
+    private static IImmutableList<Badge> GetBadges(
         string badges
     ) {
         string[] badgeList = badges.Split( ',' );
@@ -206,11 +342,10 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         return parsedBadges.ToImmutableList();
     }
 
-    private async Task SendMessage(
+    private async static Task SendMessage(
         IWebSocketConnection socketConnection,
         string message
     ) {
-        Console.WriteLine( "WRITING: " + message );
         await socketConnection.SendAsync(
             buffer: Encoding.ASCII.GetBytes(message), 
             messageType: WebSocketMessageType.Text, 
@@ -220,7 +355,30 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     }
 
     private readonly static Regex DisplayNamePattern = new("display-name([^;]*);");
-    private readonly static Regex MessageTimestampPattern = new Regex("tmi-sent-ts=([0-9]+)");
+    private readonly static Regex LoginPattern = new("login([^;]*)");
+    private readonly static Regex TargetMessageIdPattern = new("target-msg-id([^;]*)");
     private readonly static Regex BadgesPattern = new("badges([^;]*);");
     private readonly static Regex DurationPattern = new("duration([^;]*);");
+    private readonly static Regex BitsPattern = new("bits=([^;]*);");
+    private readonly static Regex ColorPattern = new("color=([^;]*);");
+    private readonly static Regex EmotesPattern = new("emotes=([^;]*);");
+    private readonly static Regex IdPattern = new(";id=([^;]*);");
+    private readonly static Regex ModPattern = new("mod=([^;]*);");
+    private readonly static Regex PinnedChatPaidAmountPattern = new("pinned-chat-paid-amount=([^;]*);");
+    private readonly static Regex PinnedChatPaidCurrencyPattern = new("pinned-chat-paid-currency=([^;]*);");
+    private readonly static Regex PinnedChatPaidExponentPattern = new("pinned-chat-paid-exponent=([^;]*);");
+    private readonly static Regex PinnedChatPaidLevelPattern = new("pinned-chat-paid-level=([^;]*);");
+    private readonly static Regex PinnedChatPaidIsSystemMessagePattern = new("pinned-chat-paid-is-system-message=([^;]*);");
+    private readonly static Regex ReplyParentMsgIdPattern = new("reply-parent-msg-id=([^;]*);");
+    private readonly static Regex ReplyParentUserIdPattern = new("reply-parent-user-id=([^;]*);");
+    private readonly static Regex ReplyParentUserLoginPattern = new("reply-parent-user-login=([^;]*);");
+    private readonly static Regex ReplyParentDisplayNamePattern = new("reply-parent-display-name=([^;]*);");
+    private readonly static Regex ReplyThreadParentMsgPattern = new("reply-thread-parent-msg-id=([^;]*);");
+    private readonly static Regex RoomIdPattern = new("room-id=([^;]*);");
+    private readonly static Regex SubscriberPattern = new("subscriber=([^;]*);");
+    private readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)");
+    private readonly static Regex TurboPattern = new("turbo=([^;]*);");
+    private readonly static Regex UserIdPattern = new("user-id=([^;]*);");
+    private readonly static Regex UserTypePattern = new("user-type=([^; ]+)");
+    private readonly static Regex VipPattern = new("vip=([^;]*)");
 }

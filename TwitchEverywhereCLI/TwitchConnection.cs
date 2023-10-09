@@ -9,6 +9,7 @@ internal class TwitchConnection {
 
     private readonly MessageBuffer m_messageBuffer = new( buffer: new StringBuilder() );
     private readonly MessageBuffer m_clearChat = new( buffer: new StringBuilder() );
+    private readonly MessageBuffer m_clearMsg = new( buffer: new StringBuilder() );
     private readonly ICompressor m_compressor = new BrotliCompressor();
     private DateTime m_startTimestamp = DateTime.UtcNow;
 
@@ -16,7 +17,7 @@ internal class TwitchConnection {
 
     public async Task Connect( TwitchConnectionOptions options ) {
         TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( options );
-        await twitchEverywhere.ConnectToChannel( PrivMessageCallback, ClearMessageCallback );
+        await twitchEverywhere.ConnectToChannel( PrivMessageCallback, ClearChatCallback, ClearMsgCallback );
     }
 
     private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
@@ -42,28 +43,40 @@ internal class TwitchConnection {
     }
     
     private async void PrivMessageCallback(
-        PrivMessage privMessage
+        PrivMsg privMsg
     ) {
         if( m_messageBuffer.Count == BUFFER_SIZE ) {
             await WriteToStore( m_messageBuffer, MessageType.PrivMsg );
         }
         
-        Console.WriteLine( $"Message: {privMessage.Text}" );
-        m_messageBuffer.AddToBuffer( privMessage.Text );
+        Console.WriteLine( $"Message: {privMsg}" );
+        m_messageBuffer.AddToBuffer( privMsg.Text );
     }
 
-    private async void ClearMessageCallback(
-        ClearMessage clearMessage
+    private async void ClearChatCallback(
+        ClearChat clearChat
     ) {
         if( m_clearChat.Count == BUFFER_SIZE ) {
-            await WriteToStore( m_messageBuffer, MessageType.ClearChat );
+            await WriteToStore( m_clearChat, MessageType.ClearChat );
         }
         
-        Console.WriteLine( $"Clear: On {clearMessage.Timestamp} the user {clearMessage.UserId} was muted/banned for {clearMessage.Duration} seconds" );
+        Console.WriteLine( $"ClearChat: On {clearChat.Timestamp} the user {clearChat.UserId} was muted/banned for {clearChat.Duration} seconds" );
         
-        if( clearMessage.UserId != null ) {
-            m_clearChat.AddToBuffer( clearMessage.UserId );
+        if( clearChat.UserId != null ) {
+            m_clearChat.AddToBuffer( clearChat.UserId );
         }
+    }
+    
+    private async void ClearMsgCallback(
+        ClearMsg clearMsg
+    ) {
+        if( m_clearMsg.Count == BUFFER_SIZE ) {
+            await WriteToStore( m_clearMsg, MessageType.ClearMsg );
+        }
+        
+        Console.WriteLine( $"ClearMsg: On {clearMsg.Timestamp} the user {clearMsg.Login} had a message deleted for message {clearMsg.TargetMessageId}" );
+        
+        m_clearMsg.AddToBuffer( clearMsg.TargetMessageId );
     }
 
     private async Task WriteToStore(

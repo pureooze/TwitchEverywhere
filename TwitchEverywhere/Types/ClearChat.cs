@@ -1,6 +1,6 @@
 namespace TwitchEverywhere.Types; 
 
-public record ClearMessage(
+public record ClearChat(
     long? Duration,
     string RoomId,
     string? UserId,

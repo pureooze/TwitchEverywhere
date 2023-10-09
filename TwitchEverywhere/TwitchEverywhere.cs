@@ -27,13 +27,15 @@ public sealed class TwitchEverywhere {
     }
 
     public async Task ConnectToChannel(
-        Action<PrivMessage> privCallback,
-        Action<ClearMessage> clearCallback
+        Action<PrivMsg> privCallback,
+        Action<ClearChat> clearChatCallback,
+        Action<ClearMsg> clearMsgCallback
     ) {
         await m_twitchConnector.TryConnect(
             options: m_options,
             privCallback: privCallback,
-            clearCallback: clearCallback
+            clearChatCallback: clearChatCallback,
+            clearMsgCallback: clearMsgCallback
         );
     }
 }
