@@ -27,6 +27,8 @@ In order to connect you need to create an `appsettings.json` file in the root of
 ## Supported Functionality
 
 ### PRIVMSG
+[PRIVMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#privmsg-tags)
+
 [PrivMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/PrivMsg.cs)
 
 | Field                         | Support                      |
