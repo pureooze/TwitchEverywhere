@@ -197,10 +197,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
         string pinnedChatPaidExponent = GetValueFromResponse( response, PinnedChatPaidExponentPattern );
 
         string pinnedChatPaidLevelText = GetValueFromResponse( response, PinnedChatPaidLevelPattern );
-        bool pinnedChatPaidLevelParseResult = Enum.TryParse( 
-            pinnedChatPaidLevelText, 
-            out PinnedChatPaidLevel pinnedChatPaidLevel 
-        );
+        PinnedChatPaidLevel? pinnedChatPaidLevel = GetPinnedChatPaidLevelType( pinnedChatPaidLevelText );
         
         string pinnedChatPaidIsSystemMessage = GetValueFromResponse( response, PinnedChatPaidIsSystemMessagePattern );
         string replyParentMsgId = GetValueFromResponse( response, ReplyParentMsgIdPattern );
@@ -259,7 +256,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
             PinnedChatPaidAmount: string.IsNullOrEmpty( pinnedChatPaidAmount ) ? null : long.Parse( pinnedChatPaidAmount ),
             PinnedChatPaidCurrency: pinnedChatPaidCurrency,
             PinnedChatPaidExponent: string.IsNullOrEmpty( pinnedChatPaidExponent ) ? null : int.Parse( pinnedChatPaidExponent ),
-            PinnedChatPaidLevel: pinnedChatPaidLevelParseResult ? pinnedChatPaidLevel : null,
+            PinnedChatPaidLevel: pinnedChatPaidLevel,
             PinnedChatPaidIsSystemMessage: !string.IsNullOrEmpty( pinnedChatPaidIsSystemMessage ),
             ReplyParentMsgId: replyParentMsgId,
             ReplyParentUserId: replyParentUserId,
@@ -277,6 +274,23 @@ internal sealed class TwitchConnector : ITwitchConnector {
             Text: message,
             MessageType: MessageType.PrivMsg
         );
+    }
+    private static PinnedChatPaidLevel? GetPinnedChatPaidLevelType(
+        string pinnedChatPaidLevelText
+    ) {
+        return pinnedChatPaidLevelText switch {
+            "ONE" => PinnedChatPaidLevel.One,
+            "TWO" => PinnedChatPaidLevel.Two,
+            "THREE" => PinnedChatPaidLevel.Three,
+            "FOUR" => PinnedChatPaidLevel.Four,
+            "FIVE" => PinnedChatPaidLevel.Five,
+            "SIX" => PinnedChatPaidLevel.Six,
+            "SEVEN" => PinnedChatPaidLevel.Seven,
+            "EIGHT" => PinnedChatPaidLevel.Eight,
+            "NINE" => PinnedChatPaidLevel.Nine,
+            "TEN" => PinnedChatPaidLevel.Ten,
+            _ => null
+        };
     }
     private static UserType GetUserType(
         string userTypeText
