@@ -119,14 +119,14 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     ) {
         string[] segments = response.Split( $"CLEARCHAT #{channel} :" );
 
-        string duration = DurationPattern()
+        string duration = DurationPattern
             .Match( response )
             .Value
             .Split( "=" )[1]
             .TrimEnd( ';' );
 
         long rawTimestamp = Convert.ToInt64(
-            MessageTimestampPattern().Match( response ).Value
+            MessageTimestampPattern.Match( response ).Value
                 .Split( "=" )[1]
         );
 
@@ -144,13 +144,13 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
     private PrivMessage GetUserMessage( string response, string channel ) {
         string[] segments = response.Split( $"PRIVMSG #{channel} :" );
  
-        string displayName = DisplayNamePattern()
+        string displayName = DisplayNamePattern
             .Match( response )
             .Value
             .Split( "=" )[1]
             .TrimEnd( ';' );
         
-        string badges = BadgesPattern()
+        string badges = BadgesPattern
             .Match( response )
             .Value
             .Split( "=" )[1]
@@ -159,7 +159,7 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         IImmutableList<Badge> parsedBadges = GetBadges( badges );
 
         long rawTimestamp = Convert.ToInt64(
-            MessageTimestampPattern().Match( response ).Value
+            MessageTimestampPattern.Match( response ).Value
             .Split( "=" )[1]
             .TrimEnd( ';' )
         );
@@ -219,18 +219,8 @@ internal sealed partial class TwitchConnector : ITwitchConnector {
         );
     }
 
-    [GeneratedRegex("display-name([^;]*);")]
-    private static partial Regex DisplayNamePattern();
-    
-    [GeneratedRegex("tmi-sent-ts=([0-9]+)")]
-    private static partial Regex MessageTimestampPattern();
-    
-    [GeneratedRegex("id([^;]*);")]
-    private static partial Regex MessageIdPattern();
-    
-    [GeneratedRegex("badges([^;]*);")]
-    private static partial Regex BadgesPattern();
-    
-    [GeneratedRegex("duration([^;]*);")]
-    private static partial Regex DurationPattern();
+    private readonly static Regex DisplayNamePattern = new("display-name([^;]*);");
+    private readonly static Regex MessageTimestampPattern = new Regex("tmi-sent-ts=([0-9]+)");
+    private readonly static Regex BadgesPattern = new("badges([^;]*);");
+    private readonly static Regex DurationPattern = new("duration([^;]*);");
 }
