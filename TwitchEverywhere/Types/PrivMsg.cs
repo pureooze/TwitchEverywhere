@@ -30,4 +30,4 @@ public record PrivMsg(
     TimeSpan SinceStartOfStream,
     string Text,
     MessageType MessageType
-);
+) : Message( MessageType );

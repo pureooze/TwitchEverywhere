@@ -24,8 +24,7 @@ TwitchConnectionOptions options = new(
     RefreshToken: refreshToken,
     ClientId: clientId,
     ClientSecret: clientSecret,
-    ClientName: clientName,
-    BufferSize: 5
+    ClientName: clientName
 );
 
 TwitchConnection twitchConnection = new();

@@ -13,9 +13,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
     private readonly IWebSocketConnection m_webSocketConnection;
     private readonly DateTime m_startTimestamp = DateTime.Now;
-    private Action<PrivMsg> m_privCallback;
-    private Action<ClearChat> m_clearChatCallback;
-    private Action<ClearMsg> m_clearMsgCallback;
+    private Action<Message> m_messageCallback;
 
     public TwitchConnector(
         IAuthorizer authorizer,
@@ -23,34 +21,21 @@ internal sealed class TwitchConnector : ITwitchConnector {
     ) {
         m_authorizer = authorizer;
         m_webSocketConnection = webSocketConnection;
-        m_privCallback = delegate(
-            PrivMsg message
+        m_messageCallback = delegate(
+            Message message
         ) {
-            Console.WriteLine( $"PrivMsg: {message.Text}" );
-        };
-        
-        m_clearChatCallback = delegate(
-            ClearChat message
-        ) {
-            Console.WriteLine( $"ClearChat: {message.UserId}" );
-        };
-        
-        m_clearMsgCallback = delegate(
-            ClearMsg message
-        ) {
-            Console.WriteLine( $"ClearMsg: {message.TargetMessageId}" );
+            if( message.MessageType == MessageType.PrivMsg ) {
+                PrivMsg privMsg = (PrivMsg) message;
+                Console.WriteLine( $"PrivMsg: {privMsg.Text}" );
+            }
         };
     }
     
     async Task<bool> ITwitchConnector.TryConnect( 
         TwitchConnectionOptions options, 
-        Action<PrivMsg> privCallback,
-        Action<ClearChat> clearChatCallback,
-        Action<ClearMsg> clearMsgCallback
+        Action<Message> messageCallback
     ) {
-        m_privCallback = privCallback;
-        m_clearChatCallback = clearChatCallback;
-        m_clearMsgCallback = clearMsgCallback;
+        m_messageCallback = messageCallback;
         
         string token = await m_authorizer.GetToken();
         
@@ -111,22 +96,22 @@ internal sealed class TwitchConnector : ITwitchConnector {
             }
 
             if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
-                PrivMsg privMsg = GetUserMessage( response, options.Channel );
-                m_privCallback( privMsg );
+                Message privMsg = GetUserMessage( response, options.Channel );
+                m_messageCallback( privMsg );
             }
             
             if( response.Contains( $" CLEARCHAT #{options.Channel}" ) ) {
-                ClearChat chat = GetClearChatMessage( response, options.Channel );
-                m_clearChatCallback( chat );
+                Message chat = GetClearChatMessage( response, options.Channel );
+                m_messageCallback( chat );
             }
             
             if( response.Contains( $" CLEARMSG #{options.Channel}" ) ) {
-                ClearMsg chat = GetClearMsgMessage( response, options.Channel );
-                m_clearMsgCallback( chat );
+                Message chat = GetClearMsgMessage( response, options.Channel );
+                m_messageCallback( chat );
             }
         }
     }
-    private ClearMsg GetClearMsgMessage(
+    private Message GetClearMsgMessage(
         string response,
         string channel
     ) {
@@ -153,11 +138,12 @@ internal sealed class TwitchConnector : ITwitchConnector {
             Login: login,
             RoomId: channel,
             TargetMessageId: targetMessageId,
-            Timestamp: messageTimestamp
+            Timestamp: messageTimestamp,
+            MessageType: MessageType.ClearMsg
         );
     }
 
-    private ClearChat GetClearChatMessage(
+    private Message GetClearChatMessage(
         string response,
         string channel
     ) {
@@ -181,11 +167,12 @@ internal sealed class TwitchConnector : ITwitchConnector {
             Duration: long.Parse( duration ),
             RoomId: channel,
             UserId: string.IsNullOrEmpty(message) ? null : message,
-            Timestamp: messageTimestamp
+            Timestamp: messageTimestamp,
+            MessageType: MessageType.ClearChat
         );
     }
 
-    private PrivMsg GetUserMessage( string response, string channel ) {
+    private Message GetUserMessage( string response, string channel ) {
         string[] segments = response.Split( $"PRIVMSG #{channel} :" );
         
         string displayName = GetValueFromResponse( response, DisplayNamePattern );

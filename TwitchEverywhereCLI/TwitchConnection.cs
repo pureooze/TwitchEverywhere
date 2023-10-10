@@ -17,7 +17,7 @@ internal class TwitchConnection {
 
     public async Task Connect( TwitchConnectionOptions options ) {
         TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( options );
-        await twitchEverywhere.ConnectToChannel( PrivMessageCallback, ClearChatCallback, ClearMsgCallback );
+        await twitchEverywhere.ConnectToChannel( MessageCallback );
     }
 
     private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
@@ -40,6 +40,42 @@ internal class TwitchConnection {
     ) {
         using FileStream fileStream = new (path, FileMode.Create);
         fileStream.Write( compressedData, 0, compressedData.Length );
+    }
+
+    private void MessageCallback(
+        Message message
+    ) {
+        switch( message.MessageType ) {
+            case MessageType.PrivMsg: {
+                PrivMsg privMsg = (PrivMsg) message;
+                PrivMessageCallback( privMsg );
+                break;
+            }
+            case MessageType.ClearChat: {
+                ClearChat clearChatMsg = (ClearChat) message;
+                ClearChatCallback( clearChatMsg );
+                break;
+            }
+            case MessageType.ClearMsg: {
+                ClearMsg clearMsg = (ClearMsg) message;
+                ClearMsgCallback( clearMsg );
+                break;
+            }
+            case MessageType.GlobalUserState:
+                break;
+            case MessageType.Notice:
+                break;
+            case MessageType.RoomState:
+                break;
+            case MessageType.UserNotice:
+                break;
+            case MessageType.UserState:
+                break;
+            case MessageType.Whisper:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
     
     private async void PrivMessageCallback(
