@@ -24,10 +24,8 @@ TwitchConnectionOptions options = new(
 Next define a `MessageCallback` method that will handle any messages that `TwitchEverywhere` sends to your application.
 The input will be of type `TwitchEverywhere.Types.Message` and return type `void`.
 ```csharp
-/* 
-This example only handles MessageType.PrivMsg
-but you should handle other types here too
-*/
+
+// This example only handles MessageType.PrivMsg but you should handle other types here too
 private void MessageCallback( Message message ) {
     switch( message.MessageType ) {
         case MessageType.PrivMsg: {
