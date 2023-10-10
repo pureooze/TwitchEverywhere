@@ -69,9 +69,6 @@ WIP
 ### Notice
 WIP
 
-### PrivMsg
-WIP
-
 ### RoomState
 WIP
 
