@@ -192,7 +192,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
         string badges = GetValueFromResponse( response, BadgesPattern );
 
         string emotesText = GetValueFromResponse( response, EmotesPattern );
-        IImmutableList<Emote> emotes = GetEmotesFromText( emotesText );
+        IImmutableList<Emote>? emotes = GetEmotesFromText( emotesText );
         
         string id = GetValueFromResponse( response, IdPattern );
         string pinnedChatPaidAmount = GetValueFromResponse( response, PinnedChatPaidAmountPattern );
