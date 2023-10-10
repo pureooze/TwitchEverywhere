@@ -96,7 +96,7 @@ internal class TwitchConnection {
             await WriteToStore( m_clearChat, MessageType.ClearChat );
         }
         
-        Console.WriteLine( $"ClearChat: On {clearChat.Timestamp} the user {clearChat.UserId} was muted/banned for {clearChat.Duration} seconds" );
+        Console.WriteLine( $"ClearChat: On {clearChat.Timestamp} the user {clearChat.UserId} was muted/banned for {clearChat.Duration} seconds {clearChat.Text}" );
         
         if( clearChat.UserId != null ) {
             m_clearChat.AddToBuffer( clearChat.UserId );

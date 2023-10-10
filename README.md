@@ -100,7 +100,16 @@ In order to connect you need to create an `appsettings.json` file in the root of
 | Vip                           | ✅       |
 
 ### CLEARCHAT
-WIP
+[CLEARCHAT Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearchat-tags)
+
+[ClearChat Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/ClearChat.cs)
+
+| Field        | Support |
+|--------------|---------|
+| BanDuration  | ✅       |
+| RoomId       | ✅       |
+| TargetUserId | ✅       |
+| Timestamp    | ✅       |
 
 ### CLEARMSG
 WIP

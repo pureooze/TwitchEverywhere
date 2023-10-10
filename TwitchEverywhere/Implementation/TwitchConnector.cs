@@ -147,7 +147,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
         string response,
         string channel
     ) {
-        string[] segments = response.Split( $"CLEARCHAT #{channel} :" );
+        string[] segments = response.Split( $"CLEARCHAT #{channel}" );
 
         string duration = GetValueFromResponse( response, BanDurationPattern );
         string roomId = GetValueFromResponse( response, RoomIdPattern );
@@ -161,10 +161,11 @@ internal sealed class TwitchConnector : ITwitchConnector {
         DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
 
         return new ClearChat(
-            Duration: long.Parse( duration ),
+            Duration: string.IsNullOrEmpty( duration ) ? null : long.Parse( duration ),
             RoomId: roomId,
             UserId: targetUserId,
             Timestamp: messageTimestamp,
+            Text: segments[1],
             MessageType: MessageType.ClearChat
         );
     }
