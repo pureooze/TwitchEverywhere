@@ -149,11 +149,9 @@ internal sealed class TwitchConnector : ITwitchConnector {
     ) {
         string[] segments = response.Split( $"CLEARCHAT #{channel} :" );
 
-        string duration = DurationPattern
-            .Match( response )
-            .Value
-            .Split( "=" )[1]
-            .TrimEnd( ';' );
+        string duration = GetValueFromResponse( response, BanDurationPattern );
+        string roomId = GetValueFromResponse( response, RoomIdPattern );
+        string targetUserId = GetValueFromResponse( response, TargetUserIdPattern );
         
         long rawTimestamp = Convert.ToInt64(
             MessageTimestampPattern.Match( response ).Value
@@ -161,12 +159,11 @@ internal sealed class TwitchConnector : ITwitchConnector {
         );
 
         DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
-        string message = segments[1].Trim( '\r', '\n' );
 
         return new ClearChat(
             Duration: long.Parse( duration ),
-            RoomId: channel,
-            UserId: string.IsNullOrEmpty(message) ? null : message,
+            RoomId: roomId,
+            UserId: targetUserId,
             Timestamp: messageTimestamp,
             MessageType: MessageType.ClearChat
         );
@@ -398,4 +395,6 @@ internal sealed class TwitchConnector : ITwitchConnector {
     private readonly static Regex UserIdPattern = new("user-id=([^;]*);");
     private readonly static Regex UserTypePattern = new("user-type=([^; ]+)");
     private readonly static Regex VipPattern = new("vip=([^;]*)");
+    private readonly static Regex BanDurationPattern = new("ban-duration=([^;]*)");
+    private readonly static Regex TargetUserIdPattern = new("target-user-id=([^;]*)");
 }
