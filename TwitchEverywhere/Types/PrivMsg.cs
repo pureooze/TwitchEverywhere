@@ -7,7 +7,7 @@ public record PrivMsg(
     string Bits,
     string? Color,
     string DisplayName,
-    string Emotes,
+    IImmutableList<Emote>? Emotes,
     string Id,
     bool Mod,
     long? PinnedChatPaidAmount,

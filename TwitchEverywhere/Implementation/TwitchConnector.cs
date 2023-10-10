@@ -190,7 +190,10 @@ internal sealed class TwitchConnector : ITwitchConnector {
         
         string displayName = GetValueFromResponse( response, DisplayNamePattern );
         string badges = GetValueFromResponse( response, BadgesPattern );
-        string emotes = GetValueFromResponse( response, EmotesPattern );
+
+        string emotesText = GetValueFromResponse( response, EmotesPattern );
+        IImmutableList<Emote> emotes = GetEmotesFromText( emotesText );
+        
         string id = GetValueFromResponse( response, IdPattern );
         string pinnedChatPaidAmount = GetValueFromResponse( response, PinnedChatPaidAmountPattern );
         string pinnedChatPaidCurrency = GetValueFromResponse( response, PinnedChatPaidCurrencyPattern );
@@ -274,6 +277,33 @@ internal sealed class TwitchConnector : ITwitchConnector {
             Text: message,
             MessageType: MessageType.PrivMsg
         );
+    }
+    private IImmutableList<Emote>? GetEmotesFromText(
+        string emotesText
+    ) {
+
+        if( string.IsNullOrEmpty( emotesText ) ) {
+            return null;
+        }
+
+        List<Emote> emotes = new();
+        string[] separatedRawEmotes = emotesText.Split( "," );
+
+        foreach (string rawEmote in separatedRawEmotes) {
+            string[] separatedEmote = rawEmote.Split( ":" );
+            string[] separatedEmoteTimestamps = separatedEmote[1].Split( "-" );
+            
+            emotes.Add( 
+                new Emote( 
+                    separatedEmote[0], 
+                    int.Parse( separatedEmoteTimestamps[0] ), 
+                    int.Parse( separatedEmoteTimestamps[1] )
+                )
+            );
+        }
+        
+        
+        return emotes.ToImmutableList();
     }
     private static PinnedChatPaidLevel? GetPinnedChatPaidLevelType(
         string pinnedChatPaidLevelText

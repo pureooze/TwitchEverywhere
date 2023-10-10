@@ -31,32 +31,32 @@ In order to connect you need to create an `appsettings.json` file in the root of
 
 [PrivMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/PrivMsg.cs)
 
-| Field                         | Support                      |
-|-------------------------------|------------------------------|
-| Badges                        | ✅                            |
-| Bits                          | ✅                            |
-| Color                         | ✅                            |
-| DisplayName                   | ✅                            |
-| Emotes                        | WIP (currently a raw string) |
-| Id                            | ✅                            |
-| Mod                           | ✅                            |
-| PinnedChatPaidAmount          | ✅                            |
-| PinnedChatPaidCurrency        | ✅                            |
-| PinnedChatPaidExponent        | ✅                            |
-| PinnedChatPaidLevel           | ✅                            |
-| PinnedChatPaidIsSystemMessage | ✅                            |
-| ReplyParentMsgId              | ✅                            |
-| ReplyParentUserId             | ✅                            |
-| ReplyParentUserLogin          | ✅                            |
-| ReplyParentDisplayName        | ✅                            |
-| ReplyThreadParentMsg          | ✅                            |
-| RoomId                        | ✅                            |
-| Subscriber                    | ✅                            |
-| Timestamp                     | ✅                            |
-| Turbo                         | ✅                            |
-| UserId                        | ✅                            |
-| UserType                      | ✅                            |
-| Vip                           | ✅                            |
+| Field                         | Support |
+|-------------------------------|---------|
+| Badges                        | ✅       |
+| Bits                          | ✅       |
+| Color                         | ✅       |
+| DisplayName                   | ✅       |
+| Emotes                        | ✅       |
+| Id                            | ✅       |
+| Mod                           | ✅       |
+| PinnedChatPaidAmount          | ✅       |
+| PinnedChatPaidCurrency        | ✅       |
+| PinnedChatPaidExponent        | ✅       |
+| PinnedChatPaidLevel           | ✅       |
+| PinnedChatPaidIsSystemMessage | ✅       |
+| ReplyParentMsgId              | ✅       |
+| ReplyParentUserId             | ✅       |
+| ReplyParentUserLogin          | ✅       |
+| ReplyParentDisplayName        | ✅       |
+| ReplyThreadParentMsg          | ✅       |
+| RoomId                        | ✅       |
+| Subscriber                    | ✅       |
+| Timestamp                     | ✅       |
+| Turbo                         | ✅       |
+| UserId                        | ✅       |
+| UserType                      | ✅       |
+| Vip                           | ✅       |
 
 ### CLEARCHAT
 WIP
