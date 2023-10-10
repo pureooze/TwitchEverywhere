@@ -4,5 +4,6 @@ public record ClearChat(
     long? Duration,
     string RoomId,
     string? UserId,
-    DateTime Timestamp
-);
+    DateTime Timestamp,
+    MessageType MessageType
+) : Message( MessageType );

@@ -6,6 +6,5 @@ public sealed record TwitchConnectionOptions(
     string? RefreshToken,
     string? ClientId,
     string? ClientSecret,
-    string? ClientName,
-    int BufferSize
+    string? ClientName
 );

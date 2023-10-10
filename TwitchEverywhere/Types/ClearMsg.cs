@@ -4,5 +4,6 @@ public record ClearMsg(
     string Login,
     string RoomId,
     string TargetMessageId,
-    DateTime Timestamp
-);
+    DateTime Timestamp,
+    MessageType MessageType
+) : Message( MessageType );
