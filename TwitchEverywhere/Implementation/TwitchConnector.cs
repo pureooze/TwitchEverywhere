@@ -39,11 +39,11 @@ internal sealed class TwitchConnector : ITwitchConnector {
         
         string token = await m_authorizer.GetToken();
         
-        await ConnectToWebsocket( m_webSocketConnection, token, options );
-        return true;
+        bool result = await ConnectToWebsocket( m_webSocketConnection, token, options );
+        return result;
     }
 
-    private async Task ConnectToWebsocket(
+    private async Task<bool> ConnectToWebsocket(
         IWebSocketConnection ws,
         string token,
         TwitchConnectionOptions options
@@ -58,7 +58,6 @@ internal sealed class TwitchConnector : ITwitchConnector {
             socketConnection: ws, 
             message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" 
         );
-        Thread.Sleep(millisecondsTimeout: 1000);
         await SendMessage( socketConnection: ws, message: $"PASS oauth:{token}" );
         await SendMessage( socketConnection: ws, message: $"NICK {options.ClientName}" );
         await SendMessage( socketConnection: ws, message: $"JOIN #{options.Channel}" );
@@ -66,7 +65,10 @@ internal sealed class TwitchConnector : ITwitchConnector {
         while (ws.State == WebSocketState.Open) {
             await ReceiveWebSocketResponse( ws: ws, buffer: buffer, options: options );
         }
+
+        return true;
     }
+
     private async Task ReceiveWebSocketResponse(
         IWebSocketConnection ws,
         byte[] buffer,
