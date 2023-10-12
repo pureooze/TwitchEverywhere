@@ -111,39 +111,39 @@ public class TwitchConnectorTests {
                 $"@badge-info=;badges=turbo/1;color=#0D4200;display-name=ronni;emotes=25:0-4,12-16/1902:6-10;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=1337;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=1337;user-type=global_mod :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :Kappa Keepo Kappa"
             }.ToImmutableList(),
             new PrivMsg(
-                new List<Badge>() {
+                Badges: new List<Badge>() {
                     new( Name: "turbo", Version: "1" )
                 }.ToImmutableList(),
-                "",
-                "#0D4200",
-                "ronni",
-                new List<Emote>() {
+                Bits: "",
+                Color: "#0D4200",
+                DisplayName: "ronni",
+                Emotes: new List<Emote>() {
                     new Emote("25", 0, 4),
                     new Emote("25", 12, 16),
                     new Emote("1902", 6, 10)
                 }.ToImmutableList(),
-                "b34ccfc7-4977-403a-8a94-33c6bac34fb8",
-                false,
-                null,
-                "",
-                null,
-                null,
-                false,
-                "",
-                "",
-                "",
-                "",
-                "",
-                "1337",
-                false,
-                DateTime.Parse( "2017-10-05 23:36:12.675" ),
-                true,
-                "1337",
-                UserType.GlobalMod,
-                false,
-                TimeSpan.Zero,
-                "Kappa Keepo Kappa",
-                MessageType.PrivMsg
+                Id: "b34ccfc7-4977-403a-8a94-33c6bac34fb8",
+                Mod: false,
+                PinnedChatPaidAmount: null,
+                PinnedChatPaidCurrency: "",
+                PinnedChatPaidExponent: null,
+                PinnedChatPaidLevel: null,
+                PinnedChatPaidIsSystemMessage: false,
+                ReplyParentMsgId: "",
+                ReplyParentUserId: "",
+                ReplyParentUserLogin: "",
+                ReplyParentDisplayName: "",
+                ReplyThreadParentMsg: "",
+                RoomId: "1337",
+                Subscriber: false,
+                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
+                Turbo: true,
+                UserId: "1337",
+                UserType: UserType.GlobalMod,
+                Vip: false,
+                SinceStartOfStream: TimeSpan.Zero,
+                Text: "Kappa Keepo Kappa",
+                MessageType: MessageType.PrivMsg
             )
         ).SetName("Message with badges and emotes");;
     }
