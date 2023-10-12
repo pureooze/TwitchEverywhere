@@ -12,15 +12,18 @@ namespace TwitchEverywhere.Implementation;
 internal sealed class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
     private readonly IWebSocketConnection m_webSocketConnection;
-    private readonly DateTime m_startTimestamp = DateTime.Now;
+    private readonly DateTime m_startTimestamp;
     private Action<Message> m_messageCallback;
 
     public TwitchConnector(
         IAuthorizer authorizer,
-        IWebSocketConnection webSocketConnection
+        IWebSocketConnection webSocketConnection,
+        IDateTimeService dateTimeService
     ) {
         m_authorizer = authorizer;
         m_webSocketConnection = webSocketConnection;
+        m_startTimestamp = dateTimeService.GetStartTime();
+        
         m_messageCallback = delegate(
             Message message
         ) {
@@ -272,21 +275,25 @@ internal sealed class TwitchConnector : ITwitchConnector {
         if( string.IsNullOrEmpty( emotesText ) ) {
             return null;
         }
-
+// 25 : 0-4 , 12-16 / 1902 : 6-10
         List<Emote> emotes = new();
-        string[] separatedRawEmotes = emotesText.Split( "," );
+        string[] separatedRawEmotes = emotesText.Split( "/" );
 
         foreach (string rawEmote in separatedRawEmotes) {
             string[] separatedEmote = rawEmote.Split( ":" );
-            string[] separatedEmoteTimestamps = separatedEmote[1].Split( "-" );
-            
-            emotes.Add( 
-                new Emote( 
-                    separatedEmote[0], 
-                    int.Parse( separatedEmoteTimestamps[0] ), 
-                    int.Parse( separatedEmoteTimestamps[1] )
-                )
-            );
+            string[] separatedEmoteLocationGroup = separatedEmote[1].Split( "," );
+
+            foreach (string locationGroup in separatedEmoteLocationGroup) {
+                string[] separatedEmoteLocation = locationGroup.Split( "-" );
+                
+                emotes.Add(
+                    new Emote( 
+                        separatedEmote[0], 
+                        int.Parse( separatedEmoteLocation[0] ), 
+                        int.Parse( separatedEmoteLocation[1] )
+                    )
+                );
+            }
         }
         
         
