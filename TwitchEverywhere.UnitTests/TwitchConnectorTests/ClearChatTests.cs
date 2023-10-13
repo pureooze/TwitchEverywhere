@@ -37,9 +37,9 @@ public class ClearChatTests {
 
             switch( message.MessageType ) {
                 case MessageType.ClearChat: {
-                    ClearChat privMsg = (ClearChat)message;
+                    ClearChat msg = (ClearChat)message;
                     ClearChat? expectedPrivMessage = (ClearChat)expectedMessage;
-                    ClearChatMessageCallback( privMsg, expectedPrivMessage );
+                    ClearChatMessageCallback( msg, expectedPrivMessage );
                     break;
                 }
                 case MessageType.PrivMsg:

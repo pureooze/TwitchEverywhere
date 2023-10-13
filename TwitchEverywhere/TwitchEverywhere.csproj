@@ -10,9 +10,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>11</LangVersion>
-        <Version>0.1.0</Version>
-        <PackageReadmeFile>../README.md</PackageReadmeFile>
+        <Version>0.1.1</Version>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 </Project>
