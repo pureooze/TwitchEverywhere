@@ -98,19 +98,13 @@ internal sealed class TwitchConnector : ITwitchConnector {
             // keep alive, let twitch know we are still listening
             if( response.Contains("PING :tmi.twitch.tv") ) {
                 await SendMessage( ws, "PONG :tmi.twitch.tv" );
-            }
-
-            if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
+            } else if( response.Contains( $" PRIVMSG #{options.Channel}" ) ) {
                 Message privMsg = GetUserMessage( response, options.Channel );
                 m_messageCallback( privMsg );
-            }
-            
-            if( response.Contains( $" CLEARCHAT #{options.Channel}" ) ) {
+            } else if( response.Contains( $" CLEARCHAT #{options.Channel}" ) ) {
                 Message chat = GetClearChatMessage( response, options.Channel );
                 m_messageCallback( chat );
-            }
-            
-            if( response.Contains( $" CLEARMSG #{options.Channel}" ) ) {
+            } else if( response.Contains( $" CLEARMSG #{options.Channel}" ) ) {
                 Message chat = GetClearMsgMessage( response, options.Channel );
                 m_messageCallback( chat );
             }
@@ -136,15 +130,16 @@ internal sealed class TwitchConnector : ITwitchConnector {
             MessageTimestampPattern.Match( response ).Value
                 .Split( "=" )[1]
         );
+        
+        string roomId = GetValueFromResponse( response, RoomIdPattern );
 
         DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
         
         return new ClearMsg(
             Login: login,
-            RoomId: channel,
+            RoomId: roomId,
             TargetMessageId: targetMessageId,
-            Timestamp: messageTimestamp,
-            MessageType: MessageType.ClearMsg
+            Timestamp: messageTimestamp
         );
     }
 
@@ -170,8 +165,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
             RoomId: roomId,
             UserId: targetUserId,
             Timestamp: messageTimestamp,
-            Text: segments[1],
-            MessageType: MessageType.ClearChat
+            Text: segments[1]
         );
     }
 
@@ -264,8 +258,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
             UserType: userType,
             Vip: !string.IsNullOrEmpty( vip ),
             SinceStartOfStream: timeSinceStartOfStream,
-            Text: message,
-            MessageType: MessageType.PrivMsg
+            Text: message
         );
     }
     private IImmutableList<Emote>? GetEmotesFromText(

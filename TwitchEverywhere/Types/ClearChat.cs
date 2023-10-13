@@ -1,10 +1,9 @@
-namespace TwitchEverywhere.Types; 
+namespace TwitchEverywhere.Types;
 
 public record ClearChat(
     long? Duration,
     string RoomId,
-    string? UserId,
+    string UserId,
     DateTime Timestamp,
-    string Text,
-    MessageType MessageType
-) : Message( MessageType );
+    string Text
+) : Message( MessageType.ClearChat );
