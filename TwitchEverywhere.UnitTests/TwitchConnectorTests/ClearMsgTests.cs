@@ -6,7 +6,7 @@ using TwitchEverywhere.Types;
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests;
 
 [TestFixture]
-public class PrivMsgTests {
+public class ClearMsgTests {
     private readonly TwitchConnectionOptions m_options = new(
         "channel",
         "access_token",
@@ -21,14 +21,13 @@ public class PrivMsgTests {
     private ITwitchConnector m_twitchConnector;
 
     [Test]
-    [TestCaseSource(nameof(PrivMsgMessages))]
-    public async Task PrivMsg( IImmutableList<string> messages, Message? expectedMessage ) {
+    [TestCaseSource(nameof(ClearMsgMessages))]
+    public async Task ClearMsg( IImmutableList<string> messages, Message? expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
-        
 
         void MessageCallback(
             Message message
@@ -36,14 +35,14 @@ public class PrivMsgTests {
             Assert.That( message, Is.Not.Null );
 
             switch( message.MessageType ) {
-                case MessageType.PrivMsg: {
-                    PrivMsg privMsg = (PrivMsg)message;
-                    PrivMsg? expectedPrivMessage = (PrivMsg)expectedMessage;
-                    PrivMessageCallback( privMsg, expectedPrivMessage );
+                case MessageType.ClearMsg: {
+                    ClearMsg privMsg = (ClearMsg)message;
+                    ClearMsg? expectedPrivMessage = (ClearMsg)expectedMessage;
+                    ClearMsgMessageCallback( privMsg, expectedPrivMessage );
                     break;
                 }
+                case MessageType.PrivMsg:
                 case MessageType.ClearChat:
-                case MessageType.ClearMsg:
                 case MessageType.GlobalUserState:
                 case MessageType.Notice:
                 case MessageType.RoomState:
@@ -66,39 +65,18 @@ public class PrivMsgTests {
         Assert.That( result, Is.True );
     }
     
-    private void PrivMessageCallback(
-        PrivMsg privMsg,
-        PrivMsg? expectedPrivMessage
+    private void ClearMsgMessageCallback(
+        ClearMsg clearMsg,
+        ClearMsg? expectedClearMessage
     ) {
-        CollectionAssert.AreEqual( privMsg.Badges, expectedPrivMessage?.Badges, "Badges are not equal" );
-        Assert.That( privMsg.Bits, Is.EqualTo( expectedPrivMessage?.Bits ), "Bits are not equal");
-        Assert.That( privMsg.Color, Is.EqualTo( expectedPrivMessage?.Color ), "Colors are not equal");
-        Assert.That( privMsg.DisplayName, Is.EqualTo( expectedPrivMessage?.DisplayName ), "DisplayNames are not equal");
-        CollectionAssert.AreEqual( privMsg.Emotes, expectedPrivMessage?.Emotes, "Emotes are not equal" );
-        Assert.That( privMsg.Id, Is.EqualTo( expectedPrivMessage?.Id ), "Ids are not equal");
-        Assert.That( privMsg.Mod, Is.EqualTo( expectedPrivMessage?.Mod ), "Mods are not equal");
-        Assert.That( privMsg.PinnedChatPaidAmount, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidAmount ), "PinnedChatPaidAmounts are not equal");
-        Assert.That( privMsg.PinnedChatPaidCurrency, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidCurrency ), "PinnedChatPaidCurrencys are not equal");
-        Assert.That( privMsg.PinnedChatPaidExponent, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidExponent ), "PinnedChatPaidExponents are not equal");
-        Assert.That( privMsg.PinnedChatPaidLevel, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidLevel ), "PinnedChatPaidLevels are not equal");
-        Assert.That( privMsg.PinnedChatPaidIsSystemMessage, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidIsSystemMessage ), "PinnedChatPaidIsSystemMessage are not equal");
-        Assert.That( privMsg.ReplyParentMsgId, Is.EqualTo( expectedPrivMessage?.ReplyParentMsgId ), "ReplyParentMsgIds are not equal");
-        Assert.That( privMsg.ReplyParentUserId, Is.EqualTo( expectedPrivMessage?.ReplyParentUserId ), "ReplyParentUserIds are not equal");
-        Assert.That( privMsg.ReplyParentUserLogin, Is.EqualTo( expectedPrivMessage?.ReplyParentUserLogin ), "ReplyParentUserLogins are not equal");
-        Assert.That( privMsg.ReplyParentDisplayName, Is.EqualTo( expectedPrivMessage?.ReplyParentDisplayName ), "ReplyParentDisplayNames are not equal");
-        Assert.That( privMsg.ReplyThreadParentMsg, Is.EqualTo( expectedPrivMessage?.ReplyThreadParentMsg ), "ReplyThreadParentMsgs are not equal");
-        Assert.That( privMsg.RoomId, Is.EqualTo( expectedPrivMessage?.RoomId ), "RoomIds are not equal");
-        Assert.That( privMsg.Subscriber, Is.EqualTo( expectedPrivMessage?.Subscriber ), "Subscribers are not equal");
-        Assert.That( privMsg.Timestamp, Is.EqualTo( expectedPrivMessage?.Timestamp ), "Timestamps are not equal");
-        Assert.That( privMsg.Turbo, Is.EqualTo( expectedPrivMessage?.Turbo ), "Turbos are not equal");
-        Assert.That( privMsg.UserId, Is.EqualTo( expectedPrivMessage?.UserId ), "UserIds are not equal");
-        Assert.That( privMsg.UserType, Is.EqualTo( expectedPrivMessage?.UserType ), "UserTypes are not equal");
-        Assert.That( privMsg.Vip, Is.EqualTo( expectedPrivMessage?.Vip ), "Vips are not equal");
-        Assert.That( privMsg.SinceStartOfStream, Is.EqualTo( expectedPrivMessage?.SinceStartOfStream ), "SinceStartOfStreams are not equal");
-        Assert.That( privMsg.Text, Is.EqualTo( expectedPrivMessage?.Text ), "Texts are not equal");
+        Assert.That( clearMsg.Login, Is.EqualTo( expectedClearMessage?.Login ), "Login was not equal to expected value");
+        Assert.That( clearMsg.RoomId, Is.EqualTo( expectedClearMessage?.RoomId ), "RoomId was not equal to expected value");
+        Assert.That( clearMsg.TargetMessageId, Is.EqualTo( expectedClearMessage?.TargetMessageId ), "TargetMessageId was not equal to expected value");
+        Assert.That( clearMsg.Timestamp, Is.EqualTo( expectedClearMessage?.Timestamp ), "Timestamp was not equal to expected value");
+        Assert.That( clearMsg.MessageType, Is.EqualTo( expectedClearMessage?.MessageType ), "MessageType was not equal to expected value");
     }
     
-    private static IEnumerable<TestCaseData> PrivMsgMessages() {
+    private static IEnumerable<TestCaseData> ClearMsgMessages() {
         yield return new TestCaseData(
             new List<string> {
                 $"foo bar baz"
@@ -108,43 +86,14 @@ public class PrivMsgTests {
         
         yield return new TestCaseData(
             new List<string> {
-                $"@badge-info=;badges=turbo/1;color=#0D4200;display-name=ronni;emotes=25:0-4,12-16/1902:6-10;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=1337;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=1337;user-type=global_mod :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :Kappa Keepo Kappa"
+                $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
             }.ToImmutableList(),
-            new PrivMsg(
-                Badges: new List<Badge>() {
-                    new( Name: "turbo", Version: "1" )
-                }.ToImmutableList(),
-                Bits: "",
-                Color: "#0D4200",
-                DisplayName: "ronni",
-                Emotes: new List<Emote>() {
-                    new Emote("25", 0, 4),
-                    new Emote("25", 12, 16),
-                    new Emote("1902", 6, 10)
-                }.ToImmutableList(),
-                Id: "b34ccfc7-4977-403a-8a94-33c6bac34fb8",
-                Mod: false,
-                PinnedChatPaidAmount: null,
-                PinnedChatPaidCurrency: "",
-                PinnedChatPaidExponent: null,
-                PinnedChatPaidLevel: null,
-                PinnedChatPaidIsSystemMessage: false,
-                ReplyParentMsgId: "",
-                ReplyParentUserId: "",
-                ReplyParentUserLogin: "",
-                ReplyParentDisplayName: "",
-                ReplyThreadParentMsg: "",
-                RoomId: "1337",
-                Subscriber: false,
-                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
-                Turbo: true,
-                UserId: "1337",
-                UserType: UserType.GlobalMod,
-                Vip: false,
-                SinceStartOfStream: TimeSpan.Zero,
-                Text: "Kappa Keepo Kappa",
-                MessageType: MessageType.PrivMsg
+            new ClearMsg(
+                Login: "ronni",
+                RoomId: "",
+                TargetMessageId: "abc-123-def",
+                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" )
             )
-        ).SetName("Message with badges and emotes");;
+        ).SetName("Clear single message with Id");;
     }
 }

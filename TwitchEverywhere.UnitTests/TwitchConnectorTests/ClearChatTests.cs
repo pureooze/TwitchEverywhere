@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
 using Moq;
+using NUnit.Framework.Internal;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests;
 
 [TestFixture]
-public class ClearMsgTests {
+public class ClearChatTests {
     private readonly TwitchConnectionOptions m_options = new(
         "channel",
         "access_token",
@@ -21,8 +22,8 @@ public class ClearMsgTests {
     private ITwitchConnector m_twitchConnector;
 
     [Test]
-    [TestCaseSource(nameof(ClearMsgMessages))]
-    public async Task ClearMsg( IImmutableList<string> messages, Message? expectedMessage ) {
+    [TestCaseSource(nameof(ClearChatMessages))]
+    public async Task ClearChat( IImmutableList<string> messages, Message? expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -35,14 +36,14 @@ public class ClearMsgTests {
             Assert.That( message, Is.Not.Null );
 
             switch( message.MessageType ) {
-                case MessageType.ClearMsg: {
-                    ClearMsg privMsg = (ClearMsg)message;
-                    ClearMsg? expectedPrivMessage = (ClearMsg)expectedMessage;
-                    ClearMsgMessageCallback( privMsg, expectedPrivMessage );
+                case MessageType.ClearChat: {
+                    ClearChat privMsg = (ClearChat)message;
+                    ClearChat? expectedPrivMessage = (ClearChat)expectedMessage;
+                    ClearChatMessageCallback( privMsg, expectedPrivMessage );
                     break;
                 }
                 case MessageType.PrivMsg:
-                case MessageType.ClearChat:
+                case MessageType.ClearMsg:
                 case MessageType.GlobalUserState:
                 case MessageType.Notice:
                 case MessageType.RoomState:
@@ -65,36 +66,56 @@ public class ClearMsgTests {
         Assert.That( result, Is.True );
     }
     
-    private void ClearMsgMessageCallback(
-        ClearMsg clearMsg,
-        ClearMsg? expectedClearMessage
+    private void ClearChatMessageCallback(
+        ClearChat clearChat,
+        ClearChat? expectedClearChatMessage
     ) {
-        Assert.That( clearMsg.Login, Is.EqualTo( expectedClearMessage?.Login ), "Login was not equal to expected value");
-        Assert.That( clearMsg.RoomId, Is.EqualTo( expectedClearMessage?.RoomId ), "RoomId was not equal to expected value");
-        Assert.That( clearMsg.TargetMessageId, Is.EqualTo( expectedClearMessage?.TargetMessageId ), "TargetMessageId was not equal to expected value");
-        Assert.That( clearMsg.Timestamp, Is.EqualTo( expectedClearMessage?.Timestamp ), "Timestamp was not equal to expected value");
-        Assert.That( clearMsg.MessageType, Is.EqualTo( expectedClearMessage?.MessageType ), "MessageType was not equal to expected value");
+        Assert.That( clearChat.Duration, Is.EqualTo( expectedClearChatMessage?.Duration ), "Duration was not equal to expected value");
+        Assert.That( clearChat.RoomId, Is.EqualTo( expectedClearChatMessage?.RoomId ), "RoomId was not equal to expected value");
+        Assert.That( clearChat.UserId, Is.EqualTo( expectedClearChatMessage?.UserId ), "UserId was not equal to expected value");
+        Assert.That( clearChat.Timestamp, Is.EqualTo( expectedClearChatMessage?.Timestamp ), "Timestamp was not equal to expected value");
+        Assert.That( clearChat.Text, Is.EqualTo( expectedClearChatMessage?.Text ), "Text was not equal to expected value");
+        Assert.That( clearChat.MessageType, Is.EqualTo( expectedClearChatMessage?.MessageType ), "MessageType was not equal to expected value");
     }
     
-    private static IEnumerable<TestCaseData> ClearMsgMessages() {
+    private static IEnumerable<TestCaseData> ClearChatMessages() {
         yield return new TestCaseData(
             new List<string> {
-                $"foo bar baz"
+                $"@room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel :ronni"
             }.ToImmutableList(),
-            null
-        ).SetName("Random message should be ignored");
+            new ClearChat(
+                Duration: null,
+                RoomId: "12345678",
+                UserId: "87654321",
+                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
+                Text: " :ronni"
+            )
+        ).SetName("Permanent Ban");
         
         yield return new TestCaseData(
             new List<string> {
-                $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
+                $"@room-id=12345678;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel"
             }.ToImmutableList(),
-            new ClearMsg(
-                Login: "ronni",
-                RoomId: "channel",
-                TargetMessageId: "abc-123-def",
+            new ClearChat(
+                Duration: null,
+                RoomId: "12345678",
+                UserId: "",
                 Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
-                MessageType: MessageType.ClearMsg
+                Text: ""
             )
-        ).SetName("Clear single message with Id");;
+        ).SetName("All Messages Removed");
+        
+        yield return new TestCaseData(
+            new List<string> {
+                $"@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #dallas :ronni"
+            }.ToImmutableList(),
+            new ClearChat(
+                Duration: 350,
+                RoomId: "12345678",
+                UserId: "87654321",
+                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
+                Text: " :ronni"
+            )
+        ).SetName("Timeout User And Remove All Of Their Messages");
     }
 }

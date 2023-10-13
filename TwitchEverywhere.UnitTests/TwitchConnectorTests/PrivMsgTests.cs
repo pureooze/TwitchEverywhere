@@ -3,10 +3,10 @@ using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 
-namespace TwitchEverywhere.UnitTests;
+namespace TwitchEverywhere.UnitTests.TwitchConnectorTests;
 
 [TestFixture]
-public class TwitchConnectorTests {
+public class PrivMsgTests {
     private readonly TwitchConnectionOptions m_options = new(
         "channel",
         "access_token",
@@ -142,8 +142,7 @@ public class TwitchConnectorTests {
                 UserType: UserType.GlobalMod,
                 Vip: false,
                 SinceStartOfStream: TimeSpan.Zero,
-                Text: "Kappa Keepo Kappa",
-                MessageType: MessageType.PrivMsg
+                Text: "Kappa Keepo Kappa"
             )
         ).SetName("Message with badges and emotes");;
     }
