@@ -28,6 +28,5 @@ public record PrivMsg(
     UserType UserType,
     bool Vip,
     TimeSpan SinceStartOfStream,
-    string Text,
-    MessageType MessageType
-) : Message( MessageType );
+    string Text
+) : Message( MessageType.PrivMsg );
