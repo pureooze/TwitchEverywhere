@@ -112,7 +112,16 @@ In order to connect you need to create an `appsettings.json` file in the root of
 | Timestamp    | ✅       |
 
 ### CLEARMSG
-WIP
+[CLEARMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearmsg-tags)
+
+[ClearMSG Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/ClearMsg.cs)
+
+| Field           | Support |
+|-----------------|---------|
+| Login           | ✅       |
+| RoomId          | ✅       |
+| TargetMessageId | ✅       |
+| Timestamp       | ✅       |
 
 ### GlobalUserState
 WIP
