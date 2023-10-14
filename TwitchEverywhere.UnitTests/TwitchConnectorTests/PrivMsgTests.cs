@@ -21,25 +21,24 @@ public class PrivMsgTests {
     private ITwitchConnector m_twitchConnector;
 
     [Test]
-    [TestCaseSource(nameof(PrivMsgMessages))]
-    public async Task PrivMsg( IImmutableList<string> messages, Message? expectedMessage ) {
+    [TestCaseSource(sourceName: nameof(PrivMsgMessages))]
+    public async Task PrivMsg( IImmutableList<string> messages, PrivMsg? expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
-        Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
-        dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
 
-        IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
-        
+        IWebSocketConnection webSocket = new TestWebSocketConnection( messages: messages );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
 
         void MessageCallback(
             Message message
         ) {
-            Assert.That( message, Is.Not.Null );
+            Assert.That( actual: message, expression: Is.Not.Null );
 
             switch( message.MessageType ) {
                 case MessageType.PrivMsg: {
                     PrivMsg msg = (PrivMsg)message;
-                    PrivMsg? expectedPrivMessage = (PrivMsg)expectedMessage;
-                    PrivMessageCallback( msg, expectedPrivMessage );
+                    PrivMessageCallback( privMsg: msg, expectedPrivMessage: expectedMessage );
                     break;
                 }
                 case MessageType.ClearChat:
@@ -59,11 +58,11 @@ public class PrivMsgTests {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            dateTimeService: dateTimeService.Object
+            messageProcessor: messageProcessor
         );
         
-        bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
-        Assert.That( result, Is.True );
+        bool result = await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+        Assert.That( actual: result, expression: Is.True );
     }
     
     private void PrivMessageCallback(
