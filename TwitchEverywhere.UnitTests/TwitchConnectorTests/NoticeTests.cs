@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
 using Moq;
+using NUnit.Framework.Internal;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests;
 
 [TestFixture]
-public class ClearMsgTests {
+public class NoticeTests {
     private readonly TwitchConnectionOptions m_options = new(
         "channel",
         "access_token",
@@ -21,8 +22,8 @@ public class ClearMsgTests {
     private ITwitchConnector m_twitchConnector;
 
     [Test]
-    [TestCaseSource(nameof(ClearMsgMessages))]
-    public async Task ClearMsg( IImmutableList<string> messages, Message? expectedMessage ) {
+    [TestCaseSource(nameof(NoticeMessages))]
+    public async Task Notice( IImmutableList<string> messages, Message? expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -35,16 +36,16 @@ public class ClearMsgTests {
             Assert.That( message, Is.Not.Null );
 
             switch( message.MessageType ) {
-                case MessageType.ClearMsg: {
-                    ClearMsg msg = (ClearMsg)message;
-                    ClearMsg? expectedPrivMessage = (ClearMsg)expectedMessage;
-                    ClearMsgMessageCallback( msg, expectedPrivMessage );
+                case MessageType.Notice: {
+                    Notice msg = (Notice)message;
+                    Notice? expectedPrivMessage = (Notice)expectedMessage;
+                    NoticeMessageCallback( msg, expectedPrivMessage );
                     break;
                 }
                 case MessageType.PrivMsg:
+                case MessageType.ClearMsg:
                 case MessageType.ClearChat:
                 case MessageType.GlobalUserState:
-                case MessageType.Notice:
                 case MessageType.RoomState:
                 case MessageType.UserNotice:
                 case MessageType.UserState:
@@ -65,35 +66,34 @@ public class ClearMsgTests {
         Assert.That( result, Is.True );
     }
     
-    private void ClearMsgMessageCallback(
-        ClearMsg clearMsg,
-        ClearMsg? expectedClearMessage
+    private void NoticeMessageCallback(
+        Notice notice,
+        Notice? expectedNoticeMessage
     ) {
-        Assert.That( clearMsg.Login, Is.EqualTo( expectedClearMessage?.Login ), "Login was not equal to expected value");
-        Assert.That( clearMsg.RoomId, Is.EqualTo( expectedClearMessage?.RoomId ), "RoomId was not equal to expected value");
-        Assert.That( clearMsg.TargetMessageId, Is.EqualTo( expectedClearMessage?.TargetMessageId ), "TargetMessageId was not equal to expected value");
-        Assert.That( clearMsg.Timestamp, Is.EqualTo( expectedClearMessage?.Timestamp ), "Timestamp was not equal to expected value");
-        Assert.That( clearMsg.MessageType, Is.EqualTo( expectedClearMessage?.MessageType ), "MessageType was not equal to expected value");
+        Assert.That( notice.MsgId, Is.EqualTo( expectedNoticeMessage?.MsgId ), "MsgId was not equal to expected value");
+        Assert.That( notice.TargetUserId, Is.EqualTo( expectedNoticeMessage?.TargetUserId ), "TargetUserId was not equal to expected value");
+        Assert.That( notice.MessageType, Is.EqualTo( expectedNoticeMessage?.MessageType ), "MessageType was not equal to expected value");
     }
     
-    private static IEnumerable<TestCaseData> ClearMsgMessages() {
+    private static IEnumerable<TestCaseData> NoticeMessages() {
         yield return new TestCaseData(
             new List<string> {
-                $"foo bar baz"
+                $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             }.ToImmutableList(),
-            null
-        ).SetName("Random message should be ignored");
+            new Notice(
+                MsgId: "delete_message_success",
+                TargetUserId: ""
+            )
+        ).SetName("Message Delete Success, No User ID");
         
         yield return new TestCaseData(
             new List<string> {
-                $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
+                $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             }.ToImmutableList(),
-            new ClearMsg(
-                Login: "ronni",
-                RoomId: "",
-                TargetMessageId: "abc-123-def",
-                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" )
+            new Notice(
+                MsgId: "whisper_restricted",
+                TargetUserId: "12345678"
             )
-        ).SetName("Clear single message with Id");;
+        ).SetName("Whisper Restricted, With User ID");
     }
 }

@@ -105,14 +105,27 @@ internal sealed class TwitchConnector : ITwitchConnector {
                 Message chat = GetClearChatMessage( response, options.Channel );
                 m_messageCallback( chat );
             } else if( response.Contains( $" CLEARMSG #{options.Channel}" ) ) {
-                Message chat = GetClearMsgMessage( response, options.Channel );
+                Message chat = GetClearMsgMessage( response );
+                m_messageCallback( chat );
+            } else if( response.Contains( $" NOTICE #{options.Channel}" ) ) {
+                Message chat = GetNoticeMsgMessage( response );
                 m_messageCallback( chat );
             }
         }
     }
+    private Message GetNoticeMsgMessage(
+        string response
+    ) {
+        string targetMessageId = GetValueFromResponse( response, MsgIdPattern );
+        string targetUserId = GetValueFromResponse( response, TargetUserIdPattern );
+        
+        return new Notice(
+            MsgId: targetMessageId, 
+            TargetUserId: targetUserId 
+        );
+    }
     private Message GetClearMsgMessage(
-        string response,
-        string channel
+        string response
     ) {
         string login = LoginPattern
             .Match( response )
@@ -169,7 +182,10 @@ internal sealed class TwitchConnector : ITwitchConnector {
         );
     }
 
-    private Message GetUserMessage( string response, string channel ) {
+    private Message GetUserMessage( 
+        string response, 
+        string channel 
+    ) {
         string[] segments = response.Split( $"PRIVMSG #{channel} :" );
         
         string displayName = GetValueFromResponse( response, DisplayNamePattern );
@@ -268,7 +284,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
         if( string.IsNullOrEmpty( emotesText ) ) {
             return null;
         }
-// 25 : 0-4 , 12-16 / 1902 : 6-10
+
         List<Emote> emotes = new();
         string[] separatedRawEmotes = emotesText.Split( "/" );
 
@@ -399,5 +415,6 @@ internal sealed class TwitchConnector : ITwitchConnector {
     private readonly static Regex UserTypePattern = new("user-type=([^; ]+)");
     private readonly static Regex VipPattern = new("vip=([^;]*)");
     private readonly static Regex BanDurationPattern = new("ban-duration=([^;]*)");
-    private readonly static Regex TargetUserIdPattern = new("target-user-id=([^;]*)");
+    private readonly static Regex TargetUserIdPattern = new("target-user-id=([^ ;]*)");
+    private readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)");
 }
