@@ -23,12 +23,13 @@ public class ClearChatTests {
 
     [Test]
     [TestCaseSource(nameof(ClearChatMessages))]
-    public async Task ClearChat( IImmutableList<string> messages, Message? expectedMessage ) {
+    public async Task ClearChat( IImmutableList<string> messages, ClearChat? expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
 
         void MessageCallback(
             Message message
@@ -38,8 +39,7 @@ public class ClearChatTests {
             switch( message.MessageType ) {
                 case MessageType.ClearChat: {
                     ClearChat msg = (ClearChat)message;
-                    ClearChat? expectedPrivMessage = (ClearChat)expectedMessage;
-                    ClearChatMessageCallback( msg, expectedPrivMessage );
+                    ClearChatMessageCallback( msg, expectedMessage );
                     break;
                 }
                 case MessageType.PrivMsg:
@@ -59,7 +59,7 @@ public class ClearChatTests {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            dateTimeService: dateTimeService.Object
+            messageProcessor: messageProcessor
         );
         
         bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );

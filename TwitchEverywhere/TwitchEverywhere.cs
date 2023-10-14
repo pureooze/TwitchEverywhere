@@ -23,7 +23,7 @@ public sealed class TwitchEverywhere {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer,
             webSocketConnection: new WebSocketConnection(),
-            dateTimeService: new DateTimeService()
+            messageProcessor: new MessageProcessor( dateTimeService: new DateTimeService() )
         );
     }
 
