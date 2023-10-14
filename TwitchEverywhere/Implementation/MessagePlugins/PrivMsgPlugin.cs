@@ -27,39 +27,39 @@ public class PrivMsgPlugin : IMessagePlugin {
     ) {
         string[] segments = response.Split( $"PRIVMSG #{channel} :" );
         
-        string displayName = GetValueFromResponse( response, DisplayNamePattern );
-        string badges = GetValueFromResponse( response, BadgesPattern );
+        string displayName = GetValueFromResponse( response, MessagePluginRegex.DisplayNamePattern );
+        string badges = GetValueFromResponse( response, MessagePluginRegex.BadgesPattern );
 
-        string emotesText = GetValueFromResponse( response, EmotesPattern );
+        string emotesText = GetValueFromResponse( response, MessagePluginRegex.EmotesPattern );
         IImmutableList<Emote>? emotes = GetEmotesFromText( emotesText );
         
-        string id = GetValueFromResponse( response, IdPattern );
-        string pinnedChatPaidAmount = GetValueFromResponse( response, PinnedChatPaidAmountPattern );
-        string pinnedChatPaidCurrency = GetValueFromResponse( response, PinnedChatPaidCurrencyPattern );
-        string pinnedChatPaidExponent = GetValueFromResponse( response, PinnedChatPaidExponentPattern );
+        string id = GetValueFromResponse( response, MessagePluginRegex.IdPattern );
+        string pinnedChatPaidAmount = GetValueFromResponse( response, MessagePluginRegex.PinnedChatPaidAmountPattern );
+        string pinnedChatPaidCurrency = GetValueFromResponse( response, MessagePluginRegex.PinnedChatPaidCurrencyPattern );
+        string pinnedChatPaidExponent = GetValueFromResponse( response, MessagePluginRegex.PinnedChatPaidExponentPattern );
 
-        string pinnedChatPaidLevelText = GetValueFromResponse( response, PinnedChatPaidLevelPattern );
+        string pinnedChatPaidLevelText = GetValueFromResponse( response, MessagePluginRegex.PinnedChatPaidLevelPattern );
         PinnedChatPaidLevel? pinnedChatPaidLevel = GetPinnedChatPaidLevelType( pinnedChatPaidLevelText );
         
-        string pinnedChatPaidIsSystemMessage = GetValueFromResponse( response, PinnedChatPaidIsSystemMessagePattern );
-        string replyParentMsgId = GetValueFromResponse( response, ReplyParentMsgIdPattern );
-        string replyParentUserId = GetValueFromResponse( response, ReplyParentUserIdPattern );
-        string replyParentUserLogin = GetValueFromResponse( response, ReplyParentUserLoginPattern );        
-        string replyParentDisplayName = GetValueFromResponse( response, ReplyParentDisplayNamePattern );
-        string replyThreadParentMsg = GetValueFromResponse( response, ReplyThreadParentMsgPattern );
-        string roomId = GetValueFromResponse( response, RoomIdPattern );
-        string subscriber = GetValueFromResponse( response, SubscriberPattern );
-        string turbo = GetValueFromResponse( response, TurboPattern );
-        string userId = GetValueFromResponse( response, UserIdPattern );
+        string pinnedChatPaidIsSystemMessage = GetValueFromResponse( response, MessagePluginRegex.PinnedChatPaidIsSystemMessagePattern );
+        string replyParentMsgId = GetValueFromResponse( response, MessagePluginRegex.ReplyParentMsgIdPattern );
+        string replyParentUserId = GetValueFromResponse( response, MessagePluginRegex.ReplyParentUserIdPattern );
+        string replyParentUserLogin = GetValueFromResponse( response, MessagePluginRegex.ReplyParentUserLoginPattern );        
+        string replyParentDisplayName = GetValueFromResponse( response, MessagePluginRegex.ReplyParentDisplayNamePattern );
+        string replyThreadParentMsg = GetValueFromResponse( response, MessagePluginRegex.ReplyThreadParentMsgPattern );
+        string roomId = GetValueFromResponse( response, MessagePluginRegex.RoomIdPattern );
+        string subscriber = GetValueFromResponse( response, MessagePluginRegex.SubscriberPattern );
+        string turbo = GetValueFromResponse( response, MessagePluginRegex.TurboPattern );
+        string userId = GetValueFromResponse( response, MessagePluginRegex.UserIdPattern );
         
-        string userTypeText = GetValueFromResponse( response, UserTypePattern );
+        string userTypeText = GetValueFromResponse( response, MessagePluginRegex.UserTypePattern );
         UserType userType = GetUserType( userTypeText );
         
-        string vip = GetValueFromResponse( response, VipPattern );
-        string isMod = GetValueFromResponse( response, ModPattern );
-        string color = GetValueFromResponse( response, ColorPattern );
+        string vip = GetValueFromResponse( response, MessagePluginRegex.VipPattern );
+        string isMod = GetValueFromResponse( response, MessagePluginRegex.ModPattern );
+        string color = GetValueFromResponse( response, MessagePluginRegex.ColorPattern );
         
-        string[] bitsArray = BitsPattern
+        string[] bitsArray = MessagePluginRegex.BitsPattern
             .Match( response )
             .Value
             .Split( "=" );
@@ -73,7 +73,7 @@ public class PrivMsgPlugin : IMessagePlugin {
         IImmutableList<Badge> parsedBadges = GetBadges( badges );
 
         long rawTimestamp = Convert.ToInt64(
-            MessageTimestampPattern.Match( response ).Value
+            MessagePluginRegex.MessageTimestampPattern.Match( response ).Value
             .Split( "=" )[1]
             .TrimEnd( ';' )
         );
@@ -216,29 +216,4 @@ public class PrivMsgPlugin : IMessagePlugin {
 
         return result;
     }
-    
-    private readonly static Regex DisplayNamePattern = new("display-name([^;]*);");
-    private readonly static Regex BadgesPattern = new("badges([^;]*);");
-    private readonly static Regex BitsPattern = new("bits=([^;]*);");
-    private readonly static Regex ColorPattern = new("color=([^;]*);");
-    private readonly static Regex EmotesPattern = new("emotes=([^;]*);");
-    private readonly static Regex IdPattern = new(";id=([^;]*);");
-    private readonly static Regex ModPattern = new("mod=([^;]*);");
-    private readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)");
-    private readonly static Regex PinnedChatPaidAmountPattern = new("pinned-chat-paid-amount=([^;]*);");
-    private readonly static Regex PinnedChatPaidCurrencyPattern = new("pinned-chat-paid-currency=([^;]*);");
-    private readonly static Regex PinnedChatPaidExponentPattern = new("pinned-chat-paid-exponent=([^;]*);");
-    private readonly static Regex PinnedChatPaidLevelPattern = new("pinned-chat-paid-level=([^;]*);");
-    private readonly static Regex PinnedChatPaidIsSystemMessagePattern = new("pinned-chat-paid-is-system-message=([^;]*);");
-    private readonly static Regex RoomIdPattern = new("room-id=([^;]*);");
-    private readonly static Regex ReplyParentMsgIdPattern = new("reply-parent-msg-id=([^;]*);");
-    private readonly static Regex ReplyParentUserIdPattern = new("reply-parent-user-id=([^;]*);");
-    private readonly static Regex ReplyParentUserLoginPattern = new("reply-parent-user-login=([^;]*);");
-    private readonly static Regex ReplyParentDisplayNamePattern = new("reply-parent-display-name=([^;]*);");
-    private readonly static Regex ReplyThreadParentMsgPattern = new("reply-thread-parent-msg-id=([^;]*);");
-    private readonly static Regex SubscriberPattern = new("subscriber=([^;]*);");
-    private readonly static Regex TurboPattern = new("turbo=([^;]*);");
-    private readonly static Regex UserIdPattern = new("user-id=([^;]*);");
-    private readonly static Regex UserTypePattern = new("user-type=([^; ]+)");
-    private readonly static Regex VipPattern = new("vip=([^;]*)");
 }

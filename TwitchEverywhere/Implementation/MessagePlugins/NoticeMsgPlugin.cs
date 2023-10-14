@@ -16,8 +16,8 @@ public class NoticeMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        string targetMessageId = GetValueFromResponse( response, MsgIdPattern );
-        string targetUserId = GetValueFromResponse( response, TargetUserIdPattern );
+        string targetMessageId = GetValueFromResponse( response, MessagePluginRegex.MsgIdPattern );
+        string targetUserId = GetValueFromResponse( response, MessagePluginRegex.TargetUserIdPattern );
 
         NoticeMsgIdType targetMsgIdType = GetNoticeMsgIdType( targetMessageId );
         
@@ -208,7 +208,4 @@ public class NoticeMsgPlugin : IMessagePlugin {
             _ => NoticeMsgIdType.Undefined
         };
     }
-    
-    private readonly static Regex TargetUserIdPattern = new("target-user-id=([^ ;]*)");
-    private readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)");
 }

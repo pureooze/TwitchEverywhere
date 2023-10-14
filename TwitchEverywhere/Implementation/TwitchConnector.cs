@@ -1,6 +1,5 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.Implementation;

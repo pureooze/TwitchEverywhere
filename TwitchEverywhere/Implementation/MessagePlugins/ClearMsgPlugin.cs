@@ -16,24 +16,24 @@ public class ClearMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        string login = LoginPattern
+        string login = MessagePluginRegex.LoginPattern
             .Match( response )
             .Value
             .Split( "=" )[1]
             .TrimEnd( ';' );
         
-        string targetMessageId = TargetMessageIdPattern
+        string targetMessageId = MessagePluginRegex.TargetMessageIdPattern
             .Match( response )
             .Value
             .Split( "=" )[1]
             .TrimEnd( ';' );
         
         long rawTimestamp = Convert.ToInt64(
-            MessageTimestampPattern.Match( response ).Value
+            MessagePluginRegex.MessageTimestampPattern.Match( response ).Value
                 .Split( "=" )[1]
         );
         
-        string roomId = GetValueFromResponse( response, RoomIdPattern );
+        string roomId = GetValueFromResponse( response, MessagePluginRegex.RoomIdPattern );
 
         DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
         
@@ -60,8 +60,5 @@ public class ClearMsgPlugin : IMessagePlugin {
         return result;
     }
 
-    private readonly static Regex RoomIdPattern = new("room-id=([^;]*);");
-    private readonly static Regex LoginPattern = new("login([^;]*)");
-    private readonly static Regex TargetMessageIdPattern = new("target-msg-id([^;]*)");
-    private readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)");
+    
 }

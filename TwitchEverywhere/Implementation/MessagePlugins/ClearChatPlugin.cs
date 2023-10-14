@@ -18,12 +18,12 @@ public class ClearChatPlugin : IMessagePlugin {
     ) {
         string[] segments = response.Split( $"CLEARCHAT #{channel}" );
 
-        string duration = GetValueFromResponse( response, BanDurationPattern );
-        string roomId = GetValueFromResponse( response, RoomIdPattern );
-        string targetUserId = GetValueFromResponse( response, TargetUserIdPattern );
+        string duration = GetValueFromResponse( response, MessagePluginRegex.BanDurationPattern );
+        string roomId = GetValueFromResponse( response, MessagePluginRegex.RoomIdPattern );
+        string targetUserId = GetValueFromResponse( response, MessagePluginRegex.TargetUserIdPattern );
         
         long rawTimestamp = Convert.ToInt64(
-            MessageTimestampPattern.Match( response ).Value
+            MessagePluginRegex.MessageTimestampPattern.Match( response ).Value
                 .Split( "=" )[1]
         );
 
@@ -52,9 +52,4 @@ public class ClearChatPlugin : IMessagePlugin {
 
         return result;
     }
-    
-    private readonly static Regex BanDurationPattern = new("ban-duration=([^;]*)");
-    private readonly static Regex RoomIdPattern = new("room-id=([^;]*);");
-    private readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)");
-    private readonly static Regex TargetUserIdPattern = new("target-user-id=([^ ;]*)");
 }
