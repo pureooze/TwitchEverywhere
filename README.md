@@ -129,7 +129,7 @@ WIP
 ### Notice
 [NOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#notice-tags)
 
-[NOTICE Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/NoticeMsg.cs)
+[NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/NoticeMsg.cs)
 
 | Field        | Support |
 |--------------|---------|
