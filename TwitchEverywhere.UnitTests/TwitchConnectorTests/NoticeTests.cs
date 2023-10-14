@@ -81,7 +81,7 @@ public class NoticeTests {
                 $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             }.ToImmutableList(),
             new NoticeMsg(
-                MsgId: "delete_message_success",
+                MsgId: NoticeMsgIdType.DeleteMessageSuccess,
                 TargetUserId: ""
             )
         ).SetName("Message Delete Success, No User ID");
@@ -91,7 +91,7 @@ public class NoticeTests {
                 $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             }.ToImmutableList(),
             new NoticeMsg(
-                MsgId: "whisper_restricted",
+                MsgId: NoticeMsgIdType.WhisperRestricted,
                 TargetUserId: "12345678"
             )
         ).SetName("Whisper Restricted, With User ID");

@@ -64,6 +64,8 @@ internal class TwitchConnection {
             case MessageType.GlobalUserState:
                 break;
             case MessageType.Notice:
+                NoticeMsg noticeMsg = (NoticeMsg) message;
+                NoticeMsgCallback( noticeMsg );
                 break;
             case MessageType.RoomState:
                 break;
@@ -113,6 +115,12 @@ internal class TwitchConnection {
         Console.WriteLine( $"ClearMsg: On {clearMsg.Timestamp} the user {clearMsg.Login} had a message deleted for message {clearMsg.TargetMessageId}" );
         
         m_clearMsg.AddToBuffer( clearMsg.TargetMessageId );
+    }
+    
+    private void NoticeMsgCallback(
+        NoticeMsg noticeMsg
+    ) {      
+        Console.WriteLine( $"NoticeMsg: On {noticeMsg.MsgId} the user {noticeMsg.TargetUserId}" );
     }
 
     private async Task WriteToStore(
