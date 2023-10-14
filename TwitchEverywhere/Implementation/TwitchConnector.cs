@@ -119,7 +119,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
         string targetMessageId = GetValueFromResponse( response, MsgIdPattern );
         string targetUserId = GetValueFromResponse( response, TargetUserIdPattern );
         
-        return new Notice(
+        return new NoticeMsg(
             MsgId: targetMessageId, 
             TargetUserId: targetUserId 
         );

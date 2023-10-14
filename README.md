@@ -127,7 +127,14 @@ In order to connect you need to create an `appsettings.json` file in the root of
 WIP
 
 ### Notice
-WIP
+[NOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#notice-tags)
+
+[NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/NoticeMsg.cs)
+
+| Field        | Support |
+|--------------|---------|
+| MsgId        | ✅       |
+| TargetUserId | ✅       |
 
 ### RoomState
 WIP

@@ -37,8 +37,8 @@ public class NoticeTests {
 
             switch( message.MessageType ) {
                 case MessageType.Notice: {
-                    Notice msg = (Notice)message;
-                    Notice? expectedPrivMessage = (Notice)expectedMessage;
+                    NoticeMsg msg = (NoticeMsg)message;
+                    NoticeMsg? expectedPrivMessage = (NoticeMsg)expectedMessage;
                     NoticeMessageCallback( msg, expectedPrivMessage );
                     break;
                 }
@@ -67,12 +67,12 @@ public class NoticeTests {
     }
     
     private void NoticeMessageCallback(
-        Notice notice,
-        Notice? expectedNoticeMessage
+        NoticeMsg noticeMsg,
+        NoticeMsg? expectedNoticeMessage
     ) {
-        Assert.That( notice.MsgId, Is.EqualTo( expectedNoticeMessage?.MsgId ), "MsgId was not equal to expected value");
-        Assert.That( notice.TargetUserId, Is.EqualTo( expectedNoticeMessage?.TargetUserId ), "TargetUserId was not equal to expected value");
-        Assert.That( notice.MessageType, Is.EqualTo( expectedNoticeMessage?.MessageType ), "MessageType was not equal to expected value");
+        Assert.That( noticeMsg.MsgId, Is.EqualTo( expectedNoticeMessage?.MsgId ), "MsgId was not equal to expected value");
+        Assert.That( noticeMsg.TargetUserId, Is.EqualTo( expectedNoticeMessage?.TargetUserId ), "TargetUserId was not equal to expected value");
+        Assert.That( noticeMsg.MessageType, Is.EqualTo( expectedNoticeMessage?.MessageType ), "MessageType was not equal to expected value");
     }
     
     private static IEnumerable<TestCaseData> NoticeMessages() {
@@ -80,7 +80,7 @@ public class NoticeTests {
             new List<string> {
                 $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             }.ToImmutableList(),
-            new Notice(
+            new NoticeMsg(
                 MsgId: "delete_message_success",
                 TargetUserId: ""
             )
@@ -90,7 +90,7 @@ public class NoticeTests {
             new List<string> {
                 $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             }.ToImmutableList(),
-            new Notice(
+            new NoticeMsg(
                 MsgId: "whisper_restricted",
                 TargetUserId: "12345678"
             )
