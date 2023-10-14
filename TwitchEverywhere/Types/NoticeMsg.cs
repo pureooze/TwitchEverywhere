@@ -1,6 +1,6 @@
 namespace TwitchEverywhere.Types; 
 
-public record Notice(
+public record NoticeMsg(
     string MsgId,
     string TargetUserId
 ) : Message ( MessageType.Notice );
