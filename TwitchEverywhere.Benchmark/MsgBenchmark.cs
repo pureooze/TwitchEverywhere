@@ -23,7 +23,7 @@ public class MsgBenchmark {
         
     private ITwitchConnector m_twitchConnector;
 
-    [Params(100)]
+    [Params(500)]
     public int Iterations;
     
     [Benchmark]
@@ -72,11 +72,11 @@ public class MsgBenchmark {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
         dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
-
+    
         string baseMessage = $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :";
         IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
-
+    
         void MessageCallback(
             Message message
         ) {
@@ -112,11 +112,11 @@ public class MsgBenchmark {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
         dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
-
+    
         string baseMessage = $"@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel :";
         IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
-
+    
         void MessageCallback(
             Message message
         ) {
@@ -152,11 +152,11 @@ public class MsgBenchmark {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
         dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
-
+    
         string baseMessage = $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :";
         IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
-
+    
         void MessageCallback(
             Message message
         ) {

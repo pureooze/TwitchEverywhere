@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
-internal static class MessagePluginRegex {
+internal static class MessagePluginUtils {
     public readonly static Regex DisplayNamePattern = new("display-name([^;]*);");
     public readonly static Regex BadgesPattern = new("badges([^;]*);");
     public readonly static Regex BitsPattern = new("bits=([^;]*);");
@@ -32,4 +32,19 @@ internal static class MessagePluginRegex {
     public readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)");
     public readonly static Regex LoginPattern = new("login([^;]*)");
     public readonly static Regex TargetMessageIdPattern = new("target-msg-id([^;]*)");
+    
+    public static string GetValueFromResponse(
+        string message,
+        Regex pattern
+    ) {
+        Match match = pattern
+            .Match( message );
+
+        string result = string.Empty;
+        if( match.Success ) {
+            result = match.Value.Split( "=" )[1].TrimEnd( ';' );
+        }
+
+        return result;
+    }
 }
