@@ -107,7 +107,7 @@ public class ClearChatTests {
         
         yield return new TestCaseData(
             new List<string> {
-                $"@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #dallas :ronni"
+                $"@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel :ronni"
             }.ToImmutableList(),
             new ClearChat(
                 Duration: 350,
