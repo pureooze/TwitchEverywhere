@@ -34,7 +34,7 @@ private void MessageCallback( Message message ) {
             break;
         }
         default:
-            // This is just an example, uou can handle this case however you wish
+            // This is just an example, you can handle this case however you wish
             throw new ArgumentOutOfRangeException();
     }
 }
