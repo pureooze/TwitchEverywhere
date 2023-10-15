@@ -1,11 +1,5 @@
 namespace TwitchEverywhere.Types;
 
-public record Message {
-    protected Message(
-        MessageType messageType
-    ) {
-        MessageType = messageType;
-    }
-
-    public MessageType MessageType;
-};
+public abstract class Message {
+    public abstract MessageType MessageType { get; }
+}

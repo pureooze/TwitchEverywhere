@@ -69,13 +69,15 @@ public class ClearMsgTests {
         ClearMsg clearMsg,
         ClearMsg? expectedClearMessage
     ) {
-        Assert.That( clearMsg.Login, Is.EqualTo( expectedClearMessage?.Login ), "Login was not equal to expected value");
-        Assert.That( clearMsg.RoomId, Is.EqualTo( expectedClearMessage?.RoomId ), "RoomId was not equal to expected value");
-        Assert.That( clearMsg.TargetMessageId, Is.EqualTo( expectedClearMessage?.TargetMessageId ), "TargetMessageId was not equal to expected value");
-        Assert.That( clearMsg.Timestamp, Is.EqualTo( expectedClearMessage?.Timestamp ), "Timestamp was not equal to expected value");
-        Assert.That( clearMsg.MessageType, Is.EqualTo( expectedClearMessage?.MessageType ), "MessageType was not equal to expected value");
+        Assert.Multiple(() => {
+            Assert.That(clearMsg.Login, Is.EqualTo(expectedClearMessage?.Login), "Login was not equal to expected value");
+            Assert.That(clearMsg.RoomId, Is.EqualTo(expectedClearMessage?.RoomId), "RoomId was not equal to expected value");
+            Assert.That(clearMsg.TargetMessageId, Is.EqualTo(expectedClearMessage?.TargetMessageId), "TargetMessageId was not equal to expected value");
+            Assert.That(clearMsg.Timestamp, Is.EqualTo(expectedClearMessage?.Timestamp), "Timestamp was not equal to expected value");
+            Assert.That(clearMsg.MessageType, Is.EqualTo(expectedClearMessage?.MessageType), "MessageType was not equal to expected value");
+        });
     }
-    
+
     private static IEnumerable<TestCaseData> ClearMsgMessages() {
         yield return new TestCaseData(
             new List<string> {
@@ -89,10 +91,8 @@ public class ClearMsgTests {
                 $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
             }.ToImmutableList(),
             new ClearMsg(
-                Login: "ronni",
-                RoomId: "",
-                TargetMessageId: "abc-123-def",
-                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" )
+                channel: "channel",
+                message: $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
             )
         ).SetName("Clear single message with Id");;
     }

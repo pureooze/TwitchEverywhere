@@ -69,26 +69,26 @@ public class ClearChatTests {
     private void ClearChatMessageCallback(
         ClearChat clearChat,
         ClearChat? expectedClearChatMessage
-    ) {
-        Assert.That( clearChat.Duration, Is.EqualTo( expectedClearChatMessage?.Duration ), "Duration was not equal to expected value");
-        Assert.That( clearChat.RoomId, Is.EqualTo( expectedClearChatMessage?.RoomId ), "RoomId was not equal to expected value");
-        Assert.That( clearChat.UserId, Is.EqualTo( expectedClearChatMessage?.UserId ), "UserId was not equal to expected value");
-        Assert.That( clearChat.Timestamp, Is.EqualTo( expectedClearChatMessage?.Timestamp ), "Timestamp was not equal to expected value");
-        Assert.That( clearChat.Text, Is.EqualTo( expectedClearChatMessage?.Text ), "Text was not equal to expected value");
-        Assert.That( clearChat.MessageType, Is.EqualTo( expectedClearChatMessage?.MessageType ), "MessageType was not equal to expected value");
+    )
+    {
+        Assert.Multiple(() => {
+            Assert.That(clearChat.Duration, Is.EqualTo(expectedClearChatMessage?.Duration), "Duration was not equal to expected value");
+            Assert.That(clearChat.RoomId, Is.EqualTo(expectedClearChatMessage?.RoomId), "RoomId was not equal to expected value");
+            Assert.That(clearChat.UserId, Is.EqualTo(expectedClearChatMessage?.UserId), "UserId was not equal to expected value");
+            Assert.That(clearChat.Timestamp, Is.EqualTo(expectedClearChatMessage?.Timestamp), "Timestamp was not equal to expected value");
+            Assert.That(clearChat.Text, Is.EqualTo(expectedClearChatMessage?.Text), "Text was not equal to expected value");
+            Assert.That(clearChat.MessageType, Is.EqualTo(expectedClearChatMessage?.MessageType), "MessageType was not equal to expected value");
+        });
     }
-    
+
     private static IEnumerable<TestCaseData> ClearChatMessages() {
         yield return new TestCaseData(
             new List<string> {
                 $"@room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel :ronni"
             }.ToImmutableList(),
             new ClearChat(
-                Duration: null,
-                RoomId: "12345678",
-                UserId: "87654321",
-                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
-                Text: " :ronni"
+                channel: "channel",
+                message: $"@room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel :ronni"
             )
         ).SetName("Permanent Ban");
         
@@ -97,11 +97,8 @@ public class ClearChatTests {
                 $"@room-id=12345678;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel"
             }.ToImmutableList(),
             new ClearChat(
-                Duration: null,
-                RoomId: "12345678",
-                UserId: "",
-                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
-                Text: ""
+                channel: "channel",
+                message: $"@room-id=12345678;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel"
             )
         ).SetName("All Messages Removed");
         
@@ -110,11 +107,8 @@ public class ClearChatTests {
                 $"@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel :ronni"
             }.ToImmutableList(),
             new ClearChat(
-                Duration: 350,
-                RoomId: "12345678",
-                UserId: "87654321",
-                Timestamp: DateTime.Parse( "2017-10-05 23:36:12.675" ),
-                Text: " :ronni"
+                channel: "channel",
+                message: $"@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARCHAT #channel :ronni"
             )
         ).SetName("Timeout User And Remove All Of Their Messages");
     }

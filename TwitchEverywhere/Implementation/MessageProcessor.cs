@@ -10,10 +10,10 @@ public class MessageProcessor : IMessageProcessor {
         IDateTimeService dateTimeService
     ) {
         m_messagePlugins = new IMessagePlugin[] {
-            new PrivMsgPlugin( dateTimeService: dateTimeService ),
-            new ClearChatPlugin(),
-            new ClearMsgPlugin(),
-            new NoticeMsgPlugin()
+            new PrivMsgPlugin( dateTimeService: dateTimeService )
+            // new ClearChatPlugin(),
+            // new ClearMsgPlugin(),
+            // new NoticeMsgPlugin()
         };
     }
 

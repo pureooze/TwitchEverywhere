@@ -16,25 +16,9 @@ public class ClearChatPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        string[] segments = response.Split( $"CLEARCHAT #{channel}" );
-
-        string duration = GetValueFromResponse( response, MessagePluginRegex.BanDurationPattern );
-        string roomId = GetValueFromResponse( response, MessagePluginRegex.RoomIdPattern );
-        string targetUserId = GetValueFromResponse( response, MessagePluginRegex.TargetUserIdPattern );
-        
-        long rawTimestamp = Convert.ToInt64(
-            MessagePluginRegex.MessageTimestampPattern.Match( response ).Value
-                .Split( "=" )[1]
-        );
-
-        DateTime messageTimestamp = DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
-
         return new ClearChat(
-            Duration: string.IsNullOrEmpty( duration ) ? null : long.Parse( duration ),
-            RoomId: roomId,
-            UserId: targetUserId,
-            Timestamp: messageTimestamp,
-            Text: segments[1]
+            channel: channel,
+            message: response
         );
     }
     
