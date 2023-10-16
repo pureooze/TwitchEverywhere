@@ -5,9 +5,11 @@ namespace TwitchEverywhere.Implementation.MessagePlugins;
 internal static class MessagePluginUtils {
     public readonly static Regex DisplayNamePattern = new("display-name([^;]*);");
     public readonly static Regex BadgesPattern = new("badges([^;]*);");
+    public readonly static Regex BadgeInfoPattern = new("badge-info([^;]*);");
     public readonly static Regex BitsPattern = new("bits=([^;]*);");
     public readonly static Regex ColorPattern = new("color=([^;]*);");
     public readonly static Regex EmotesPattern = new("emotes=([^;]*);");
+    public readonly static Regex EmoteSetsPattern = new("emote-sets=([^;]*);");
     public readonly static Regex IdPattern = new(";id=([^;]*);");
     public readonly static Regex ModPattern = new("mod=([^;]*);");
     public readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)");
