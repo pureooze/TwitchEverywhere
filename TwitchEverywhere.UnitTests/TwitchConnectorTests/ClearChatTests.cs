@@ -69,8 +69,7 @@ public class ClearChatTests {
     private void ClearChatMessageCallback(
         ClearChat clearChat,
         ClearChat? expectedClearChatMessage
-    )
-    {
+    ) {
         Assert.Multiple(() => {
             Assert.That(clearChat.Duration, Is.EqualTo(expectedClearChatMessage?.Duration), "Duration was not equal to expected value");
             Assert.That(clearChat.RoomId, Is.EqualTo(expectedClearChatMessage?.RoomId), "RoomId was not equal to expected value");

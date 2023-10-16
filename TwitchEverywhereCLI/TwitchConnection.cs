@@ -87,7 +87,7 @@ internal class TwitchConnection {
             await WriteToStore( m_messageBuffer, MessageType.PrivMsg );
         }
         
-        Console.WriteLine( $"Message: {privMsg}" );
+        Console.WriteLine( $"Message: {privMsg.Text}" );
         m_messageBuffer.AddToBuffer( privMsg.Text );
     }
 

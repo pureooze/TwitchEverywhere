@@ -65,6 +65,21 @@ In order to connect you need to create an `appsettings.json` file in the root of
 }
 ```
 
+## Performance
+The benchmarks in the [TwitchEverywhere.Benchmark](https://github.com/pureooze/TwitchEverywhere/tree/main/TwitchEverywhere.Benchmark) solution use the [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet/tree/master) library. You can read more about the methodology that BenchmarkDotNet uses [here](https://github.com/dotnet/BenchmarkDotNet/tree/master#features).
+
+We send 500 messages of each type to `TwitchEverywhere` and run it several times to determine an average. The results are below:
+
+| Method                 | Iterations |    Mean |    Error |   StdDev |  Allocated |
+|------------------------|------------|--------:|---------:|---------:|-----------:|
+| PrivMsg                | 500        | 7.548 s | 0.1517 s | 0.4473 s | 1693.96 KB |
+| ClearMsg               | 500        | 7.232 s | 0.1001 s | 0.0936 s |  687.69 KB |
+| ClearChat              | 500        | 6.242 s | 0.0269 s | 0.0225 s |  718.94 KB |
+| NoticeMsg              | 500        | 6.249 s | 0.0268 s | 0.0251 s |  628.95 KB |
+| GlobalUserStateMessage | 500        | 7.370 s | 0.1589 s | 0.4686 s |   951.7 KB |
+
+
+
 ## Supported Functionality
 
 ### PRIVMSG
@@ -124,7 +139,20 @@ In order to connect you need to create an `appsettings.json` file in the root of
 | Timestamp       | ✅       |
 
 ### GlobalUserState
-WIP
+[GLOBALUSERSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#globaluserstate-tags)
+
+[GlobalUserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/GlobalUserState.cs)
+
+| Field       | Support |
+|-------------|---------|
+| BadgeInfo   | ✅       |
+| Badges      | ✅       |
+| Color       | ✅       |
+| DisplayName | ✅       |
+| EmoteSets   | ✅       |
+| Turbo       | ✅       |
+| UserId      | ✅       |
+| UserType    | ✅       |
 
 ### Notice
 [NOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#notice-tags)
