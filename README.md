@@ -1,20 +1,19 @@
 # TwitchEverywhere
 
 <!-- TOC -->
-* [TwitchEverywhere](#twitcheverywhere)
-  * [How To Use It](#how-to-use-it)
-  * [Sample CLI App](#sample-cli-app)
-  * [Performance](#performance)
-  * [Supported Functionality](#supported-functionality)
-    * [PRIVMSG](#privmsg)
-    * [CLEARCHAT](#clearchat)
-    * [CLEARMSG](#clearmsg)
-    * [GlobalUserState](#globaluserstate)
-    * [Notice](#notice)
-    * [RoomState](#roomstate)
-    * [UserNotice](#usernotice)
-    * [UserState](#userstate)
-    * [Whisper](#whisper)
+* [How To Use It](#how-to-use-it)
+* [Sample CLI App](#sample-cli-app)
+* [Performance](#performance)
+* [Supported Functionality](#supported-functionality)
+  * [PRIVMSG](#privmsg)
+  * [CLEARCHAT](#clearchat)
+  * [CLEARMSG](#clearmsg)
+  * [GlobalUserState](#globaluserstate)
+  * [Notice](#notice)
+  * [RoomState](#roomstate)
+  * [UserNotice](#usernotice)
+  * [UserState](#userstate)
+  * [Whisper](#whisper)
 <!-- TOC -->
 
 `TwitchEverywhere` is a .NET Core (6 and 7) library that allows connecting to a Twitch chat and subscribing to messages in that chat.
