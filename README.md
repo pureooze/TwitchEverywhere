@@ -181,7 +181,18 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | TargetUserId | ✅       |
 
 ### RoomState
-WIP
+[ROOMSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#roomstate-tags)
+
+[RoomState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/RoomStateMsg.cs)
+
+| Field         | Support |
+|---------------|---------|
+| EmoteOnly     | ✅       |
+| FollowersOnly | ✅       |
+| R9K           | ✅       |
+| RoomId        | ✅       |
+| Slow          | ✅       |
+| SubsOnly      | ✅       |
 
 ### UserNotice
 WIP
