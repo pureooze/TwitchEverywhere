@@ -9,5 +9,6 @@ public enum MessageType {
     RoomState,
     UserNotice,
     UserState,
-    Whisper
+    Whisper,
+    Unknown
 }

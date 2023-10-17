@@ -2,19 +2,19 @@ using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
-public class GlobalUserStatePlugin : IMessagePlugin {
+public class UnknownMsgPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
         string response,
         string channel
     ) {
-        return response.Contains( $" GLOBALUSERSTATE" );
+        return true;
     }
-
+    
     Message IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new GlobalUserState( message: response );
+        return new UnknownMessage( response );
     }
 }

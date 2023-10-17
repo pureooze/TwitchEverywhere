@@ -22,7 +22,7 @@ public class PrivMsgTests {
 
     [Test]
     [TestCaseSource(sourceName: nameof(PrivMsgMessages))]
-    public async Task PrivMsg( IImmutableList<string> messages, PrivMsg? expectedMessage ) {
+    public async Task PrivMsg( IImmutableList<string> messages, PrivMsg expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
         dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
@@ -33,25 +33,11 @@ public class PrivMsgTests {
         void MessageCallback(
             Message message
         ) {
-            Assert.That( actual: message, expression: Is.Not.Null );
+            Assert.That( message, Is.Not.Null );
+            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            switch( message.MessageType ) {
-                case MessageType.PrivMsg: {
-                    PrivMsg msg = (PrivMsg)message;
-                    PrivMessageCallback( privMsg: msg, expectedPrivMessage: expectedMessage );
-                    break;
-                }
-                case MessageType.ClearChat:
-                case MessageType.ClearMsg:
-                case MessageType.GlobalUserState:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            PrivMsg msg = (PrivMsg)message;
+            PrivMessageCallback( privMsg: msg, expectedPrivMessage: expectedMessage );
         }
         
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
@@ -98,13 +84,6 @@ public class PrivMsgTests {
     }
     
     private static IEnumerable<TestCaseData> PrivMsgMessages() {
-        yield return new TestCaseData(
-            new List<string> {
-                $"foo bar baz"
-            }.ToImmutableList(),
-            null
-        ).SetName("Random message should be ignored");
-        
         yield return new TestCaseData(
             new List<string> {
                 $"@badge-info=;badges=turbo/1;color=#0D4200;display-name=ronni;emotes=25:0-4,12-16/1902:6-10;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=1337;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=1337;user-type=global_mod :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :Kappa Keepo Kappa"

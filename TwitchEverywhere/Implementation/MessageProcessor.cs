@@ -9,11 +9,15 @@ public class MessageProcessor : IMessageProcessor {
     public MessageProcessor(
         IDateTimeService dateTimeService
     ) {
+        // TODO: use Dependency Injection
         m_messagePlugins = new IMessagePlugin[] {
-            new PrivMsgPlugin( dateTimeService: dateTimeService )
-            // new ClearChatPlugin(),
-            // new ClearMsgPlugin(),
-            // new NoticeMsgPlugin()
+            new PrivMsgPlugin( dateTimeService: dateTimeService ),
+            new ClearChatPlugin(),
+            new ClearMsgPlugin(),
+            new NoticeMsgPlugin(),
+            new GlobalUserStatePlugin(),
+            new RoomStateMsgPlugin(),
+            new UnknownMsgPlugin()
         };
     }
 
@@ -30,6 +34,7 @@ public class MessageProcessor : IMessageProcessor {
 
             Message message = messagePlugin.GetMessageData( response, channel );
             callback( message );
+            break;
         }
     }
 }

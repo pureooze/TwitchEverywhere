@@ -59,7 +59,7 @@ internal class TestWebSocketConnection : IWebSocketConnection {
         return await Task.FromResult(
             new WebSocketReceiveResult(
                 count: 0, // Number of bytes received
-                messageType: WebSocketMessageType.Text, // Message type
+                messageType: WebSocketMessageType.Close, // Message type
                 endOfMessage: true
             )
         );
