@@ -68,6 +68,15 @@ public class UnknownMessageTests {
             new UnknownMessage(
                 message: $"foo bar baz"
             )
-        ).SetName("After user authenticated ");
+        ).SetName("Ignore messages with invalid format");
+        
+        yield return new TestCaseData(
+            new List<string> {
+                $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
+            }.ToImmutableList(),
+            new UnknownMessage(
+                message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
+            )
+        ).SetName("Ignore messages missing channel when its required");
     }
 }
