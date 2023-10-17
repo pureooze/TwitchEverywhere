@@ -3,13 +3,19 @@ using System.Text.RegularExpressions;
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
 internal static class MessagePluginUtils {
+    
+    // When we drop .NET 6 these can use the GeneratedRegex source generator
+    // https://devblogs.microsoft.com/dotnet/regular-expression-improvements-in-dotnet-7/
+    
     public readonly static Regex DisplayNamePattern = new("display-name([^;]*);");
     public readonly static Regex BadgesPattern = new("badges([^;]*);");
     public readonly static Regex BadgeInfoPattern = new("badge-info([^;]*);");
     public readonly static Regex BitsPattern = new("bits=([^;]*);");
     public readonly static Regex ColorPattern = new("color=([^;]*);");
     public readonly static Regex EmotesPattern = new("emotes=([^;]*);");
+    public readonly static Regex EmoteOnlyPattern = new("emote-only=([^;]*);");
     public readonly static Regex EmoteSetsPattern = new("emote-sets=([^;]*);");
+    public readonly static Regex FollowersOnlyPattern = new("followers-only=([^;]*);");
     public readonly static Regex IdPattern = new(";id=([^;]*);");
     public readonly static Regex ModPattern = new("mod=([^;]*);");
     public readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)");
@@ -34,6 +40,9 @@ internal static class MessagePluginUtils {
     public readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)");
     public readonly static Regex LoginPattern = new("login([^;]*)");
     public readonly static Regex TargetMessageIdPattern = new("target-msg-id([^;]*)");
+    public readonly static Regex R9KPattern = new("r9k([^ ;]*)");
+    public readonly static Regex SlowPattern = new("slow([^ ;]*)");
+    public readonly static Regex SubsOnlyPattern = new("subs-only([^ ;]*)");
     
     public static string GetValueFromResponse(
         string message,

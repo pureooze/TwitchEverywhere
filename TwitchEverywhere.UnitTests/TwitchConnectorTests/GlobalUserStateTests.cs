@@ -22,7 +22,7 @@ public class GlobalUserStateTests {
     
     [Test]
     [TestCaseSource(nameof(GlobalUserStateMessages))]
-    public async Task ClearChat( IImmutableList<string> messages, GlobalUserState? expectedMessage ) {
+    public async Task ClearChat( IImmutableList<string> messages, GlobalUserState expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -34,24 +34,10 @@ public class GlobalUserStateTests {
             Message message
         ) {
             Assert.That( message, Is.Not.Null );
+            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            switch( message.MessageType ) {
-                case MessageType.GlobalUserState: {
-                    GlobalUserState msg = (GlobalUserState)message;
-                    GlobalUserStateMessageCallback( msg, expectedMessage );
-                    break;
-                }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            GlobalUserState msg = (GlobalUserState)message;
+            GlobalUserStateMessageCallback( msg, expectedMessage );
         }
         
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );

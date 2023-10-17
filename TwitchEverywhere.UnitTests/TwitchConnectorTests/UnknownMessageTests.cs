@@ -3,10 +3,9 @@ using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 
-namespace TwitchEverywhere.UnitTests.TwitchConnectorTests;
+namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
-[TestFixture]
-public class ClearMsgTests {
+public class UnknownMessageTests {
     private readonly TwitchConnectionOptions m_options = new(
         "channel",
         "access_token",
@@ -19,10 +18,10 @@ public class ClearMsgTests {
     private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds(1507246572675).UtcDateTime;
         
     private ITwitchConnector m_twitchConnector;
-
+    
     [Test]
-    [TestCaseSource(nameof(ClearMsgMessages))]
-    public async Task ClearMsg( IImmutableList<string> messages, ClearMsg expectedMessage ) {
+    [TestCaseSource(nameof(UnknownMessageMessages))]
+    public async Task ClearChat( IImmutableList<string> messages, UnknownMessage expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -36,8 +35,8 @@ public class ClearMsgTests {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            ClearMsg msg = (ClearMsg)message;
-            ClearMsgMessageCallback( msg, expectedMessage );
+            UnknownMessage msg = (UnknownMessage)message;
+            UnknownMessageCallback( msg, expectedMessage );
         }
         
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
@@ -51,28 +50,33 @@ public class ClearMsgTests {
         Assert.That( result, Is.True );
     }
     
-    private void ClearMsgMessageCallback(
-        ClearMsg clearMsg,
-        ClearMsg? expectedClearMessage
+    private void UnknownMessageCallback(
+        UnknownMessage globalUserState,
+        UnknownMessage? expectedGlobalUserState
     ) {
         Assert.Multiple(() => {
-            Assert.That(clearMsg.Login, Is.EqualTo(expectedClearMessage?.Login), "Login was not equal to expected value");
-            Assert.That(clearMsg.RoomId, Is.EqualTo(expectedClearMessage?.RoomId), "RoomId was not equal to expected value");
-            Assert.That(clearMsg.TargetMessageId, Is.EqualTo(expectedClearMessage?.TargetMessageId), "TargetMessageId was not equal to expected value");
-            Assert.That(clearMsg.Timestamp, Is.EqualTo(expectedClearMessage?.Timestamp), "Timestamp was not equal to expected value");
-            Assert.That(clearMsg.MessageType, Is.EqualTo(expectedClearMessage?.MessageType), "MessageType was not equal to expected value");
+            Assert.That(globalUserState.Message, Is.EqualTo(expectedGlobalUserState?.Message), "Message was not equal to expected value");
+            Assert.That(globalUserState.MessageType, Is.EqualTo(expectedGlobalUserState?.MessageType), "MessageType was not equal to expected value");
         });
     }
-
-    private static IEnumerable<TestCaseData> ClearMsgMessages() {
+    
+    private static IEnumerable<TestCaseData> UnknownMessageMessages() {
         yield return new TestCaseData(
             new List<string> {
-                $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
+                $"foo bar baz"
             }.ToImmutableList(),
-            new ClearMsg(
-                channel: "channel",
-                message: $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
+            new UnknownMessage(
+                message: $"foo bar baz"
             )
-        ).SetName("Clear single message with Id");;
+        ).SetName("Ignore messages with invalid format");
+        
+        yield return new TestCaseData(
+            new List<string> {
+                $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
+            }.ToImmutableList(),
+            new UnknownMessage(
+                message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
+            )
+        ).SetName("Ignore messages missing channel when its required");
     }
 }

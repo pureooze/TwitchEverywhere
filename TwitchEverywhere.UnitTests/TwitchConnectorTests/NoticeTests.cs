@@ -23,7 +23,7 @@ public class NoticeTests {
 
     [Test]
     [TestCaseSource(nameof(NoticeMessages))]
-    public async Task Notice( IImmutableList<string> messages, NoticeMsg? expectedMessage ) {
+    public async Task Notice( IImmutableList<string> messages, NoticeMsg expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -35,24 +35,10 @@ public class NoticeTests {
             Message message
         ) {
             Assert.That( message, Is.Not.Null );
+            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            switch( message.MessageType ) {
-                case MessageType.Notice: {
-                    NoticeMsg msg = (NoticeMsg)message;
-                    NoticeMessageCallback( msg, expectedMessage );
-                    break;
-                }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.GlobalUserState:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            NoticeMsg msg = (NoticeMsg)message;
+            NoticeMessageCallback( msg, expectedMessage );
         }
         
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );

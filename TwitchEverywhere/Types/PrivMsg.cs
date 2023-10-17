@@ -56,7 +56,7 @@ public class PrivMsg : Message {
 
     public long? PinnedChatPaidAmount {
         get {
-            string pinnedChatPaidAmount = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.PinnedChatPaidExponentPattern );
+            string pinnedChatPaidAmount = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.PinnedChatPaidAmountPattern );
             return string.IsNullOrEmpty( pinnedChatPaidAmount ) ? null : long.Parse( pinnedChatPaidAmount );
         }
     }
