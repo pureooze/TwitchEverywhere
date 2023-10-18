@@ -17,6 +17,7 @@ public class MessageProcessor : IMessageProcessor {
             new NoticeMsgPlugin(),
             new GlobalUserStatePlugin(),
             new RoomStateMsgPlugin(),
+            new WhisperMsgPlugin(),
             new UnknownMsgPlugin()
         };
     }

@@ -132,7 +132,7 @@ public class PrivMsg : Message {
         };
     }
 
-    private IImmutableList<Emote>? GetEmotesFromText(
+    private static IImmutableList<Emote>? GetEmotesFromText(
         string emotesText
     ) {
 
