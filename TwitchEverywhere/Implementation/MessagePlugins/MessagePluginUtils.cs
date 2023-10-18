@@ -17,6 +17,7 @@ internal static class MessagePluginUtils {
     public readonly static Regex EmoteSetsPattern = new("emote-sets=([^;]*);");
     public readonly static Regex FollowersOnlyPattern = new("followers-only=([^;]*);");
     public readonly static Regex IdPattern = new(";id=([^;]*);");
+    public readonly static Regex MessageIdPattern = new("message-id=([^;]*);");
     public readonly static Regex ModPattern = new("mod=([^;]*);");
     public readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)");
     public readonly static Regex PinnedChatPaidAmountPattern = new("pinned-chat-paid-amount=([^;]*);");
@@ -37,6 +38,7 @@ internal static class MessagePluginUtils {
     public readonly static Regex VipPattern = new("vip=([^;]*)");
     public readonly static Regex BanDurationPattern = new("ban-duration=([^;]*)");
     public readonly static Regex TargetUserIdPattern = new("target-user-id=([^ ;]*)");
+    public readonly static Regex ThreadIdPattern = new("thread-id=([^;]*);");
     public readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)");
     public readonly static Regex LoginPattern = new("login([^;]*)");
     public readonly static Regex TargetMessageIdPattern = new("target-msg-id([^;]*)");
