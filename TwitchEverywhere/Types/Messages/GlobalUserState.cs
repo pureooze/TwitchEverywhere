@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using TwitchEverywhere.Implementation.MessagePlugins;
 
-namespace TwitchEverywhere.Types; 
+namespace TwitchEverywhere.Types.Messages; 
 
 public class GlobalUserState : Message {
     private readonly string m_message;

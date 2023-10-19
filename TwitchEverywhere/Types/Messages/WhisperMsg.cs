@@ -1,9 +1,8 @@
 using System.Collections.Immutable;
 using TwitchEverywhere.Implementation.MessagePlugins;
 
-namespace TwitchEverywhere.Types; 
+namespace TwitchEverywhere.Types.Messages; 
 
-// @badges=<badges>;color=<color>;display-name=<display-name>;emotes=<emotes>;message-id=<msg-id>;thread-id=<thread-id>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>
 public class WhisperMsg : Message {
     private readonly string m_message;
 
@@ -34,7 +33,7 @@ public class WhisperMsg : Message {
         }
     }
     
-    public string Id => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MessageIdPattern );
+    public string MsgId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MessageIdPattern );
     
     public string ThreadId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ThreadIdPattern );
     

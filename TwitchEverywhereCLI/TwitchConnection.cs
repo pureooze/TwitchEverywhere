@@ -1,6 +1,7 @@
 using System.Text;
 using TwitchEverywhere;
 using TwitchEverywhere.Types;
+using TwitchEverywhere.Types.Messages;
 using TwitchEverywhereCLI.Implementation;
 
 namespace TwitchEverywhereCLI; 
