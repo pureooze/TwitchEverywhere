@@ -1,4 +1,4 @@
-namespace TwitchEverywhere.Types; 
+namespace TwitchEverywhere.Types.Messages; 
 
 public class UnknownMessage : Message {
 

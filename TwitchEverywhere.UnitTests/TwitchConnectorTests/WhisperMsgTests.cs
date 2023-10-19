@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
+using TwitchEverywhere.Types.Messages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
@@ -59,7 +60,7 @@ public class WhisperMsgTests {
             Assert.That(whisperMsg.Badges, Is.EqualTo(expectedWhisperMsgMessage?.Badges), "Badges was not equal to expected value");
             Assert.That(whisperMsg.Color, Is.EqualTo(expectedWhisperMsgMessage?.Color), "Color was not equal to expected value");
             Assert.That(whisperMsg.DisplayName, Is.EqualTo(expectedWhisperMsgMessage?.DisplayName), "DisplayName was not equal to expected value");
-            Assert.That(whisperMsg.Id, Is.EqualTo(expectedWhisperMsgMessage?.Id), "Id was not equal to expected value");
+            Assert.That(whisperMsg.MsgId, Is.EqualTo(expectedWhisperMsgMessage?.MsgId), "Id was not equal to expected value");
             Assert.That(whisperMsg.ThreadId, Is.EqualTo(expectedWhisperMsgMessage?.ThreadId), "ThreadId was not equal to expected value");
             Assert.That(whisperMsg.Turbo, Is.EqualTo(expectedWhisperMsgMessage?.Turbo), "Turbo was not equal to expected value");
             Assert.That(whisperMsg.UserType, Is.EqualTo(expectedWhisperMsgMessage?.UserType), "UserType was not equal to expected value");

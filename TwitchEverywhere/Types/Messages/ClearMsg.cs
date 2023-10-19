@@ -1,6 +1,6 @@
 ﻿using TwitchEverywhere.Implementation.MessagePlugins;
 
-namespace TwitchEverywhere.Types; 
+namespace TwitchEverywhere.Types.Messages; 
 
 public class ClearMsg : Message {
     private readonly string m_channel;

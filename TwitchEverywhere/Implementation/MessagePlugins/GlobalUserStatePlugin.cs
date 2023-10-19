@@ -1,4 +1,5 @@
 using TwitchEverywhere.Types;
+using TwitchEverywhere.Types.Messages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 

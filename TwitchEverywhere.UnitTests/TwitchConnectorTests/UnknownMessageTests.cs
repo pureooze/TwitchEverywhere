@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
+using TwitchEverywhere.Types.Messages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
