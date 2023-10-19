@@ -105,7 +105,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 ### PRIVMSG
 [PRIVMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#privmsg-tags)
 
-[PrivMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/PrivMsg.cs)
+[PrivMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/PrivMsg.cs)
 
 | Field                         | Support |
 |-------------------------------|---------|
@@ -137,7 +137,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 ### CLEARCHAT
 [CLEARCHAT Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearchat-tags)
 
-[ClearChat Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/ClearChat.cs)
+[ClearChat Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearChat.cs)
 
 | Field        | Support |
 |--------------|---------|
@@ -149,7 +149,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 ### CLEARMSG
 [CLEARMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearmsg-tags)
 
-[ClearMSG Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/ClearMsg.cs)
+[ClearMSG Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearMsg.cs)
 
 | Field           | Support |
 |-----------------|---------|
@@ -161,7 +161,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 ### GlobalUserState
 [GLOBALUSERSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#globaluserstate-tags)
 
-[GlobalUserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/GlobalUserState.cs)
+[GlobalUserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/GlobalUserState.cs)
 
 | Field       | Support |
 |-------------|---------|
@@ -177,7 +177,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 ### Notice
 [NOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#notice-tags)
 
-[NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/NoticeMsg.cs)
+[NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/NoticeMsg.cs)
 
 | Field        | Support |
 |--------------|---------|
@@ -187,7 +187,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 ### RoomState
 [ROOMSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#roomstate-tags)
 
-[RoomState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/RoomStateMsg.cs)
+[RoomState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/RoomStateMsg.cs)
 
 | Field         | Support |
 |---------------|---------|
@@ -199,10 +199,45 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | SubsOnly      | ✅       |
 
 ### UserNotice
-WIP
+[USERNOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#usernotice-tags)
+
+[UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserNotice.cs)
+
+| Field         | Support |
+|--------------- |---------|
+| BadgeInfo     | ✅      |
+| Badges        | ✅      |
+| Color         | ✅      |
+| DisplayName   | ✅      |
+| Emotes        | ✅      |
+| Id            | ✅      |
+| Login         | ✅      |
+| Mod           | ✅      |
+| MsgId         | ✅      |
+| RoomId        | ✅      |
+| Subscriber    | ✅      |
+| SystemMsg     | ✅      |
+| TmiSentTs     | ✅      |
+| Turbo         | ✅      |
+| UserId        | ✅      |
+| UserType       | ✅      |
 
 ### UserState
 WIP
 
 ### Whisper
-WIP
+[WHISPER Twitch API](https://dev.twitch.tv/docs/irc/tags/#whisper-tags)
+
+[UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/WhisperMsg.cs)
+
+| Field       | Support |
+|-------------|---------|
+| Badges      | ✅       |
+| Color       | ✅       |
+| DisplayName | ✅       |
+| Emotes      | ✅       |
+| MessageId   | ✅       |
+| ThreadId    | ✅       |
+| Turbo       | ✅       |
+| UserId      | ✅       |
+| UserType    | ✅       |
