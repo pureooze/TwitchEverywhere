@@ -31,12 +31,12 @@ public class MsgBenchmark {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
         dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
-
+    
         string baseMessage =
             "@badge-info=;badges=turbo/1;color=#0D4200;display-name=ronni;emotes=25:0-4,12-16/1902:6-10;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=1337;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=1337;user-type=global_mod :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :";
         IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
-
+    
         void MessageCallback(
             Message message
         ) {
@@ -289,6 +289,46 @@ public class MsgBenchmark {
                 case MessageType.ClearChat:
                 case MessageType.Notice:
                 case MessageType.RoomState:
+                case MessageType.Whisper:
+                case MessageType.UserState:
+                case MessageType.GlobalUserState:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+    }
+    
+    [Benchmark]
+    public async Task RoomStateMessage() {
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
+    
+        string baseMessage = $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #channel";
+        IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+    
+        void MessageCallback(
+            Message message
+        ) {
+            switch( message.MessageType ) {
+                case MessageType.RoomState: {
+                    break;
+                }
+                case MessageType.PrivMsg:
+                case MessageType.ClearMsg:
+                case MessageType.ClearChat:
+                case MessageType.Notice:
+                case MessageType.UserNotice:
                 case MessageType.Whisper:
                 case MessageType.UserState:
                 case MessageType.GlobalUserState:

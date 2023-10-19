@@ -93,6 +93,10 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | ClearChat              | 500        | 6.242 s | 0.0269 s | 0.0225 s |  718.94 KB |
 | NoticeMsg              | 500        | 6.249 s | 0.0268 s | 0.0251 s |  628.95 KB |
 | GlobalUserStateMessage | 500        | 7.370 s | 0.1589 s | 0.4686 s |   951.7 KB |
+| RoomStateMessage       | 500        | 7.891 s | 0.0147 s | 0.0130 s |  774.07 KB |
+| WhisperMessage         | 500        | 7.636 s | 0.1504 s | 0.3003 s |    1.08 MB |
+| UserNoticeMessage      | 500        | 6.291 s | 0.0400 s | 0.0375 s |    1.74 MB |
+
 
 
 

@@ -3,7 +3,6 @@ using TwitchEverywhere.Implementation.MessagePlugins;
 
 namespace TwitchEverywhere.Types.Messages; 
 
-// @badges=<badges>;color=<color>;display-name=<display-name>;emotes=<emotes>;message-id=<msg-id>;thread-id=<thread-id>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>
 public class WhisperMsg : Message {
     private readonly string m_message;
 
