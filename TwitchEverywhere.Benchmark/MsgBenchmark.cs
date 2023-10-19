@@ -226,4 +226,84 @@ public class MsgBenchmark {
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
     }
+    
+    [Benchmark]
+    public async Task WhisperMessage() {
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
+    
+        string baseMessage = $"@badges=staff/1,bits-charity/1;color=#8A2BE2;display-name=PetsgomOO;emotes=;message-id=306;thread-id=12345678_87654321;turbo=0;user-id=87654321;user-type=staff :petsgomoo!petsgomoo@petsgomoo.tmi.twitch.tv WHISPER foo :hello";
+        IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+    
+        void MessageCallback(
+            Message message
+        ) {
+            switch( message.MessageType ) {
+                case MessageType.Whisper: {
+                    break;
+                }
+                case MessageType.PrivMsg:
+                case MessageType.ClearMsg:
+                case MessageType.ClearChat:
+                case MessageType.Notice:
+                case MessageType.RoomState:
+                case MessageType.UserNotice:
+                case MessageType.UserState:
+                case MessageType.GlobalUserState:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+    }
+    
+    [Benchmark]
+    public async Task UserNoticeMessage() {
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
+    
+        string baseMessage = $"@badge-info=;badges=staff/1,broadcaster/1,turbo/1;color=#008000;display-name=ronni;emotes=;id=db25007f-7a18-43eb-9379-80131e44d633;login=ronni;mod=0;msg-id=resub;msg-param-cumulative-months=6;msg-param-streak-months=2;msg-param-should-share-streak=1;msg-param-sub-plan=Prime;msg-param-sub-plan-name=Prime;room-id=12345678;subscriber=1;system-msg=ronni\\shas\\ssubscribed\\sfor\\s6\\smonths!;tmi-sent-ts=1507246572675;turbo=1;user-id=87654321;user-type=staff :tmi.twitch.tv USERNOTICE #channel :";
+        IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+    
+        void MessageCallback(
+            Message message
+        ) {
+            switch( message.MessageType ) {
+                case MessageType.UserNotice: {
+                    break;
+                }
+                case MessageType.PrivMsg:
+                case MessageType.ClearMsg:
+                case MessageType.ClearChat:
+                case MessageType.Notice:
+                case MessageType.RoomState:
+                case MessageType.Whisper:
+                case MessageType.UserState:
+                case MessageType.GlobalUserState:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+    }
 }
