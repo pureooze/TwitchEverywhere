@@ -20,7 +20,7 @@
     * [Whisper](#whisper)
 <!-- TOC -->
 
-`TwitchEverywhere` is a .NET Core (6 and 7) library that allows connecting to a Twitch chat and subscribing to messages in that chat.
+`TwitchEverywhere` is a .NET (6 and 7) library that allows connecting to a Twitch chat and subscribing to messages in that chat.
 
 The goal of this library is to provide a lightweight, strongly typed API for clients so they can avoid parsing raw strings as much as possible.
 Additionally, Twitch requires an authenticated connection to the IRC server which can get a bit complicated to setup and maintain. 
@@ -102,7 +102,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | `UserNoticeMessage`      | `500`      | `6.291 s` | `0.0400 s` | `0.0375 s` |    `1.74 MB` |
 | `JoinMsg`                | `500`      | `7.968 s` | `0.0348 s` | `0.0326 s` |  `557.64 KB` |
 | `PartMsg`                | `500`      | `7.996 s` | `0.1551 s` | `0.2548 s` |  `585.02 KB` |
-
+| `HostTargetMsg`          | `500`      | `7.885 s` | `0.0234 s` | `0.0207 s` |  `624.19 KB` |
 
 
 ## Supported Functionality

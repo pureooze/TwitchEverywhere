@@ -14,6 +14,9 @@ public class MessageProcessor : IMessageProcessor {
             new JoinMsgPlugin(),
             new PartMsgPlugin(),
             
+            // Commands
+            new HostTargetMsgPlugin(),
+            
             // IRC Tags
             new PrivMsgPlugin( dateTimeService: dateTimeService ),
             new ClearChatPlugin(),
