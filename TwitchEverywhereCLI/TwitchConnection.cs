@@ -63,18 +63,30 @@ internal class TwitchConnection {
                 break;
             }
             case MessageType.GlobalUserState:
+                GlobalUserState globalUserStateMsg = (GlobalUserState) message;
+                Console.WriteLine( $"GlobalUserState: {globalUserStateMsg.UserId}, {globalUserStateMsg.UserType}, {globalUserStateMsg.DisplayName}" );
                 break;
             case MessageType.Notice:
                 NoticeMsg noticeMsg = (NoticeMsg) message;
                 NoticeMsgCallback( noticeMsg );
                 break;
             case MessageType.RoomState:
+                RoomStateMsg roomStateMsg = (RoomStateMsg) message;
+                Console.WriteLine( $"RoomStateMsg: {roomStateMsg.RoomId}, {roomStateMsg.R9K}, {roomStateMsg.Slow}" );
                 break;
             case MessageType.UserNotice:
+                UserNotice userNoticeMsg = (UserNotice) message;
+                Console.WriteLine( $"UserNotice: {userNoticeMsg}" );
                 break;
             case MessageType.UserState:
                 break;
             case MessageType.Whisper:
+                WhisperMsg whisperMsg = (WhisperMsg) message;
+                Console.WriteLine( $"WhisperMsg: {whisperMsg}" );
+                break;
+            case MessageType.Unknown:
+                UnknownMessage unknownMsg = (UnknownMessage) message;
+                Console.WriteLine( $"UnknownMessage: {unknownMsg.Message}" );
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
