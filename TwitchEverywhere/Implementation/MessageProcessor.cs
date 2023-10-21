@@ -14,10 +14,7 @@ public class MessageProcessor : IMessageProcessor {
             new JoinMsgPlugin(),
             new PartMsgPlugin(),
             
-            // Commands
-            new HostTargetMsgPlugin(),
-            
-            // IRC Tags
+            // IRC Commands
             new PrivMsgPlugin( dateTimeService: dateTimeService ),
             new ClearChatPlugin(),
             new ClearMsgPlugin(),
@@ -26,6 +23,8 @@ public class MessageProcessor : IMessageProcessor {
             new RoomStateMsgPlugin(),
             new WhisperMsgPlugin(),
             new UserNoticePlugin(),
+            new HostTargetMsgPlugin(),
+            new ReconnectMsgPlugin(),
             
             // Nothing worked, just give the raw message
             new UnknownMsgPlugin()
