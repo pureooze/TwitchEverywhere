@@ -13,5 +13,6 @@ public enum MessageType {
     Join,
     Part,
     HostTarget,
+    Reconnect,
     Unknown
 }

@@ -103,6 +103,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | `JoinMsg`                | `500`      | `7.968 s` | `0.0348 s` | `0.0326 s` |  `557.64 KB` |
 | `PartMsg`                | `500`      | `7.996 s` | `0.1551 s` | `0.2548 s` |  `585.02 KB` |
 | `HostTargetMsg`          | `500`      | `7.885 s` | `0.0234 s` | `0.0207 s` |  `624.19 KB` |
+| `ReconnectMsg`           | `500`      | `7.726 s` | `0.1534 s` | `0.4041 s` |  `754.67 KB` |
 
 
 ## Supported Functionality

@@ -378,4 +378,36 @@ public class MsgBenchmark {
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
     }
+    
+    [Benchmark]
+    public async Task ReconnectMsg() {
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
+    
+        const string baseMessage = ":tmi.twitch.tv RECONNECT";
+        IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+    
+        void MessageCallback(
+            Message message
+        ) {
+            switch( message.MessageType ) {
+                case MessageType.Reconnect: {
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+    }
 }
