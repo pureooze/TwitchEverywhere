@@ -67,7 +67,8 @@ public class JoinMsgTests {
                 $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel"
             }.ToImmutableList(),
             new JoinMsg(
-                message: $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel"
+                message: $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel",
+                channel: "channel"
             )
         ).SetName("Ronni joined the channel");
     }
