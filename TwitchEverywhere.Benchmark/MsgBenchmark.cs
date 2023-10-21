@@ -346,4 +346,46 @@ public class MsgBenchmark {
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
     }
+    
+    [Benchmark]
+    public async Task JoinMsg() {
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
+    
+        string baseMessage = $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel";
+        IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+    
+        void MessageCallback(
+            Message message
+        ) {
+            switch( message.MessageType ) {
+                case MessageType.Join: {
+                    break;
+                }
+                case MessageType.PrivMsg:
+                case MessageType.RoomState:
+                case MessageType.ClearMsg:
+                case MessageType.ClearChat:
+                case MessageType.Notice:
+                case MessageType.UserNotice:
+                case MessageType.Whisper:
+                case MessageType.UserState:
+                case MessageType.GlobalUserState:
+                case MessageType.Unknown:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+    }
 }
