@@ -86,27 +86,61 @@ The benchmarks in the [TwitchEverywhere.Benchmark](https://github.com/pureooze/T
 
 We send 500 messages of each type to `TwitchEverywhere` and run it several times to determine an average. The results are below:
 
-| Method                 | Iterations |    Mean |    Error |   StdDev |  Allocated |
-|------------------------|------------|--------:|---------:|---------:|-----------:|
-| PrivMsg                | 500        | 7.548 s | 0.1517 s | 0.4473 s | 1693.96 KB |
-| ClearMsg               | 500        | 7.232 s | 0.1001 s | 0.0936 s |  687.69 KB |
-| ClearChat              | 500        | 6.242 s | 0.0269 s | 0.0225 s |  718.94 KB |
-| NoticeMsg              | 500        | 6.249 s | 0.0268 s | 0.0251 s |  628.95 KB |
-| GlobalUserStateMessage | 500        | 7.370 s | 0.1589 s | 0.4686 s |   951.7 KB |
-| RoomStateMessage       | 500        | 7.891 s | 0.0147 s | 0.0130 s |  774.07 KB |
-| WhisperMessage         | 500        | 7.636 s | 0.1504 s | 0.3003 s |    1.08 MB |
-| UserNoticeMessage      | 500        | 6.291 s | 0.0400 s | 0.0375 s |    1.74 MB |
+| Method                   | Iterations |      Mean |      Error |     StdDev |    Allocated |
+|--------------------------|------------|----------:|-----------:|-----------:|-------------:|
+| `PrivMsg`                | `500`      | `7.548 s` | `0.1517 s` | `0.4473 s` | `1693.96 KB` |
+| `ClearMsg`               | `500`      | `7.232 s` | `0.1001 s` | `0.0936 s` |  `687.69 KB` |
+| `ClearChat`              | `500`      | `6.242 s` | `0.0269 s` | `0.0225 s` |  `718.94 KB` |
+| `NoticeMsg`              | `500`      | `6.249 s` | `0.0268 s` | `0.0251 s` |  `628.95 KB` |
+| `GlobalUserStateMessage` | `500`      | `7.370 s` | `0.1589 s` | `0.4686 s` |   `951.7 KB` |
+| `RoomStateMessage`       | `500`      | `7.891 s` | `0.0147 s` | `0.0130 s` |  `774.07 KB` |
+| `WhisperMessage`         | `500`      | `7.636 s` | `0.1504 s` | `0.3003 s` |    `1.08 MB` |
+| `UserNoticeMessage`      | `500`      | `6.291 s` | `0.0400 s` | `0.0375 s` |    `1.74 MB` |
 
 
 
 
 ## Supported Functionality
 
-### PRIVMSG
-[PRIVMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#privmsg-tags)
+### Membership
+See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/membership/).
 
-[PrivMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/PrivMsg.cs)
+| Name   | API Link                                                           | Data Type Link                                                                                              |
+|--------|--------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `JOIN` | [JOIN Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | [Join Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/Join.cs) |
+| `PART` | [PART Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | ⏳ WIP ⏳                                                                                                     |
 
+
+#### JOIN
+| Field     | Support |
+|-----------|---------|
+| `Channel` | ✅       |
+| `User`    | ✅       |
+
+#### PART
+| Field     | Support |
+|-----------|---------|
+| `Channel` | ⏳ WIP ⏳ |
+| `User`    | ⏳ WIP ⏳ |
+
+### IRC Tags
+See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/).
+
+| Name              | Support | API Link                                                                                | Data Type Link                                                                                                                    |
+|-------------------|---------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `PRIVMSG`         | ✅       | [PRIVMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#privmsg-tags)                 | [PrivMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/PrivMsg.cs)                 |
+| `CLEARCHAT`       | ✅       | [CLEARCHAT Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearchat-tags)             | [ClearChat Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearChat.cs)             |
+| `CLEARMSG`        | ✅       | [CLEARMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearmsg-tags)               | [ClearMSG Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearMsg.cs)               |
+| `GLOBALUSERSTATE` | ✅       | [GLOBALUSERSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#globaluserstate-tags) | [GlobalUserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/GlobalUserState.cs) |
+| `NOTICE`          | ✅       | [NOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#notice-tags)                   | [NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/NoticeMsg.cs)             |
+| `ROOMSTATE`       | ✅       | [ROOMSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#roomstate-tags)             | [RoomState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/RoomStateMsg.cs)          |
+| `USERNOTICE`      | ✅       | [USERNOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#usernotice-tags)           | [UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserNotice.cs)           |
+| `USERSTATE`       | ⏳ WIP ⏳ | [USERSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#userstate-tags)             | ⏳ WIP ⏳                                                                                                                           |
+| `WHISPER`         | ✅       | [WHISPER Twitch API](https://dev.twitch.tv/docs/irc/tags/#whisper-tags)                 | [UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/WhisperMsg.cs)           |
+
+
+
+#### PRIVMSG
 | Field                         | Support |
 |-------------------------------|---------|
 | Badges                        | ✅       |
@@ -134,11 +168,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | UserType                      | ✅       |
 | Vip                           | ✅       |
 
-### CLEARCHAT
-[CLEARCHAT Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearchat-tags)
-
-[ClearChat Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearChat.cs)
-
+#### CLEARCHAT
 | Field        | Support |
 |--------------|---------|
 | BanDuration  | ✅       |
@@ -146,11 +176,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | TargetUserId | ✅       |
 | Timestamp    | ✅       |
 
-### CLEARMSG
-[CLEARMSG Twitch API](https://dev.twitch.tv/docs/irc/tags/#clearmsg-tags)
-
-[ClearMSG Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearMsg.cs)
-
+#### CLEARMSG
 | Field           | Support |
 |-----------------|---------|
 | Login           | ✅       |
@@ -158,11 +184,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | TargetMessageId | ✅       |
 | Timestamp       | ✅       |
 
-### GlobalUserState
-[GLOBALUSERSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#globaluserstate-tags)
-
-[GlobalUserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/GlobalUserState.cs)
-
+#### GlobalUserState
 | Field       | Support |
 |-------------|---------|
 | BadgeInfo   | ✅       |
@@ -174,21 +196,13 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | UserId      | ✅       |
 | UserType    | ✅       |
 
-### Notice
-[NOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#notice-tags)
-
-[NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/NoticeMsg.cs)
-
+#### Notice
 | Field        | Support |
 |--------------|---------|
 | MsgId        | ✅       |
 | TargetUserId | ✅       |
 
-### RoomState
-[ROOMSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#roomstate-tags)
-
-[RoomState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/RoomStateMsg.cs)
-
+#### RoomState
 | Field         | Support |
 |---------------|---------|
 | EmoteOnly     | ✅       |
@@ -198,11 +212,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | Slow          | ✅       |
 | SubsOnly      | ✅       |
 
-### UserNotice
-[USERNOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#usernotice-tags)
-
-[UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserNotice.cs)
-
+#### UserNotice
 | Field         | Support |
 |--------------- |---------|
 | BadgeInfo     | ✅      |
@@ -222,14 +232,10 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | UserId        | ✅      |
 | UserType       | ✅      |
 
-### UserState
+#### UserState
 WIP
 
-### Whisper
-[WHISPER Twitch API](https://dev.twitch.tv/docs/irc/tags/#whisper-tags)
-
-[UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/WhisperMsg.cs)
-
+#### Whisper
 | Field       | Support |
 |-------------|---------|
 | Badges      | ✅       |
