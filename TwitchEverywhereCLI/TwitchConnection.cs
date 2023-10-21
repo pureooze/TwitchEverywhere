@@ -88,6 +88,10 @@ internal class TwitchConnection {
                 JoinMsg joinMsg = (JoinMsg) message;
                 Console.WriteLine( $"{joinMsg.User} joining {joinMsg.Channel}" );
                 break;
+            case MessageType.Part:
+                PartMsg partMsg = (PartMsg) message;
+                Console.WriteLine( $"{partMsg.User} leaving {partMsg.Channel}" );
+                break;
             case MessageType.Unknown:
                 UnknownMessage unknownMsg = (UnknownMessage) message;
                 Console.WriteLine( $"UnknownMessage: {unknownMsg.Message}" );

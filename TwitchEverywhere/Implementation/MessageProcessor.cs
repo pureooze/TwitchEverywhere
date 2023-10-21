@@ -12,6 +12,7 @@ public class MessageProcessor : IMessageProcessor {
         m_messagePlugins = new IMessagePlugin[] {
             // Membership
             new JoinMsgPlugin(),
+            new PartMsgPlugin(),
             
             // IRC Tags
             new PrivMsgPlugin( dateTimeService: dateTimeService ),
