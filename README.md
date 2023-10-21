@@ -111,10 +111,10 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 ### Membership
 See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/membership/).
 
-| Name   | API Link                                                           | Data Type Link                                                                                              |
-|--------|--------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `JOIN` | [JOIN Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | [Join Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/Join.cs) |
-| `PART` | [PART Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | ⏳ WIP ⏳                                                                                                     |
+| Name   | API Link                                                           | Data Type Link                                                                                                 |
+|--------|--------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| `JOIN` | [JOIN Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | [Join Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/JoinMsg.cs) |
+| `PART` | [PART Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | ⏳ WIP ⏳                                                                                                        |
 
 
 #### JOIN
