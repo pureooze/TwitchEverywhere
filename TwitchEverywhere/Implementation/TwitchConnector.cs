@@ -84,21 +84,24 @@ internal sealed class TwitchConnector : ITwitchConnector {
                 cancellationToken: CancellationToken.None
             );
         } else {
-            string response = Encoding.ASCII.GetString( 
+            string twitchResponse = Encoding.ASCII.GetString( 
                 bytes: buffer, 
                 index: 0, 
                 count: result.Count 
             );
 
-            // keep alive, let twitch know we are still listening
-            if( response.Contains( "PING :tmi.twitch.tv" ) ) {
-                await SendMessage( ws, "PONG :tmi.twitch.tv" );
-            } else {
-                m_messageProcessor.ProcessMessage(
-                    response: response,
-                    channel: options.Channel, 
-                    callback: callback
-                );
+            string[] responses = twitchResponse.Trim().Split( "\r\n" );
+            foreach (string response in responses) {
+                // keep alive, let twitch know we are still listening
+                if( response.Contains( "PING :tmi.twitch.tv" ) ) {
+                    await SendMessage( ws, "PONG :tmi.twitch.tv" );
+                } else {
+                    m_messageProcessor.ProcessMessage(
+                        response: response,
+                        channel: options.Channel, 
+                        callback: callback
+                    );
+                }
             }
         }
     }
