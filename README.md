@@ -101,8 +101,7 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | `WhisperMessage`         | `500`      | `7.636 s` | `0.1504 s` | `0.3003 s` |    `1.08 MB` |
 | `UserNoticeMessage`      | `500`      | `6.291 s` | `0.0400 s` | `0.0375 s` |    `1.74 MB` |
 | `JoinMsg`                | `500`      | `7.968 s` | `0.0348 s` | `0.0326 s` |  `557.64 KB` |
-
-
+| `PartMsg`                | `500`      | `7.996 s` | `0.1551 s` | `0.2548 s` |  `585.02 KB` |
 
 
 
@@ -114,7 +113,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/membe
 | Name   | API Link                                                           | Data Type Link                                                                                                 |
 |--------|--------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | `JOIN` | [JOIN Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | [Join Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/JoinMsg.cs) |
-| `PART` | [PART Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | ⏳ WIP ⏳                                                                                                        |
+| `PART` | [PART Twitch API](https://dev.twitch.tv/docs/irc/membership/#join) | [Part Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/PartMsg.cs) |
 
 
 #### JOIN
@@ -126,8 +125,8 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/membe
 #### PART
 | Field     | Support |
 |-----------|---------|
-| `Channel` | ⏳ WIP ⏳ |
-| `User`    | ⏳ WIP ⏳ |
+| `Channel` | ✅       |
+| `User`    | ✅       |
 
 ### IRC Tags
 See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/).
