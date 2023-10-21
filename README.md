@@ -107,7 +107,24 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 
 ## Supported Functionality
 
-### Membership
+### IRC Commands
+See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/commands/)
+
+| Name              | API Link                                                                               | Data Type Link                                                                                                                    |
+|-------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `CLEARCHAT`       | [CLEARCHAT Twitch API](https://dev.twitch.tv/docs/irc/commands/#clearchat)             | [ClearChat Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearChat.cs)             |
+| `CLEARMSG`        | [CLEARMSG Twitch API](https://dev.twitch.tv/docs/irc/commands/#clearmsg)               | [ClearMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ClearMsg.cs)               |
+| `GLOBALUSERSTATE` | [GLOBALUSERSTATE Twitch API](https://dev.twitch.tv/docs/irc/commands/#globaluserstate) | [GlobalUserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/GlobalUserState.cs) |
+| `HOSTTARGET`      | [HOSTTARGET Twitch API](https://dev.twitch.tv/docs/irc/commands/#hosttarget)           | [HostTargetMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/HostTargetMsg.cs)     |
+| `NOTICE`          | [NOTICE Twitch API](https://dev.twitch.tv/docs/irc/commands/#notice)                   | [NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/NoticeMsg.cs)             |
+| `RECONNECT`       | [RECONNECT Twitch API](https://dev.twitch.tv/docs/irc/commands/#reconnect)             | ⏳ WIP ⏳                                                                                                                           |
+| `ROOMSTATE`       | [ROOMSTATE Twitch API](https://dev.twitch.tv/docs/irc/commands/#roomstate)             | [RoomStateMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/RoomStateMsg.cs)       |
+| `USERNOTICE`      | [USERNOTICE Twitch API](https://dev.twitch.tv/docs/irc/commands/#usernotice)           | [UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserNotice.cs)           |
+| `USERSTATE`       | [USERSTATE Twitch API](https://dev.twitch.tv/docs/irc/commands/#userstate)             | ⏳ WIP ⏳                                                                                                                           |
+| `WHISPER`         | [WHISPER Twitch API](https://dev.twitch.tv/docs/irc/commands/#whisper)                 | [WHISPER Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/WhisperMsg.cs)              |
+
+
+### IRC Membership
 See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/membership/).
 
 | Name   | API Link                                                           | Data Type Link                                                                                                 |
@@ -238,7 +255,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | UserType       | ✅      |
 
 #### UserState
-WIP
+⏳ WIP ⏳
 
 #### Whisper
 | Field       | Support |
