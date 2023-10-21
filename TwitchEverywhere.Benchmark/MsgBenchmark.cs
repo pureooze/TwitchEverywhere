@@ -23,7 +23,7 @@ public class MsgBenchmark {
         
     private ITwitchConnector m_twitchConnector;
 
-    [Params(500)]
+    [Params(10)]
     public int Iterations;
     
     [Benchmark]

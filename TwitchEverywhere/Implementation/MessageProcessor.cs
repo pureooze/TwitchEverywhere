@@ -9,8 +9,11 @@ public class MessageProcessor : IMessageProcessor {
     public MessageProcessor(
         IDateTimeService dateTimeService
     ) {
-        // TODO: use Dependency Injection
         m_messagePlugins = new IMessagePlugin[] {
+            // Membership
+            new JoinMsgPlugin(),
+            
+            // IRC Tags
             new PrivMsgPlugin( dateTimeService: dateTimeService ),
             new ClearChatPlugin(),
             new ClearMsgPlugin(),
@@ -19,6 +22,8 @@ public class MessageProcessor : IMessageProcessor {
             new RoomStateMsgPlugin(),
             new WhisperMsgPlugin(),
             new UserNoticePlugin(),
+            
+            // Nothing worked, just give the raw message
             new UnknownMsgPlugin()
         };
     }

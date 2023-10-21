@@ -10,5 +10,7 @@ public enum MessageType {
     UserNotice,
     UserState,
     Whisper,
+    Join,
+    Part,
     Unknown
 }

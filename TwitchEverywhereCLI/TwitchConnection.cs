@@ -84,6 +84,10 @@ internal class TwitchConnection {
                 WhisperMsg whisperMsg = (WhisperMsg) message;
                 Console.WriteLine( $"WhisperMsg: {whisperMsg}" );
                 break;
+            case MessageType.Join:
+                JoinMsg joinMsg = (JoinMsg) message;
+                Console.WriteLine( $"{joinMsg.User} joining {joinMsg.Channel}" );
+                break;
             case MessageType.Unknown:
                 UnknownMessage unknownMsg = (UnknownMessage) message;
                 Console.WriteLine( $"UnknownMessage: {unknownMsg.Message}" );
