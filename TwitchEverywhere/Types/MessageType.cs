@@ -12,5 +12,6 @@ public enum MessageType {
     Whisper,
     Join,
     Part,
+    HostTarget,
     Unknown
 }

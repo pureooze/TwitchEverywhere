@@ -67,6 +67,8 @@ internal static class MessagePluginUtils {
     public readonly static Regex UserTypePattern = new("user-type=([^; ]+)", RegexOptions.Compiled);
     public readonly static Regex VipPattern = new("vip=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex UserJoinPattern = new(@"(?<=:)\w+(?=!)", RegexOptions.Compiled);
+    public readonly static Regex HostViewerCountPattern = new(@"\d+$", RegexOptions.Compiled);
+    public readonly static Regex HostTargetPattern = new(@":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled);
     
     public static string GetValueFromResponse(
         string message,

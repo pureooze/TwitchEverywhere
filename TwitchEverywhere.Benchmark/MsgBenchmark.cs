@@ -44,14 +44,6 @@ public class MsgBenchmark {
                 case MessageType.PrivMsg: {
                     break;
                 }
-                case MessageType.ClearChat:
-                case MessageType.ClearMsg:
-                case MessageType.GlobalUserState:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -84,14 +76,6 @@ public class MsgBenchmark {
                 case MessageType.ClearMsg: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.ClearChat:
-                case MessageType.GlobalUserState:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -124,14 +108,6 @@ public class MsgBenchmark {
                 case MessageType.ClearChat: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.GlobalUserState:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -164,14 +140,6 @@ public class MsgBenchmark {
                 case MessageType.Notice: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.GlobalUserState:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -204,14 +172,6 @@ public class MsgBenchmark {
                 case MessageType.GlobalUserState: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.Whisper:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -244,14 +204,6 @@ public class MsgBenchmark {
                 case MessageType.Whisper: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.UserNotice:
-                case MessageType.UserState:
-                case MessageType.GlobalUserState:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -284,14 +236,6 @@ public class MsgBenchmark {
                 case MessageType.UserNotice: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.Notice:
-                case MessageType.RoomState:
-                case MessageType.Whisper:
-                case MessageType.UserState:
-                case MessageType.GlobalUserState:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -324,14 +268,6 @@ public class MsgBenchmark {
                 case MessageType.RoomState: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.Notice:
-                case MessageType.UserNotice:
-                case MessageType.Whisper:
-                case MessageType.UserState:
-                case MessageType.GlobalUserState:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -364,16 +300,6 @@ public class MsgBenchmark {
                 case MessageType.Join: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.RoomState:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.Notice:
-                case MessageType.UserNotice:
-                case MessageType.Whisper:
-                case MessageType.UserState:
-                case MessageType.GlobalUserState:
-                case MessageType.Unknown:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -406,17 +332,38 @@ public class MsgBenchmark {
                 case MessageType.Part: {
                     break;
                 }
-                case MessageType.PrivMsg:
-                case MessageType.RoomState:
-                case MessageType.ClearMsg:
-                case MessageType.ClearChat:
-                case MessageType.Notice:
-                case MessageType.UserNotice:
-                case MessageType.Whisper:
-                case MessageType.UserState:
-                case MessageType.GlobalUserState:
-                case MessageType.Join:
-                case MessageType.Unknown:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+    }
+    
+    [Benchmark]
+    public async Task HostTargetMsg() {
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
+    
+        const string baseMessage = ":tmi.twitch.tv HOSTTARGET #channel :xyz 10";
+        IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+    
+        void MessageCallback(
+            Message message
+        ) {
+            switch( message.MessageType ) {
+                case MessageType.HostTarget: {
+                    break;
+                }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
