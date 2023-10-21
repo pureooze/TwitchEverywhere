@@ -96,6 +96,8 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 | `RoomStateMessage`       | `500`      | `7.891 s` | `0.0147 s` | `0.0130 s` |  `774.07 KB` |
 | `WhisperMessage`         | `500`      | `7.636 s` | `0.1504 s` | `0.3003 s` |    `1.08 MB` |
 | `UserNoticeMessage`      | `500`      | `6.291 s` | `0.0400 s` | `0.0375 s` |    `1.74 MB` |
+| `JoinMsg`                | `500`      | `7.968 s` | `0.0348 s` | `0.0326 s` |  `557.64 KB` |
+
 
 
 
