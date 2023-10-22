@@ -79,6 +79,8 @@ internal class TwitchConnection {
                 Console.WriteLine( $"UserNotice: {userNoticeMsg}" );
                 break;
             case MessageType.UserState:
+                UserStateMsg userStateMsg = (UserStateMsg) message;
+                Console.WriteLine( $"UserStateMsg: {userStateMsg.DisplayName}, {userStateMsg.UserType}, {userStateMsg.Badges}" );
                 break;
             case MessageType.Whisper:
                 WhisperMsg whisperMsg = (WhisperMsg) message;
@@ -95,6 +97,14 @@ internal class TwitchConnection {
             case MessageType.Unknown:
                 UnknownMessage unknownMsg = (UnknownMessage) message;
                 Console.WriteLine( $"UnknownMessage: {unknownMsg.Message}" );
+                break;
+            case MessageType.HostTarget:
+                HostTargetMsg hostTargetMsg = (HostTargetMsg) message;
+                Console.WriteLine( $"HostTargetMsg: {hostTargetMsg.HostingChannel}, {hostTargetMsg.NumberOfViewers}" );
+                break;
+            case MessageType.Reconnect:
+                ReconnectMsg reconnectMsg = (ReconnectMsg) message;
+                Console.WriteLine( $"ReconnectMsg: {reconnectMsg}" );
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
