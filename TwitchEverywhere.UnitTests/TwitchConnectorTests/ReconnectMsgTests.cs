@@ -6,6 +6,7 @@ using TwitchEverywhere.Types.Messages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
+[TestFixture]
 public class ReconnectMsgTests {
     private readonly TwitchConnectionOptions m_options = new(
         "channel",

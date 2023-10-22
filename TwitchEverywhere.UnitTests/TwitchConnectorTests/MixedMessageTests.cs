@@ -61,7 +61,7 @@ public class MixedMessageTests {
                 MessageType.Join,
                 MessageType.Unknown,
                 MessageType.Unknown,
-                MessageType.Unknown,
+                MessageType.UserState,
                 MessageType.RoomState,
                 MessageType.Part
             }.ToImmutableList()
