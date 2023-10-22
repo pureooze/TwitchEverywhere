@@ -92,19 +92,19 @@ We send 500 messages of each type to `TwitchEverywhere` and run it several times
 
 | Method                   | Iterations |      Mean |      Error |     StdDev |    Allocated |
 |--------------------------|------------|----------:|-----------:|-----------:|-------------:|
+| `UserNoticeMessage`      | `500`      | `6.291 s` | `0.0400 s` | `0.0375 s` | `1740.00 KB` |
 | `PrivMsg`                | `500`      | `7.548 s` | `0.1517 s` | `0.4473 s` | `1693.96 KB` |
-| `ClearMsg`               | `500`      | `7.232 s` | `0.1001 s` | `0.0936 s` |  `687.69 KB` |
-| `ClearChat`              | `500`      | `6.242 s` | `0.0269 s` | `0.0225 s` |  `718.94 KB` |
-| `NoticeMsg`              | `500`      | `6.249 s` | `0.0268 s` | `0.0251 s` |  `628.95 KB` |
-| `GlobalUserStateMessage` | `500`      | `7.370 s` | `0.1589 s` | `0.4686 s` |   `951.7 KB` |
+| `UserStateMsg`           | `500`      | `7.909 s` | `0.0120 s` | `0.0112 s` | `1160.00 KB` |
+| `WhisperMessage`         | `500`      | `7.636 s` | `0.1504 s` | `0.3003 s` | `1080.00 KB` |
+| `GlobalUserStateMessage` | `500`      | `7.370 s` | `0.1589 s` | `0.4686 s` |  `951.70 KB` |
 | `RoomStateMessage`       | `500`      | `7.891 s` | `0.0147 s` | `0.0130 s` |  `774.07 KB` |
-| `WhisperMessage`         | `500`      | `7.636 s` | `0.1504 s` | `0.3003 s` |    `1.08 MB` |
-| `UserNoticeMessage`      | `500`      | `6.291 s` | `0.0400 s` | `0.0375 s` |    `1.74 MB` |
-| `JoinMsg`                | `500`      | `7.968 s` | `0.0348 s` | `0.0326 s` |  `557.64 KB` |
-| `PartMsg`                | `500`      | `7.996 s` | `0.1551 s` | `0.2548 s` |  `585.02 KB` |
-| `HostTargetMsg`          | `500`      | `7.885 s` | `0.0234 s` | `0.0207 s` |  `624.19 KB` |
 | `ReconnectMsg`           | `500`      | `7.726 s` | `0.1534 s` | `0.4041 s` |  `754.67 KB` |
-
+| `ClearChat`              | `500`      | `6.242 s` | `0.0269 s` | `0.0225 s` |  `718.94 KB` |
+| `ClearMsg`               | `500`      | `7.232 s` | `0.1001 s` | `0.0936 s` |  `687.69 KB` |
+| `NoticeMsg`              | `500`      | `6.249 s` | `0.0268 s` | `0.0251 s` |  `628.95 KB` |
+| `HostTargetMsg`          | `500`      | `7.885 s` | `0.0234 s` | `0.0207 s` |  `624.19 KB` |
+| `PartMsg`                | `500`      | `7.996 s` | `0.1551 s` | `0.2548 s` |  `585.02 KB` |
+| `JoinMsg`                | `500`      | `7.968 s` | `0.0348 s` | `0.0326 s` |  `557.64 KB` |
 
 ## Supported Functionality
 
@@ -121,7 +121,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/comma
 | `RECONNECT`       | [RECONNECT Twitch API](https://dev.twitch.tv/docs/irc/commands/#reconnect)             | [ReconnectMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/ReconnectMsg.cs)       |
 | `ROOMSTATE`       | [ROOMSTATE Twitch API](https://dev.twitch.tv/docs/irc/commands/#roomstate)             | [RoomStateMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/RoomStateMsg.cs)       |
 | `USERNOTICE`      | [USERNOTICE Twitch API](https://dev.twitch.tv/docs/irc/commands/#usernotice)           | [UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserNotice.cs)           |
-| `USERSTATE`       | [USERSTATE Twitch API](https://dev.twitch.tv/docs/irc/commands/#userstate)             | ⏳ WIP ⏳                                                                                                                           |
+| `USERSTATE`       | [USERSTATE Twitch API](https://dev.twitch.tv/docs/irc/commands/#userstate)             | [UserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserStateMsg.cs)          |
 | `WHISPER`         | [WHISPER Twitch API](https://dev.twitch.tv/docs/irc/commands/#whisper)                 | [WHISPER Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/WhisperMsg.cs)              |
 
 
@@ -158,7 +158,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | `NOTICE`          | ✅       | [NOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#notice-tags)                   | [NoticeMsg Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/NoticeMsg.cs)             |
 | `ROOMSTATE`       | ✅       | [ROOMSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#roomstate-tags)             | [RoomState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/RoomStateMsg.cs)          |
 | `USERNOTICE`      | ✅       | [USERNOTICE Twitch API](https://dev.twitch.tv/docs/irc/tags/#usernotice-tags)           | [UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserNotice.cs)           |
-| `USERSTATE`       | ⏳ WIP ⏳ | [USERSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#userstate-tags)             | ⏳ WIP ⏳                                                                                                                           |
+| `USERSTATE`       | ✅       | [USERSTATE Twitch API](https://dev.twitch.tv/docs/irc/tags/#userstate-tags)             | [UserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserStateMsg.cs)          |
 | `WHISPER`         | ✅       | [WHISPER Twitch API](https://dev.twitch.tv/docs/irc/tags/#whisper-tags)                 | [UserNotice Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/WhisperMsg.cs)           |
 
 
@@ -256,7 +256,18 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | UserType       | ✅      |
 
 #### UserState
-⏳ WIP ⏳
+| Field       | Support |
+|-------------|---------|
+| BadgeInfo   | ✅      |
+| Badges      | ✅      |
+| Color       | ✅      |
+| DisplayName | ✅      |
+| EmoteSets   | ✅      |
+| Id          | ✅      |
+| Mod         | ✅      |
+| Subscriber  | ✅      |
+| Turbo       | ✅      |
+| UserType    | ✅      |
 
 #### Whisper
 | Field       | Support |

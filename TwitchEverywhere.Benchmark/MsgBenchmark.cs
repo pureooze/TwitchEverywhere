@@ -410,4 +410,36 @@ public class MsgBenchmark {
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
     }
+
+    [Benchmark]
+    public async Task UserStateMsg() {
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
+        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
+    
+        const string baseMessage = "@badge-info=;badges=staff/1;color=#0D4200;display-name=ronni;emote-sets=0,33,50,237,793,2126,3517,4578,5569,9400,10337,12239;mod=1;subscriber=1;turbo=1;user-type=staff :tmi.twitch.tv USERSTATE #channel";
+        IWebSocketConnection webSocket = new TestWebSocketConnection( iterations: Iterations, baseMessage: baseMessage );
+        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+    
+        void MessageCallback(
+            Message message
+        ) {
+            switch( message.MessageType ) {
+                case MessageType.UserState: {
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
+    }
 }

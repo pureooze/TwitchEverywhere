@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types;
 
@@ -23,6 +24,7 @@ public class MessageProcessor : IMessageProcessor {
             new RoomStateMsgPlugin(),
             new WhisperMsgPlugin(),
             new UserNoticePlugin(),
+            new UserStateMsgPlugin(),
             new HostTargetMsgPlugin(),
             new ReconnectMsgPlugin(),
             
