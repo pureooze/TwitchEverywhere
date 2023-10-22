@@ -5,19 +5,30 @@
 * [Sample CLI App](#sample-cli-app)
 * [Performance](#performance)
 * [Supported Functionality](#supported-functionality)
-  * [Membership](#membership)
+  * [IRC Commands](#irc-commands)
+    * [CLEARCHAT](#clearchat)
+    * [CLEARMSG](#clearmsg)
+    * [GLOBALUSERSTATE](#globaluserstate)
+    * [HOSTTARGET](#hosttarget)
+    * [NOTICE](#notice)
+    * [RECONNECT](#reconnect)
+    * [ROOMSTATE](#roomstate)
+    * [USERNOTICE](#usernotice)
+    * [USERSTATE](#userstate)
+    * [WHISPER](#whisper)
+  * [IRC Membership](#irc-membership)
     * [JOIN](#join)
     * [PART](#part)
   * [IRC Tags](#irc-tags)
-    * [PRIVMSG](#privmsg)
-    * [CLEARCHAT](#clearchat)
-    * [CLEARMSG](#clearmsg)
-    * [GlobalUserState](#globaluserstate)
-    * [Notice](#notice)
-    * [RoomState](#roomstate)
-    * [UserNotice](#usernotice)
-    * [UserState](#userstate)
-    * [Whisper](#whisper)
+    * [PRIVMSG Tags](#privmsg-tags)
+    * [CLEARCHAT Tags](#clearchat-tags)
+    * [CLEARMSG Tags](#clearmsg-tags)
+    * [GLOBALUSERSTATE Tags](#globaluserstate-tags)
+    * [NOTICE Tags](#notice-tags)
+    * [ROOMSTATE Tags](#roomstate-tags)
+    * [USERNOTICE Tags](#usernotice-tags)
+    * [USERSTATE Tags](#userstate-tags)
+    * [WHISPER Tags](#whisper-tags)
 <!-- TOC -->
 
 `TwitchEverywhere` is a .NET (6 and 7) library that allows connecting to a Twitch chat and subscribing to messages in that chat.
@@ -124,6 +135,41 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/comma
 | `USERSTATE`       | [USERSTATE Twitch API](https://dev.twitch.tv/docs/irc/commands/#userstate)             | [UserState Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/UserStateMsg.cs)          |
 | `WHISPER`         | [WHISPER Twitch API](https://dev.twitch.tv/docs/irc/commands/#whisper)                 | [WHISPER Type](https://github.com/pureooze/TwitchEverywhere/blob/main/TwitchEverywhere/Types/Messages/WhisperMsg.cs)              |
 
+#### CLEARCHAT
+See [CLEARCHAT](#clearchat-tags) tags
+
+#### CLEARMSG
+See [CLEARMSG](#clearmsg-tags) tags
+
+#### GLOBALUSERSTATE
+See [GLOBALUSERSTATE](#globaluserstate-tags) tags
+
+#### HOSTTARGET
+| Field              | Support |
+|--------------------|---------|
+| `HostingChannel`   | ✅       |
+| `Channel`          | ✅       |
+| `NumberOfViewers`  | ✅       |
+| `IsHostingChannel` | ✅       |
+
+#### NOTICE
+See [NOTICE](#notice-tags) tags
+
+#### RECONNECT
+No fields for `RECONNECT`, use the presence of this message as a signal to reconnect to Twitch. See the [Twitch API docs](https://dev.twitch.tv/docs/irc/commands/#reconnect) for more infomation.
+
+#### ROOMSTATE
+See [ROOMSTATE](#roomstate-tags) tags
+
+#### USERNOTICE
+See [USERNOTICE](#usernotice-tags) tags
+
+#### USERSTATE
+See [USERSTATE](#userstate-tags) tags
+
+#### WHISPER
+See [WHISPER](#whisper-tags) tags
+
 
 ### IRC Membership
 See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/membership/).
@@ -163,7 +209,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 
 
 
-#### PRIVMSG
+#### PRIVMSG Tags
 | Field                         | Support |
 |-------------------------------|---------|
 | Badges                        | ✅       |
@@ -191,7 +237,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | UserType                      | ✅       |
 | Vip                           | ✅       |
 
-#### CLEARCHAT
+#### CLEARCHAT Tags
 | Field        | Support |
 |--------------|---------|
 | BanDuration  | ✅       |
@@ -199,7 +245,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | TargetUserId | ✅       |
 | Timestamp    | ✅       |
 
-#### CLEARMSG
+#### CLEARMSG Tags
 | Field           | Support |
 |-----------------|---------|
 | Login           | ✅       |
@@ -207,7 +253,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | TargetMessageId | ✅       |
 | Timestamp       | ✅       |
 
-#### GlobalUserState
+#### GLOBALUSERSTATE Tags
 | Field       | Support |
 |-------------|---------|
 | BadgeInfo   | ✅       |
@@ -219,13 +265,13 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | UserId      | ✅       |
 | UserType    | ✅       |
 
-#### Notice
+#### NOTICE Tags
 | Field        | Support |
 |--------------|---------|
 | MsgId        | ✅       |
 | TargetUserId | ✅       |
 
-#### RoomState
+#### ROOMSTATE Tags
 | Field         | Support |
 |---------------|---------|
 | EmoteOnly     | ✅       |
@@ -235,7 +281,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | Slow          | ✅       |
 | SubsOnly      | ✅       |
 
-#### UserNotice
+#### USERNOTICE Tags
 | Field         | Support |
 |--------------- |---------|
 | BadgeInfo     | ✅      |
@@ -255,7 +301,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | UserId        | ✅      |
 | UserType       | ✅      |
 
-#### UserState
+#### USERSTATE Tags
 | Field       | Support |
 |-------------|---------|
 | BadgeInfo   | ✅      |
@@ -269,7 +315,7 @@ See the related Twitch documentation [here](https://dev.twitch.tv/docs/irc/tags/
 | Turbo       | ✅      |
 | UserType    | ✅      |
 
-#### Whisper
+#### WHISPER Tags
 | Field       | Support |
 |-------------|---------|
 | Badges      | ✅       |
