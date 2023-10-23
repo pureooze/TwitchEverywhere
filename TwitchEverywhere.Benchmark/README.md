@@ -46,5 +46,5 @@ Some observations about this change we can make:
 * `Gen0` garbage collection gets deferred by ~2 minutes
   * This causes `Gen1` and `Gen2` to be deferred as well (not surprising 😉)
 * Fewer spikes in memory usage, probably because we dont store in a buffer or write to disk
-  * If you look closely, there are some very small spikes but they are not negligible
+  * If you look closely, there are some very small spikes but they are negligible
 * High traffic can cause issues with GC so clients should be careful with buffers/IO streams especially when trying to run at scale
