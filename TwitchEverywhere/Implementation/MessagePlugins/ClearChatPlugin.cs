@@ -22,19 +22,4 @@ public class ClearChatPlugin : IMessagePlugin {
             message: response
         );
     }
-    
-    private static string GetValueFromResponse(
-        string response,
-        Regex pattern
-    ) {
-        Match match = pattern
-            .Match( response );
-
-        string result = string.Empty;
-        if( match.Success ) {
-            result = match.Value.Split( "=" )[1].TrimEnd( ';' );
-        }
-
-        return result;
-    }
 }
