@@ -74,15 +74,6 @@ internal static class MessagePluginUtils {
         string message,
         Regex pattern
     ) {
-        // return pattern.Match( message ).Groups[1].Value;
-        Match match = pattern
-            .Match( message );
-
-        string result = string.Empty;
-        if( match.Success ) {
-            result = match.Value.Split( "=" )[1].TrimEnd( ';' );
-        }
-
-        return result;
+        return pattern.Match( message ).Groups[1].Value;
     }
 }
