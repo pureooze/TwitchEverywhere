@@ -33,14 +33,14 @@ Using `dotMemory Profiler` we can test how much memory `TwitchEverywhere` uses.
 The sample CLI app in the `TwitchEverywhereCLI` project is an example of a very minimal app that stores some messages in a memory buffer and occasionally writes to disk, so we can use it to for the benchmark.
 The benchmark was also run against a Twitch chat with around 100,000 viewers so the chat was quite active. It was run for approximately 20 minutes and the results are here:
 
-![](C:\Users\uzi\RiderProjects\TwitchEverywhere\TwitchEverywhere.Benchmark\images\MemoryUsage.PNG)
+![](images\MemoryUsage.PNG)
 
 We can see that total memory usage does not exceed approximately 28MB but there is some Garbage Collection (GC) happening at 6m and 16m.
 This could be happening for a few reasons, there might be something in `TwitchEverywhere` itself or it could be an issue with the CLI app.
 
 Lets see what happens if we change the CLI app so it only logs messages to `STDOUT` and then stops referencing the objects.
 The same test as above is run with the updated code (~100K viewers, 20 minutes):
-![](C:\Users\uzi\RiderProjects\TwitchEverywhere\TwitchEverywhere.Benchmark\images\MemoryUsage-Optimize.PNG)
+![](images\MemoryUsage-Optimize.PNG)
 
 Some observations about this change we can make:
 * `Gen0` garbage collection gets deferred by ~2 minutes
