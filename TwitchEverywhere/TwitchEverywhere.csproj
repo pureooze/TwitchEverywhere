@@ -10,7 +10,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>11</LangVersion>
-        <Version>0.2.1</Version>
+        <Version>0.3.0</Version>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <PackRelease>true</PackRelease>
