@@ -1,9 +1,13 @@
 using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 using TwitchEverywhere.Implementation.MessagePlugins;
 
 namespace TwitchEverywhere.Types.Messages; 
 
 public class PrivMsg : Message {
+    private readonly string m_channel;
+    private readonly string m_message;
+    
     public PrivMsg(
         string channel,
         string message,
@@ -19,25 +23,11 @@ public class PrivMsg : Message {
     public IImmutableList<Badge> Badges {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern );
-            return GetBadges( badges );
+            return MessagePluginUtils.GetBadges( badges );
         }
     }
 
-    public string Bits {
-        get {
-            string[] bitsArray = MessagePluginUtils.BitsPattern
-                .Match( m_message )
-                .Value
-                .Split( "=" );
-            
-            string bits = string.Empty;
-            if( bits.Length > 1 ) {
-                bits = bitsArray.ElementAt( 1 ).TrimEnd( ';' );
-            }
-
-            return bits;
-        }
-    }
+    public string Bits => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BitsPattern );
 
     public string? Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
 
@@ -46,7 +36,7 @@ public class PrivMsg : Message {
     public IImmutableList<Emote>? Emotes {
         get {
             string emotesText = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.EmotesPattern );
-            return GetEmotesFromText( emotesText );
+            return MessagePluginUtils.GetEmotesFromText( emotesText );
         }
     }
 
@@ -73,7 +63,7 @@ public class PrivMsg : Message {
     public PinnedChatPaidLevel? PinnedChatPaidLevel {
         get {
             string pinnedChatPaidLevelText = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.PinnedChatPaidLevelPattern );
-            return GetPinnedChatPaidLevelType( pinnedChatPaidLevelText );
+            return MessagePluginUtils.GetPinnedChatPaidLevelType( pinnedChatPaidLevelText );
         }
     }
 
@@ -109,99 +99,12 @@ public class PrivMsg : Message {
 
     public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern );
 
-    public UserType UserType => GetUserType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserTypePattern ) );
+    public UserType UserType => MessagePluginUtils.GetUserType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserTypePattern ) );
 
     public bool Vip => !string.IsNullOrEmpty( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.VipPattern ) );
 
     public TimeSpan SinceStartOfStream { get; }
 
-    public string Text => m_message.Split( $"PRIVMSG #{m_channel} :" )[1].Trim( '\r', '\n' );
+    public string Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"PRIVMSG #{m_channel} :") );
 
-    private readonly string m_channel;
-    private readonly string m_message;
-
-    private static UserType GetUserType(
-        string userTypeText
-    ) {
-        return userTypeText switch {
-            "mod" => UserType.Mod,
-            "admin" => UserType.Admin,
-            "global_mod" => UserType.GlobalMod,
-            "staff" => UserType.Staff,
-            _ => UserType.Normal
-        };
-    }
-
-    private static IImmutableList<Emote>? GetEmotesFromText(
-        string emotesText
-    ) {
-
-        if( string.IsNullOrEmpty( emotesText ) ) {
-            return null;
-        }
-
-        List<Emote> emotes = new();
-        string[] separatedRawEmotes = emotesText.Split( "/" );
-
-        foreach (string rawEmote in separatedRawEmotes) {
-            string[] separatedEmote = rawEmote.Split( ":" );
-            string[] separatedEmoteLocationGroup = separatedEmote[1].Split( "," );
-
-            foreach (string locationGroup in separatedEmoteLocationGroup) {
-                string[] separatedEmoteLocation = locationGroup.Split( "-" );
-                
-                emotes.Add(
-                    new Emote( 
-                        separatedEmote[0], 
-                        int.Parse( separatedEmoteLocation[0] ), 
-                        int.Parse( separatedEmoteLocation[1] )
-                    )
-                );
-            }
-        }
-        
-        
-        return emotes.ToImmutableList();
-    }
-
-    private static IImmutableList<Badge> GetBadges(
-        string badges
-    ) {
-        string[] badgeList = badges.Split( ',' );
-
-        if( string.IsNullOrEmpty( badges ) ) {
-            return Array.Empty<Badge>().ToImmutableList();
-        }
-
-        List<Badge> parsedBadges = new();
-
-        for( int index = 0; index < badgeList.Length; index++ ) {
-            string badge = badgeList[index];
-            string[] badgeInfo = badge.Split( '/' );
-
-            if( badgeInfo.Length == 2 ) {
-                parsedBadges.Add( new Badge( Name: badgeInfo[0], Version: badgeInfo[1] ) );
-            }
-        }
-
-        return parsedBadges.ToImmutableList();
-    }
-    
-    private static PinnedChatPaidLevel? GetPinnedChatPaidLevelType(
-        string pinnedChatPaidLevelText
-    ) {
-        return pinnedChatPaidLevelText switch {
-            "ONE" => Types.PinnedChatPaidLevel.One,
-            "TWO" => Types.PinnedChatPaidLevel.Two,
-            "THREE" => Types.PinnedChatPaidLevel.Three,
-            "FOUR" => Types.PinnedChatPaidLevel.Four,
-            "FIVE" => Types.PinnedChatPaidLevel.Five,
-            "SIX" => Types.PinnedChatPaidLevel.Six,
-            "SEVEN" => Types.PinnedChatPaidLevel.Seven,
-            "EIGHT" => Types.PinnedChatPaidLevel.Eight,
-            "NINE" => Types.PinnedChatPaidLevel.Nine,
-            "TEN" => Types.PinnedChatPaidLevel.Ten,
-            _ => null
-        };
-    }
 }

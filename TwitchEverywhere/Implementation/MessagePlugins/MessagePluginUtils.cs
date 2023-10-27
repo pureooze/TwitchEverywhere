@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -70,10 +72,103 @@ internal static class MessagePluginUtils {
     public readonly static Regex HostViewerCountPattern = new(@"\d+$", RegexOptions.Compiled);
     public readonly static Regex HostTargetPattern = new(@":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled);
     
-    public static string GetValueFromResponse(
+    public static string GetValueFromResponse( 
         string message,
         Regex pattern
     ) {
         return pattern.Match( message ).Groups[1].Value;
+    }
+    
+    public static string GetLastSplitValuesFromResponse(
+        string message,
+        Regex pattern
+    ) {
+        string[] splitResult = pattern.Split( message );
+        return splitResult.Length > 1 ? splitResult[1] : "";
+    }
+    
+    public static IImmutableList<Emote>? GetEmotesFromText(
+        string emotesText
+    ) {
+
+        if( string.IsNullOrEmpty( emotesText ) ) {
+            return null;
+        }
+
+        List<Emote> emotes = new();
+        string[] separatedRawEmotes = emotesText.Split( "/" );
+
+        foreach (string rawEmote in separatedRawEmotes) {
+            string[] separatedEmote = rawEmote.Split( ":" );
+            string[] separatedEmoteLocationGroup = separatedEmote[1].Split( "," );
+
+            foreach (string locationGroup in separatedEmoteLocationGroup) {
+                string[] separatedEmoteLocation = locationGroup.Split( "-" );
+                
+                emotes.Add(
+                    new Emote( 
+                        separatedEmote[0], 
+                        int.Parse( separatedEmoteLocation[0] ), 
+                        int.Parse( separatedEmoteLocation[1] )
+                    )
+                );
+            }
+        }
+        
+        
+        return emotes.ToImmutableList();
+    }
+    
+    public static IImmutableList<Badge> GetBadges(
+        string badges
+    ) {
+        string[] badgeList = badges.Split( ',' );
+
+        if( string.IsNullOrEmpty( badges ) ) {
+            return Array.Empty<Badge>().ToImmutableList();
+        }
+
+        List<Badge> parsedBadges = new();
+
+        for( int index = 0; index < badgeList.Length; index++ ) {
+            string badge = badgeList[index];
+            string[] badgeInfo = badge.Split( '/' );
+
+            if( badgeInfo.Length == 2 ) {
+                parsedBadges.Add( new Badge( Name: badgeInfo[0], Version: badgeInfo[1] ) );
+            }
+        }
+
+        return parsedBadges.ToImmutableList();
+    }
+    
+    public static PinnedChatPaidLevel? GetPinnedChatPaidLevelType(
+        string pinnedChatPaidLevelText
+    ) {
+        return pinnedChatPaidLevelText switch {
+            "ONE" => PinnedChatPaidLevel.One,
+            "TWO" => PinnedChatPaidLevel.Two,
+            "THREE" => PinnedChatPaidLevel.Three,
+            "FOUR" => PinnedChatPaidLevel.Four,
+            "FIVE" => PinnedChatPaidLevel.Five,
+            "SIX" => PinnedChatPaidLevel.Six,
+            "SEVEN" => PinnedChatPaidLevel.Seven,
+            "EIGHT" => PinnedChatPaidLevel.Eight,
+            "NINE" => PinnedChatPaidLevel.Nine,
+            "TEN" => PinnedChatPaidLevel.Ten,
+            _ => null
+        };
+    }
+    
+    public static UserType GetUserType(
+        string userTypeText
+    ) {
+        return userTypeText switch {
+            "mod" => UserType.Mod,
+            "admin" => UserType.Admin,
+            "global_mod" => UserType.GlobalMod,
+            "staff" => UserType.Staff,
+            _ => UserType.Normal
+        };
     }
 }
