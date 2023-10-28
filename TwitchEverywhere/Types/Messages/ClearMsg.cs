@@ -3,14 +3,11 @@
 namespace TwitchEverywhere.Types.Messages; 
 
 public class ClearMsg : Message {
-    private readonly string m_channel;
     private readonly string m_message;
     
     public ClearMsg(
-        string channel,
         string message
     ) {
-        m_channel = channel;
         m_message = message;
     }
     

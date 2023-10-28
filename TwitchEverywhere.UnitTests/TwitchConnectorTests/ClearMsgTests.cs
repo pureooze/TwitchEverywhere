@@ -71,9 +71,8 @@ public class ClearMsgTests {
                 $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
             }.ToImmutableList(),
             new ClearMsg(
-                channel: "channel",
                 message: $"@login=ronni;room-id=;target-msg-id=abc-123-def;tmi-sent-ts=1507246572675 :tmi.twitch.tv CLEARMSG #channel :HeyGuys"
             )
-        ).SetName("Clear single message with Id");;
+        ).SetName("Clear single message with Id");
     }
 }

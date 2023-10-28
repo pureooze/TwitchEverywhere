@@ -22,7 +22,7 @@ internal static class MessagePluginUtils {
     public readonly static Regex FollowersOnlyPattern = new("followers-only=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex IdPattern = new(";id=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex LoginPattern = new("login=([^;]*)", RegexOptions.Compiled);
-    public readonly static Regex MessageIdPattern = new("message-id=([^;]*)", RegexOptions.Compiled);
+    public readonly static Regex MessageIdPattern = new("msg-id=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)", RegexOptions.Compiled);
     public readonly static Regex ModPattern = new("mod=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)", RegexOptions.Compiled);
@@ -130,8 +130,7 @@ internal static class MessagePluginUtils {
 
         List<Badge> parsedBadges = new();
 
-        for( int index = 0; index < badgeList.Length; index++ ) {
-            string badge = badgeList[index];
+        foreach (string badge in badgeList) {
             string[] badgeInfo = badge.Split( '/' );
 
             if( badgeInfo.Length == 2 ) {

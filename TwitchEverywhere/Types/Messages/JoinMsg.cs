@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using TwitchEverywhere.Implementation.MessagePlugins;
 
 namespace TwitchEverywhere.Types.Messages; 

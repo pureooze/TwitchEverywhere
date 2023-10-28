@@ -29,7 +29,7 @@ public class PrivMsg : Message {
 
     public string Bits => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BitsPattern );
 
-    public string? Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
+    public string Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
 
     public string DisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.DisplayNamePattern );
 

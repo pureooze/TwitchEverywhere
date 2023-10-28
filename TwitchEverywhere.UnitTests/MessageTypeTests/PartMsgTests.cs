@@ -17,8 +17,8 @@ public class PartMsgTests {
         Assert.That( actualPartMsgMessage.MessageType, Is.EqualTo( MessageType.Part ) );
 
         Assert.Multiple(() => {
-            Assert.That(actualPartMsgMessage.User, Is.EqualTo(expectedPartMsgMessage?.User), "User was not equal to expected value");
-            Assert.That(actualPartMsgMessage.Channel, Is.EqualTo(expectedPartMsgMessage?.Channel), "Channel was not equal to expected value");
+            Assert.That(actualPartMsgMessage.User, Is.EqualTo(expectedPartMsgMessage.User), "User was not equal to expected value");
+            Assert.That(actualPartMsgMessage.Channel, Is.EqualTo(expectedPartMsgMessage.Channel), "Channel was not equal to expected value");
         });
     }
 

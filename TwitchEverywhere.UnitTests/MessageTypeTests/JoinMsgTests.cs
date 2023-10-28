@@ -17,8 +17,8 @@ public class JoinMsgTests {
         Assert.That( actualJoinMsgMessage.MessageType, Is.EqualTo( MessageType.Join ) );
 
         Assert.Multiple(() => {
-            Assert.That(actualJoinMsgMessage.User, Is.EqualTo(expectedJoinMsgMessage?.User), "User was not equal to expected value");
-            Assert.That(actualJoinMsgMessage.Channel, Is.EqualTo(expectedJoinMsgMessage?.Channel), "Channel was not equal to expected value");
+            Assert.That(actualJoinMsgMessage.User, Is.EqualTo(expectedJoinMsgMessage.User), "User was not equal to expected value");
+            Assert.That(actualJoinMsgMessage.Channel, Is.EqualTo(expectedJoinMsgMessage.Channel), "Channel was not equal to expected value");
         });
     }
 

@@ -17,10 +17,10 @@ public class HostTargetMsgTests {
         Assert.That( actualHostTargetMsgMessage.MessageType, Is.EqualTo( MessageType.HostTarget ) );
 
         Assert.Multiple(() => {
-            Assert.That(actualHostTargetMsgMessage.HostingChannel, Is.EqualTo(expectedHostTargetMessage?.HostingChannel), "HostingChannel was not equal to expected value");
-            Assert.That(actualHostTargetMsgMessage.IsHostingChannel, Is.EqualTo(expectedHostTargetMessage?.IsHostingChannel), "IsHostingChannel was not equal to expected value");
-            Assert.That(actualHostTargetMsgMessage.NumberOfViewers, Is.EqualTo(expectedHostTargetMessage?.NumberOfViewers), "NumberOfViewers was not equal to expected value");
-            Assert.That(actualHostTargetMsgMessage.Channel, Is.EqualTo(expectedHostTargetMessage?.Channel), "Channel was not equal to expected value");
+            Assert.That(actualHostTargetMsgMessage.HostingChannel, Is.EqualTo(expectedHostTargetMessage.HostingChannel), "HostingChannel was not equal to expected value");
+            Assert.That(actualHostTargetMsgMessage.IsHostingChannel, Is.EqualTo(expectedHostTargetMessage.IsHostingChannel), "IsHostingChannel was not equal to expected value");
+            Assert.That(actualHostTargetMsgMessage.NumberOfViewers, Is.EqualTo(expectedHostTargetMessage.NumberOfViewers), "NumberOfViewers was not equal to expected value");
+            Assert.That(actualHostTargetMsgMessage.Channel, Is.EqualTo(expectedHostTargetMessage.Channel), "Channel was not equal to expected value");
         });
     }
 

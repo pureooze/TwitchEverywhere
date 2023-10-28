@@ -75,6 +75,6 @@ public class RoomStateMsgTests {
             new RoomStateMsg(
                 message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #channel"
             )
-        ).SetName("User joined channel with settings");;
+        ).SetName("User joined channel with settings");
     }
 }

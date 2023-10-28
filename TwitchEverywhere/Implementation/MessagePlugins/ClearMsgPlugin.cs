@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
 
@@ -18,7 +17,6 @@ public class ClearMsgPlugin : IMessagePlugin {
         string channel
     ) {
         return new ClearMsg(
-            channel: channel,
             message: response
         );
     }

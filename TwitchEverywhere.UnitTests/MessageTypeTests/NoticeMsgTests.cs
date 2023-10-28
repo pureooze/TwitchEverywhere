@@ -12,13 +12,13 @@ public class NoticeMsgTests {
         string message,
         TestData expectedNoticeMsgMessage
     ) {
-        NoticeMsg actualNoticeMsgMessage = new( channel: "channel", message: message );
+        NoticeMsg actualNoticeMsgMessage = new( message: message );
 
         Assert.That( actualNoticeMsgMessage.MessageType, Is.EqualTo( MessageType.Notice ) );
 
         Assert.Multiple(() => {
-            Assert.That( actualNoticeMsgMessage.MsgId, Is.EqualTo( expectedNoticeMsgMessage?.MsgId ), "MsgId was not equal to expected value");
-            Assert.That( actualNoticeMsgMessage.TargetUserId, Is.EqualTo( expectedNoticeMsgMessage?.TargetUserId ), "TargetUserId was not equal to expected value");
+            Assert.That( actualNoticeMsgMessage.MsgId, Is.EqualTo( expectedNoticeMsgMessage.MsgId ), "MsgId was not equal to expected value");
+            Assert.That( actualNoticeMsgMessage.TargetUserId, Is.EqualTo( expectedNoticeMsgMessage.TargetUserId ), "TargetUserId was not equal to expected value");
         });
     }
 

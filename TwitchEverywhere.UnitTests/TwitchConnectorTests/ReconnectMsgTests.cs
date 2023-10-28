@@ -55,6 +55,6 @@ public class ReconnectMsgTests {
                 $":tmi.twitch.tv RECONNECT"
             }.ToImmutableList(),
             new ReconnectMsg()
-        ).SetName("Reconnect message");;
+        ).SetName("Reconnect message");
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
 
@@ -16,11 +15,11 @@ public class ClearChatMsgTests {
         Assert.That(actualClearChatMessage.MessageType, Is.EqualTo( MessageType.ClearChat ));
         
         Assert.Multiple(() => {
-            Assert.That(actualClearChatMessage.Duration, Is.EqualTo(expectedClearChatMessage?.Duration), "Duration was not equal to expected value");
-            Assert.That(actualClearChatMessage.RoomId, Is.EqualTo(expectedClearChatMessage?.RoomId), "RoomId was not equal to expected value");
-            Assert.That(actualClearChatMessage.UserId, Is.EqualTo(expectedClearChatMessage?.UserId), "UserId was not equal to expected value");
-            Assert.That(actualClearChatMessage.Timestamp, Is.EqualTo(expectedClearChatMessage?.Timestamp), "Timestamp was not equal to expected value");
-            Assert.That(actualClearChatMessage.Text, Is.EqualTo(expectedClearChatMessage?.Text), "Text was not equal to expected value");
+            Assert.That(actualClearChatMessage.Duration, Is.EqualTo(expectedClearChatMessage.Duration), "Duration was not equal to expected value");
+            Assert.That(actualClearChatMessage.RoomId, Is.EqualTo(expectedClearChatMessage.RoomId), "RoomId was not equal to expected value");
+            Assert.That(actualClearChatMessage.UserId, Is.EqualTo(expectedClearChatMessage.UserId), "UserId was not equal to expected value");
+            Assert.That(actualClearChatMessage.Timestamp, Is.EqualTo(expectedClearChatMessage.Timestamp), "Timestamp was not equal to expected value");
+            Assert.That(actualClearChatMessage.Text, Is.EqualTo(expectedClearChatMessage.Text), "Text was not equal to expected value");
         });
     }
 

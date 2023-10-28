@@ -17,12 +17,12 @@ public class RoomStateMsgTests {
         Assert.That( actualRoomStateMsgMessage.MessageType, Is.EqualTo( MessageType.RoomState ) );
 
         Assert.Multiple(() => {
-            Assert.That(actualRoomStateMsgMessage.EmoteOnly, Is.EqualTo(expectedRoomStateMsgMessage?.EmoteOnly), "EmoteOnly was not equal to expected value");
-            Assert.That(actualRoomStateMsgMessage.FollowersOnly, Is.EqualTo(expectedRoomStateMsgMessage?.FollowersOnly), "FollowersOnly was not equal to expected value");
-            Assert.That(actualRoomStateMsgMessage.R9K, Is.EqualTo(expectedRoomStateMsgMessage?.R9K), "R9K was not equal to expected value");
-            Assert.That(actualRoomStateMsgMessage.Slow, Is.EqualTo(expectedRoomStateMsgMessage?.Slow), "Slow was not equal to expected value");
-            Assert.That(actualRoomStateMsgMessage.RoomId, Is.EqualTo(expectedRoomStateMsgMessage?.RoomId), "RoomId was not equal to expected value");
-            Assert.That(actualRoomStateMsgMessage.SubsOnly, Is.EqualTo(expectedRoomStateMsgMessage?.SubsOnly), "SubsOnly was not equal to expected value");
+            Assert.That(actualRoomStateMsgMessage.EmoteOnly, Is.EqualTo(expectedRoomStateMsgMessage.EmoteOnly), "EmoteOnly was not equal to expected value");
+            Assert.That(actualRoomStateMsgMessage.FollowersOnly, Is.EqualTo(expectedRoomStateMsgMessage.FollowersOnly), "FollowersOnly was not equal to expected value");
+            Assert.That(actualRoomStateMsgMessage.R9K, Is.EqualTo(expectedRoomStateMsgMessage.R9K), "R9K was not equal to expected value");
+            Assert.That(actualRoomStateMsgMessage.Slow, Is.EqualTo(expectedRoomStateMsgMessage.Slow), "Slow was not equal to expected value");
+            Assert.That(actualRoomStateMsgMessage.RoomId, Is.EqualTo(expectedRoomStateMsgMessage.RoomId), "RoomId was not equal to expected value");
+            Assert.That(actualRoomStateMsgMessage.SubsOnly, Is.EqualTo(expectedRoomStateMsgMessage.SubsOnly), "SubsOnly was not equal to expected value");
         });
     }
 

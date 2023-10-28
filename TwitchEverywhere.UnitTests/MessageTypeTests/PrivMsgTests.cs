@@ -15,12 +15,12 @@ public class PrivMsgTests {
         
         Assert.That(actualPrivMessage.MessageType, Is.EqualTo( MessageType.PrivMsg ));
         
-        CollectionAssert.AreEqual( actualPrivMessage.Badges, expectedPrivMessage?.Badges, "Badges are not equal" );
-        CollectionAssert.AreEqual( actualPrivMessage.Emotes, expectedPrivMessage?.Emotes, "Emotes are not equal" );
+        CollectionAssert.AreEqual( actualPrivMessage.Badges, expectedPrivMessage.Badges, "Badges are not equal" );
+        CollectionAssert.AreEqual( actualPrivMessage.Emotes, expectedPrivMessage.Emotes, "Emotes are not equal" );
         
         Assert.Multiple(() => {
-            Assert.That(actualPrivMessage.Bits, Is.EqualTo(expectedPrivMessage?.Bits), "Bits are not equal");
-            Assert.That(actualPrivMessage.Color, Is.EqualTo(expectedPrivMessage?.Color), "Colors are not equal");
+            Assert.That(actualPrivMessage.Bits, Is.EqualTo(expectedPrivMessage.Bits), "Bits are not equal");
+            Assert.That(actualPrivMessage.Color, Is.EqualTo(expectedPrivMessage.Color), "Colors are not equal");
             Assert.That(actualPrivMessage.DisplayName, Is.EqualTo(expectedPrivMessage?.DisplayName), "DisplayNames are not equal");
             Assert.That(actualPrivMessage.Id, Is.EqualTo(expectedPrivMessage?.Id), "Ids are not equal");
             Assert.That(actualPrivMessage.Mod, Is.EqualTo(expectedPrivMessage?.Mod), "Mods are not equal");
@@ -50,13 +50,13 @@ public class PrivMsgTests {
         yield return new TestCaseData(
             "@badge-info=;badges=turbo/1;color=#0D4200;display-name=ronni;emotes=25:0-4,12-16/1902:6-10;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=1337;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=1337;user-type=global_mod :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :Kappa Keepo Kappa",
             new TestData( 
-                badges: new List<Badge>() {
+                badges: new List<Badge> {
                     new( "turbo", "1" )
                 }.ToImmutableList(),
                 bits: "",
                 color: "#0D4200",
                 displayName: "ronni",
-                emotes: new List<Emote>() {
+                emotes: new List<Emote> {
                     new("25", 0, 4),
                     new("25", 12, 16),
                     new("1902", 6, 10)
@@ -88,7 +88,7 @@ public class PrivMsgTests {
         yield return new TestCaseData(
             "@badge-info=;badges=staff/1,bits/1000;bits=100;color=;display-name=ronni;emotes=;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=12345678;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=12345678;user-type=staff :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :cheer100\n",
             new TestData( 
-                badges: new List<Badge>() {
+                badges: new List<Badge> {
                     new( "staff", "1" ),
                     new( "bits", "1000" )
                 }.ToImmutableList(),
@@ -123,7 +123,7 @@ public class PrivMsgTests {
         yield return new TestCaseData(
             "@badge-info=;badges=glhf-pledge/1;color=;emotes=;first-msg=0;flags=;id=f6fb34f8-562f-4b4d-b628-32113d0ef4b0;mod=0;pinned-chat-paid-amount=200;pinned-chat-paid-canonical-amount=200;pinned-chat-paid-currency=USD;pinned-chat-paid-exponent=2;pinned-chat-paid-is-system-message=0;pinned-chat-paid-level=ONE;returning-chatter=0;room-id=12345678;subscriber=0;tmi-sent-ts=1687471984306;turbo=0;user-id=12345678;user-type=\n",
             new TestData( 
-                badges: new List<Badge>() {
+                badges: new List<Badge> {
                     new( "glhf-pledge", "1" )
                 }.ToImmutableList(),
                 bits: "",

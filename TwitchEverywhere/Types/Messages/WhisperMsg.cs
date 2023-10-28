@@ -22,7 +22,7 @@ public class WhisperMsg : Message {
         }
     }
     
-    public string? Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
+    public string Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
     
     public string DisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.DisplayNamePattern );
     
@@ -98,8 +98,7 @@ public class WhisperMsg : Message {
 
         List<Badge> parsedBadges = new();
 
-        for( int index = 0; index < badgeList.Length; index++ ) {
-            string badge = badgeList[index];
+        foreach (string badge in badgeList) {
             string[] badgeInfo = badge.Split( '/' );
 
             if( badgeInfo.Length == 2 ) {
