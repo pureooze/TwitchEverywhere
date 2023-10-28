@@ -53,17 +53,17 @@ public class RoomStateMsgTests {
     }
     
     private void RoomStateMsgMessageCallback(
-        RoomStateMsg clearMsg,
-        RoomStateMsg? expectedClearMessage
+        RoomStateMsg roomStateMsg,
+        RoomStateMsg? expectedRoomStateMsg
     ) {
         Assert.Multiple(() => {
-            Assert.That(clearMsg.EmoteOnly, Is.EqualTo(expectedClearMessage?.EmoteOnly), "EmoteOnly was not equal to expected value");
-            Assert.That(clearMsg.FollowersOnly, Is.EqualTo(expectedClearMessage?.FollowersOnly), "FollowersOnly was not equal to expected value");
-            Assert.That(clearMsg.R9K, Is.EqualTo(expectedClearMessage?.R9K), "R9K was not equal to expected value");
-            Assert.That(clearMsg.Slow, Is.EqualTo(expectedClearMessage?.Slow), "Slow was not equal to expected value");
-            Assert.That(clearMsg.RoomId, Is.EqualTo(expectedClearMessage?.RoomId), "RoomId was not equal to expected value");
-            Assert.That(clearMsg.SubsOnly, Is.EqualTo(expectedClearMessage?.SubsOnly), "SubsOnly was not equal to expected value");
-            Assert.That(clearMsg.MessageType, Is.EqualTo(expectedClearMessage?.MessageType), "MessageType was not equal to expected value");
+            Assert.That(roomStateMsg.EmoteOnly, Is.EqualTo(expectedRoomStateMsg?.EmoteOnly), "EmoteOnly was not equal to expected value");
+            Assert.That(roomStateMsg.FollowersOnly, Is.EqualTo(expectedRoomStateMsg?.FollowersOnly), "FollowersOnly was not equal to expected value");
+            Assert.That(roomStateMsg.R9K, Is.EqualTo(expectedRoomStateMsg?.R9K), "R9K was not equal to expected value");
+            Assert.That(roomStateMsg.Slow, Is.EqualTo(expectedRoomStateMsg?.Slow), "Slow was not equal to expected value");
+            Assert.That(roomStateMsg.RoomId, Is.EqualTo(expectedRoomStateMsg?.RoomId), "RoomId was not equal to expected value");
+            Assert.That(roomStateMsg.SubsOnly, Is.EqualTo(expectedRoomStateMsg?.SubsOnly), "SubsOnly was not equal to expected value");
+            Assert.That(roomStateMsg.MessageType, Is.EqualTo(expectedRoomStateMsg?.MessageType), "MessageType was not equal to expected value");
         });
     }
 
@@ -75,6 +75,6 @@ public class RoomStateMsgTests {
             new RoomStateMsg(
                 message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #channel"
             )
-        ).SetName("Clear single message with Id");;
+        ).SetName("User joined channel with settings");;
     }
 }

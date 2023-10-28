@@ -39,7 +39,7 @@ public class GlobalUserState : Message {
         }
     }
     
-    public bool Turbo => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ) ) == 1;
+    public bool Turbo => int.TryParse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ), out _ );
 
     public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern );
 
@@ -48,8 +48,10 @@ public class GlobalUserState : Message {
     private IImmutableList<string> GetEmoteSetsFromText(
         string emotesText
     ) {
-        string[] sets = emotesText.Split( "," );
-        return sets.ToImmutableList();
+        return string.IsNullOrEmpty( emotesText ) 
+            ? new List<string>().ToImmutableList() 
+            : emotesText.Split( "," ).ToImmutableList();
+
     }
 
     private static UserType GetUserType(

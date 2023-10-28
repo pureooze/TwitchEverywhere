@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using TwitchEverywhere.Implementation.MessagePlugins;
 
 namespace TwitchEverywhere.Types.Messages;
@@ -39,5 +40,5 @@ public class ClearChat : Message {
         }
     }
 
-    public string Text => m_message.Split( $"CLEARCHAT #{m_channel}" )[1].Trim( '\r', '\n' );
+    public string Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"CLEARCHAT #{m_channel} :") ).Trim('\n');
 }

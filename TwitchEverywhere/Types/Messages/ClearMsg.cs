@@ -16,19 +16,11 @@ public class ClearMsg : Message {
     
     public override MessageType MessageType => MessageType.ClearMsg;
 
-    public string Login => MessagePluginUtils.LoginPattern
-        .Match( m_message )
-        .Value
-        .Split( "=" )[1]
-        .TrimEnd( ';' );
+    public string Login => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.LoginPattern );
 
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
     
-    public string TargetMessageId => MessagePluginUtils.TargetMessageIdPattern
-        .Match( m_message )
-        .Value
-        .Split( "=" )[1]
-        .TrimEnd( ';' );
+    public string TargetMessageId => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.TargetMessageIdPattern );
     
     public DateTime Timestamp {
         get {

@@ -9,37 +9,43 @@ public class PrivMsgTests {
 
     [Test]
     [TestCaseSource(nameof(PrivMsgMessages))]
-    public void PrivMsg( string message, TestData expectedPrivMessage ) {
+    public void PrivMsg( string message, TestData expectedPrivMessage )
+    {
         PrivMsg actualPrivMessage = new( channel: "channel", message: message, TimeSpan.Zero );
         
+        Assert.That(actualPrivMessage.MessageType, Is.EqualTo( MessageType.PrivMsg ));
+        
         CollectionAssert.AreEqual( actualPrivMessage.Badges, expectedPrivMessage?.Badges, "Badges are not equal" );
-        Assert.That( actualPrivMessage.Bits, Is.EqualTo( expectedPrivMessage?.Bits ), "Bits are not equal");
-        Assert.That( actualPrivMessage.Color, Is.EqualTo( expectedPrivMessage?.Color ), "Colors are not equal");
-        Assert.That( actualPrivMessage.DisplayName, Is.EqualTo( expectedPrivMessage?.DisplayName ), "DisplayNames are not equal");
         CollectionAssert.AreEqual( actualPrivMessage.Emotes, expectedPrivMessage?.Emotes, "Emotes are not equal" );
-        Assert.That( actualPrivMessage.Id, Is.EqualTo( expectedPrivMessage?.Id ), "Ids are not equal");
-        Assert.That( actualPrivMessage.Mod, Is.EqualTo( expectedPrivMessage?.Mod ), "Mods are not equal");
-        Assert.That( actualPrivMessage.PinnedChatPaidAmount, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidAmount ), "PinnedChatPaidAmounts are not equal");
-        Assert.That( actualPrivMessage.PinnedChatPaidCurrency, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidCurrency ), "PinnedChatPaidCurrencys are not equal");
-        Assert.That( actualPrivMessage.PinnedChatPaidExponent, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidExponent ), "PinnedChatPaidExponents are not equal");
-        Assert.That( actualPrivMessage.PinnedChatPaidLevel, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidLevel ), "PinnedChatPaidLevels are not equal");
-        Assert.That( actualPrivMessage.PinnedChatPaidIsSystemMessage, Is.EqualTo( expectedPrivMessage?.PinnedChatPaidIsSystemMessage ), "PinnedChatPaidIsSystemMessage are not equal");
-        Assert.That( actualPrivMessage.ReplyParentMsgId, Is.EqualTo( expectedPrivMessage?.ReplyParentMsgId ), "ReplyParentMsgIds are not equal");
-        Assert.That( actualPrivMessage.ReplyParentUserId, Is.EqualTo( expectedPrivMessage?.ReplyParentUserId ), "ReplyParentUserIds are not equal");
-        Assert.That( actualPrivMessage.ReplyParentUserLogin, Is.EqualTo( expectedPrivMessage?.ReplyParentUserLogin ), "ReplyParentUserLogins are not equal");
-        Assert.That( actualPrivMessage.ReplyParentDisplayName, Is.EqualTo( expectedPrivMessage?.ReplyParentDisplayName ), "ReplyParentDisplayNames are not equal");
-        Assert.That( actualPrivMessage.ReplyThreadParentMsg, Is.EqualTo( expectedPrivMessage?.ReplyThreadParentMsg ), "ReplyThreadParentMsgs are not equal");
-        Assert.That( actualPrivMessage.RoomId, Is.EqualTo( expectedPrivMessage?.RoomId ), "RoomIds are not equal");
-        Assert.That( actualPrivMessage.Subscriber, Is.EqualTo( expectedPrivMessage?.Subscriber ), "Subscribers are not equal");
-        Assert.That( actualPrivMessage.Timestamp, Is.EqualTo( expectedPrivMessage?.Timestamp ), "Timestamps are not equal");
-        Assert.That( actualPrivMessage.Turbo, Is.EqualTo( expectedPrivMessage?.Turbo ), "Turbos are not equal");
-        Assert.That( actualPrivMessage.UserId, Is.EqualTo( expectedPrivMessage?.UserId ), "UserIds are not equal");
-        Assert.That( actualPrivMessage.UserType, Is.EqualTo( expectedPrivMessage?.UserType ), "UserTypes are not equal");
-        Assert.That( actualPrivMessage.Vip, Is.EqualTo( expectedPrivMessage?.Vip ), "Vips are not equal");
-        Assert.That( actualPrivMessage.SinceStartOfStream, Is.EqualTo( expectedPrivMessage?.SinceStartOfStream ), "SinceStartOfStreams are not equal");
-        Assert.That( actualPrivMessage.Text, Is.EqualTo( expectedPrivMessage?.Text ), "Texts are not equal");
+        
+        Assert.Multiple(() => {
+            Assert.That(actualPrivMessage.Bits, Is.EqualTo(expectedPrivMessage?.Bits), "Bits are not equal");
+            Assert.That(actualPrivMessage.Color, Is.EqualTo(expectedPrivMessage?.Color), "Colors are not equal");
+            Assert.That(actualPrivMessage.DisplayName, Is.EqualTo(expectedPrivMessage?.DisplayName), "DisplayNames are not equal");
+            Assert.That(actualPrivMessage.Id, Is.EqualTo(expectedPrivMessage?.Id), "Ids are not equal");
+            Assert.That(actualPrivMessage.Mod, Is.EqualTo(expectedPrivMessage?.Mod), "Mods are not equal");
+            Assert.That(actualPrivMessage.PinnedChatPaidAmount, Is.EqualTo(expectedPrivMessage?.PinnedChatPaidAmount), "PinnedChatPaidAmounts are not equal");
+            Assert.That(actualPrivMessage.PinnedChatPaidCurrency, Is.EqualTo(expectedPrivMessage?.PinnedChatPaidCurrency), "PinnedChatPaidCurrencys are not equal");
+            Assert.That(actualPrivMessage.PinnedChatPaidExponent, Is.EqualTo(expectedPrivMessage?.PinnedChatPaidExponent), "PinnedChatPaidExponents are not equal");
+            Assert.That(actualPrivMessage.PinnedChatPaidLevel, Is.EqualTo(expectedPrivMessage?.PinnedChatPaidLevel), "PinnedChatPaidLevels are not equal");
+            Assert.That(actualPrivMessage.PinnedChatPaidIsSystemMessage, Is.EqualTo(expectedPrivMessage?.PinnedChatPaidIsSystemMessage), "PinnedChatPaidIsSystemMessage are not equal");
+            Assert.That(actualPrivMessage.ReplyParentMsgId, Is.EqualTo(expectedPrivMessage?.ReplyParentMsgId), "ReplyParentMsgIds are not equal");
+            Assert.That(actualPrivMessage.ReplyParentUserId, Is.EqualTo(expectedPrivMessage?.ReplyParentUserId), "ReplyParentUserIds are not equal");
+            Assert.That(actualPrivMessage.ReplyParentUserLogin, Is.EqualTo(expectedPrivMessage?.ReplyParentUserLogin), "ReplyParentUserLogins are not equal");
+            Assert.That(actualPrivMessage.ReplyParentDisplayName, Is.EqualTo(expectedPrivMessage?.ReplyParentDisplayName), "ReplyParentDisplayNames are not equal");
+            Assert.That(actualPrivMessage.ReplyThreadParentMsg, Is.EqualTo(expectedPrivMessage?.ReplyThreadParentMsg), "ReplyThreadParentMsgs are not equal");
+            Assert.That(actualPrivMessage.RoomId, Is.EqualTo(expectedPrivMessage?.RoomId), "RoomIds are not equal");
+            Assert.That(actualPrivMessage.Subscriber, Is.EqualTo(expectedPrivMessage?.Subscriber), "Subscribers are not equal");
+            Assert.That(actualPrivMessage.Timestamp, Is.EqualTo(expectedPrivMessage?.Timestamp), "Timestamps are not equal");
+            Assert.That(actualPrivMessage.Turbo, Is.EqualTo(expectedPrivMessage?.Turbo), "Turbos are not equal");
+            Assert.That(actualPrivMessage.UserId, Is.EqualTo(expectedPrivMessage?.UserId), "UserIds are not equal");
+            Assert.That(actualPrivMessage.UserType, Is.EqualTo(expectedPrivMessage?.UserType), "UserTypes are not equal");
+            Assert.That(actualPrivMessage.Vip, Is.EqualTo(expectedPrivMessage?.Vip), "Vips are not equal");
+            Assert.That(actualPrivMessage.SinceStartOfStream, Is.EqualTo(expectedPrivMessage?.SinceStartOfStream), "SinceStartOfStreams are not equal");
+            Assert.That(actualPrivMessage.Text, Is.EqualTo(expectedPrivMessage?.Text), "Texts are not equal");
+        });
     }
-    
+
     internal static IEnumerable<TestCaseData> PrivMsgMessages() {
         yield return new TestCaseData(
             "@badge-info=;badges=turbo/1;color=#0D4200;display-name=ronni;emotes=25:0-4,12-16/1902:6-10;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=1337;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=1337;user-type=global_mod :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :Kappa Keepo Kappa",

@@ -105,6 +105,6 @@ public class PrivMsg : Message {
 
     public TimeSpan SinceStartOfStream { get; }
 
-    public string Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"PRIVMSG #{m_channel} :") );
+    public string Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"PRIVMSG #{m_channel} :") ).Trim('\n');
 
 }
