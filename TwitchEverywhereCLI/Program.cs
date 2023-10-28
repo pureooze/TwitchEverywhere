@@ -16,7 +16,7 @@ string? refreshToken = config["RefreshToken"];
 string? clientId = config["ClientId"];
 string? clientSecret = config["ClientSecret"];
 string? clientName = config["ClientName"];
-string? channel = config["Channel"] ?? "";
+string channel = config["Channel"] ?? "";
 
 TwitchConnectionOptions options = new(
     Channel: channel,

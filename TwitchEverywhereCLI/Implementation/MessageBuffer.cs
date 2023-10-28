@@ -31,4 +31,4 @@ internal sealed class MessageBuffer {
     public string ReadAsString() {
         return Buffer.ToString();
     }
-};
+}

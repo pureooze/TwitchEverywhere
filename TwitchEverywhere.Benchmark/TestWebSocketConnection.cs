@@ -52,22 +52,30 @@ internal class TestWebSocketConnection : IWebSocketConnection {
             m_state = WebSocketState.Closed;
         } else {
             byte[] messageBytes = Encoding.UTF8.GetBytes( data.Current );
-            
-            if( buffer.Array != null ) {
-                Array.Copy( 
-                    sourceArray: messageBytes, 
-                    destinationArray: buffer.Array, 
-                    length: messageBytes.Length 
-                );
-                
+
+            if( buffer.Array == null ) {
                 return await Task.FromResult(
                     new WebSocketReceiveResult(
-                        count: messageBytes.Length, // Number of bytes received
-                        messageType: WebSocketMessageType.Text, // Message type
+                        count: 0, // Number of bytes received
+                        messageType: WebSocketMessageType.Close, // Message type
                         endOfMessage: true
                     )
                 );
             }
+
+            Array.Copy( 
+                sourceArray: messageBytes, 
+                destinationArray: buffer.Array, 
+                length: messageBytes.Length 
+            );
+                
+            return await Task.FromResult(
+                new WebSocketReceiveResult(
+                    count: messageBytes.Length, // Number of bytes received
+                    messageType: WebSocketMessageType.Text, // Message type
+                    endOfMessage: true
+                )
+            );
         }
         
         return await Task.FromResult(

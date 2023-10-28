@@ -5,6 +5,11 @@ Its likely I will make a mistake so if you notice one please make an issue or a 
 <!-- TOC -->
 * [General](#general)
 * [Memory Usage Profiling](#memory-usage-profiling)
+* [TwitchEverywhere vs. TwitchLib.Client](#twitcheverywhere-vs-twitchlibclient)
+  * [TwitchLib.Client](#twitchlibclient)
+    * [Memory Usage Spikes](#memory-usage-spikes)
+    * [Garbage Collection Frequency](#garbage-collection-frequency)
+  * [TwitchEverywhere.CLI](#twitcheverywherecli)
 <!-- TOC -->
 
 ## General
@@ -48,3 +53,61 @@ Some observations about this change we can make:
 * Fewer spikes in memory usage, probably because we dont store in a buffer or write to disk
   * If you look closely, there are some very small spikes but they are negligible
 * High traffic can cause issues with GC so clients should be careful with buffers/IO streams especially when trying to run at scale
+
+## TwitchEverywhere vs. TwitchLib.Client
+`TwitchLib.Client` is a powerful C# library that allows for interaction with various Twitch services – most notably chat and whisper. 
+`TwitchLib.Client` is a very feature rich library and at the moment `TwitchEverywhere` only supports a small amount of the features and most notably does not allow sending messages. 
+This gap will get closer as I add in features but its worth keeping in mind when trying to decide which library is best for your use case.
+
+In order to do a comparison between the two libraries we can run a similar test as the previous section. 
+I ran both `TwitchEverywhere.CLI` and `TwitchLib.Client` on my machine at the same time, connecting them to the same channel as well (with a small 1 second delay between starting because of IDE UI lag 🙂).
+This ensures that both libraries receive the same data at the same frequency. 
+
+The benchmark was run for about 37 minutes on a machine with a `Ryzen 5 3600X` with `32GB` of RAM. Both applications logged each message recieved to the console.
+Here are the results:
+
+### TwitchLib.Client
+![](images/37-min-1.PNG)
+
+The results for `TwitchLib.Client` were really impressive! With a peak memory usage of ~`36.07MB` with `26.75MB` for unmanaged memory leaving a total of `9.25MB` for managed memory.
+Given the amount of features the library supports as well as how many .NET frameworks it targets I was sure the memory usage was going to be higher than this.
+I think the maintainers have done a great job at making it perform as well as it does – no wonder it has 233K downloads on nuget.org 🤯.
+
+There are two things I do want to note though:
+
+#### Memory Usage Spikes
+Sometimes the memory for Gen0 would rapidly spike up, going from around 8MB to around 15MB.
+But then dotMemory would suddenly rerender the gen and "flatten" the peak. Which is actually what you see here:
+
+![](images/37-min-flattened.PNG)
+
+I'm not sure why this happened. Maybe its just a bug in how dotMemory renders.
+Or it could be the Garbage Collector doing something that dotMemory isn't able to represent in this visualization.
+I'm not sure as to the reason but it wasn't clear to me what happened so I think its worth mentioning. If you know what causes this, please let me know!
+
+#### Garbage Collection Frequency
+Another thing worth observing is **how often** the GC occurs. It seems that for `TwitchLib.Client` GC happened around every 1 - 2 minutes. This seems pretty frequent but its also not surprising.
+The stream that was used for this had a very high amount of messages, so object creation and disposal was very frequent, causing this behavior.
+
+But while it's necessary to have objects – when evaluating performance we should consider **when** and **how** objects are created.
+When are we creating the objects? How frequently do we create them? What data do they hold? Why? When and how do we access the data?
+This was something I tried to be considerate of (even with my limited perf. experience 😉) when creating `TwitchEverywhere`. 
+
+### TwitchEverywhere.CLI
+![](images/37-min-2.PNG)
+
+`TwitchEverywhere` had a peak memory usage of `28.91MB` with `19.50MB` for unmanaged memory leaving `9.38MB` for managed memory.
+The difference in unmanaged memory is at least partly due to different build targets, since `TwitchEverywhere` targets .NET 6 and .NET 7.
+While the total memory usage is similar to `TwitchLib.Client` there is a pretty stark difference in how often GC happens. 
+For `TwitchEverywhere` GC happens around every 4 minutes, so around 2 - 4 times LESS frequently than `TwitchLib.Client`.
+
+### Gen0, Gen1, Gen2, LOH and POH, Oh My!
+
+| Segment   | `TwitchLib.CLient` | `TwitchEverywhere` |
+|-----------|--------------------|--------------------|
+| UnManaged | 26.75 MB           | 19.50 MB           |
+| Gen0      | 8.02 MB            | 8.01 MB            |
+| Gen1      | 241.3 KB           | 42.9 KB            |
+| Gen2      | 723.6 KB           | 1.00 MB            |
+| LOH & POH | 364.8 KB           | 363.5 KB           |
+| Total     | ~36.1 MB           | ~28.92 MB          |
