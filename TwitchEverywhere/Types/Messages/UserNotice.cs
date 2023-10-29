@@ -49,7 +49,7 @@ public class UserNotice : Message {
     
     public bool Mod => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ModPattern ) ) == 1;
     
-    public MsgIdType MsgId => GetMessageIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MessageIdPattern ) );
+    public MsgIdType MsgId => GetMessageIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern ) );
     
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
     

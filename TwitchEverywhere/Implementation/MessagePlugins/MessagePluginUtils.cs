@@ -22,7 +22,7 @@ internal static class MessagePluginUtils {
     public readonly static Regex FollowersOnlyPattern = new("followers-only=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex IdPattern = new(";id=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex LoginPattern = new("login=([^;]*)", RegexOptions.Compiled);
-    public readonly static Regex MessageIdPattern = new("msg-id=([^;]*)", RegexOptions.Compiled);
+    public readonly static Regex MessageIdPattern = new("message-id=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)", RegexOptions.Compiled);
     public readonly static Regex ModPattern = new("mod=([^;]*)", RegexOptions.Compiled);
     public readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)", RegexOptions.Compiled);
@@ -71,6 +71,9 @@ internal static class MessagePluginUtils {
     public readonly static Regex UserJoinPattern = new(@"(?<=:)\w+(?=!)", RegexOptions.Compiled);
     public readonly static Regex HostViewerCountPattern = new(@"\d+$", RegexOptions.Compiled);
     public readonly static Regex HostTargetPattern = new(@":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled);
+    public readonly static Regex FromUserPattern = new(@":(.+?)!", RegexOptions.Compiled);
+    public readonly static Regex ToUserPattern = new(@"WHISPER\s(.*?) :[^:]*$", RegexOptions.Compiled);
+    public readonly static Regex MsgTextPattern = new(@".+:(.+ ?).*", RegexOptions.Compiled);
     
     public static string GetValueFromResponse( 
         string message,
