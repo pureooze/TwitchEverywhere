@@ -52,12 +52,12 @@ public class PartMsgTests {
     }
     
     private void PartMsgCallback(
-        PartMsg globalUserState,
-        PartMsg? expectedGlobalUserState
+        PartMsg partMsg,
+        PartMsg? expectedPartMsg
     ) {
         Assert.Multiple(() => {
-            Assert.That(globalUserState.User, Is.EqualTo(expectedGlobalUserState?.User), "User was not equal to expected value");
-            Assert.That(globalUserState.Channel, Is.EqualTo(expectedGlobalUserState?.Channel), "Channel was not equal to expected value");
+            Assert.That(partMsg.User, Is.EqualTo(expectedPartMsg?.User), "User was not equal to expected value");
+            Assert.That(partMsg.Channel, Is.EqualTo(expectedPartMsg?.Channel), "Channel was not equal to expected value");
         });
     }
     
@@ -70,6 +70,6 @@ public class PartMsgTests {
                 message: $":ronni!ronni@ronni.tmi.twitch.tv PART #channel",
                 channel: "channel"
             )
-        ).SetName("Ronni joined the channel");
+        ).SetName("Ronni left the channel");
     }
 }

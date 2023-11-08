@@ -22,7 +22,7 @@ public class RoomStateMsg : Message {
     
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
     
-    public string Slow => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SlowPattern );
+    public int Slow => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SlowPattern ) );
     
     public bool SubsOnly => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SubsOnlyPattern ) ) == 1;
 }

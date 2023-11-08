@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Moq;
-using NUnit.Framework.Internal;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;

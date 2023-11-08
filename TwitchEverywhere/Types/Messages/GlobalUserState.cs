@@ -28,7 +28,7 @@ public class GlobalUserState : Message {
         }
     }
     
-    public string? Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
+    public string Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
     
     public string DisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.DisplayNamePattern );
     
@@ -39,7 +39,7 @@ public class GlobalUserState : Message {
         }
     }
     
-    public bool Turbo => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ) ) == 1;
+    public bool Turbo => int.TryParse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ), out _ );
 
     public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern );
 
@@ -48,8 +48,10 @@ public class GlobalUserState : Message {
     private IImmutableList<string> GetEmoteSetsFromText(
         string emotesText
     ) {
-        string[] sets = emotesText.Split( "," );
-        return sets.ToImmutableList();
+        return string.IsNullOrEmpty( emotesText ) 
+            ? new List<string>().ToImmutableList() 
+            : emotesText.Split( "," ).ToImmutableList();
+
     }
 
     private static UserType GetUserType(
@@ -75,8 +77,7 @@ public class GlobalUserState : Message {
 
         List<Badge> parsedBadges = new();
 
-        for( int index = 0; index < badgeList.Length; index++ ) {
-            string badge = badgeList[index];
+        foreach (string badge in badgeList) {
             string[] badgeInfo = badge.Split( '/' );
 
             if( badgeInfo.Length == 2 ) {

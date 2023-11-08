@@ -3,13 +3,10 @@ using TwitchEverywhere.Implementation.MessagePlugins;
 namespace TwitchEverywhere.Types.Messages; 
 
 public class NoticeMsg : Message {
-    private readonly string m_channel;
     private readonly string m_message;
     public NoticeMsg(
-        string channel,
         string message
     ) {
-        m_channel = channel;
         m_message = message;
     }
 

@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Moq;
-using NUnit.Framework.Internal;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
@@ -68,7 +67,6 @@ public class NoticeTests {
                 $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             }.ToImmutableList(),
             new NoticeMsg(
-                channel: "channel",
                 message: $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             )
         ).SetName("Message Delete Success, No User ID");
@@ -78,7 +76,6 @@ public class NoticeTests {
                 $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             }.ToImmutableList(),
             new NoticeMsg(
-                channel: "channel",
                 message: $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             )
         ).SetName("Whisper Restricted, With User ID");

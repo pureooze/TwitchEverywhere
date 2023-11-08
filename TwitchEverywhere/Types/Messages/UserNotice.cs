@@ -28,11 +28,11 @@ public class UserNotice : Message {
         }
     }
     
-    public string? Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
+    public string Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern );
     
     public string DisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.DisplayNamePattern );
     
-    public IImmutableList<Emote>? Emotes {
+    public IImmutableList<Emote> Emotes {
         get {
             string emotesText = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.EmotesPattern );
             return GetEmotesFromText( emotesText );
@@ -49,7 +49,7 @@ public class UserNotice : Message {
     
     public bool Mod => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ModPattern ) ) == 1;
     
-    public MsgIdType MsgId => GetMessageIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MessageIdPattern ) );
+    public MsgIdType MsgId => GetMessageIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern ) );
     
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
     
@@ -127,13 +127,7 @@ public class UserNotice : Message {
     
     public string MsgParamSenderName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamSenderNamePattern );
     
-    public bool? MsgParamShouldShareStreak {
-        get {
-            string value = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamShouldShareStreakPattern );
-            
-            return int.Parse( value ) == 1;
-        }
-    }
+    public bool? MsgParamShouldShareStreak => int.TryParse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamShouldShareStreakPattern ), out _ );
 
     public int? MsgParamStreakMonths {
         get {
@@ -187,7 +181,7 @@ public class UserNotice : Message {
             "1000" => MsgSubPlanType.Tier1,
             "2000" => MsgSubPlanType.Tier2,
             "3000" => MsgSubPlanType.Tier3,
-            _ => throw new ArgumentOutOfRangeException( nameof(msgSubPlan), msgSubPlan, null )
+            _ => MsgSubPlanType.None
         };
     }
     
@@ -222,15 +216,16 @@ public class UserNotice : Message {
         };
     }
     
-    private static IImmutableList<Emote>? GetEmotesFromText(
+    private static IImmutableList<Emote> GetEmotesFromText(
         string emotesText
     ) {
 
+        List<Emote> emotes = new();
+        
         if( string.IsNullOrEmpty( emotesText ) ) {
-            return null;
+            return emotes.ToImmutableList();
         }
 
-        List<Emote> emotes = new();
         string[] separatedRawEmotes = emotesText.Split( "/" );
 
         foreach (string rawEmote in separatedRawEmotes) {
@@ -265,8 +260,7 @@ public class UserNotice : Message {
 
         List<Badge> parsedBadges = new();
 
-        for( int index = 0; index < badgeList.Length; index++ ) {
-            string badge = badgeList[index];
+        foreach (string badge in badgeList) {
             string[] badgeInfo = badge.Split( '/' );
 
             if( badgeInfo.Length == 2 ) {
