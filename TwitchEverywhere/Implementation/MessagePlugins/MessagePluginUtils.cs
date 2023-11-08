@@ -71,7 +71,7 @@ internal static class MessagePluginUtils {
     public readonly static Regex UserJoinPattern = new(@"(?<=:)\w+(?=!)", RegexOptions.Compiled);
     public readonly static Regex HostViewerCountPattern = new(@"\d+$", RegexOptions.Compiled);
     public readonly static Regex HostTargetPattern = new(@":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled);
-    public readonly static Regex FromUserPattern = new(@":(.+?)!", RegexOptions.Compiled);
+    public readonly static Regex FromUserPattern = new(@" :(.+?)!", RegexOptions.Compiled);
     public readonly static Regex ToUserPattern = new(@"WHISPER\s(.*?) :[^:]*$", RegexOptions.Compiled);
     public readonly static Regex MsgTextPattern = new(@".+:(.+ ?).*", RegexOptions.Compiled);
     
