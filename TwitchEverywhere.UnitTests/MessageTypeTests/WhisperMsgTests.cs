@@ -53,6 +53,30 @@ public class WhisperMsgTests {
                 toUser: "foo"
             )
         ).SetName( "Whisper from a user" );
+        
+        yield return new TestCaseData(
+            "@badges=staff/1,bits-charity/1;color=#8A2BE2;display-name=PetsgomOO;emotes=25:0-4,12-16/1902:6-10;message-id=306;thread-id=12345678_87654321;turbo=0;user-id=87654321;user-type=staff :petsgomoo!petsgomoo@petsgomoo.tmi.twitch.tv WHISPER foo :hello",
+            new TestData( 
+                badges: new List<Badge> {
+                    new("staff", "1"),
+                    new("bits-charity", "1")
+                }.ToImmutableList(),
+                color: "#8A2BE2",
+                displayName: "PetsgomOO",
+                emotes: new List<Emote> {
+                    new Emote("25", 0, 4),
+                    new Emote("25", 12, 16),
+                    new Emote("1902", 6, 10)
+                }.ToImmutableList(),
+                msgId: "306",
+                threadId: "12345678_87654321",
+                turbo: false,
+                userId: "87654321",
+                userType: UserType.Staff,
+                fromUser: "petsgomoo",
+                toUser: "foo"
+            )
+        ).SetName( "Whisper with emotes" );
     }
 
     public class TestData {
