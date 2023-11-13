@@ -41,11 +41,11 @@ public class UserStateMsg : Message {
     
     public string Id => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.IdPattern );
     
-    public bool Mod => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ModPattern ) ) == 1;
+    public bool Mod => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.ModPattern );
     
-    public bool Subscriber => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SubscriberPattern ) ) == 1;
+    public bool Subscriber => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.SubscriberPattern );
     
-    public bool Turbo => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ) ) == 1;
+    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.TurboPattern );
     
     public UserType UserType => GetUserType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserTypePattern ) );
     

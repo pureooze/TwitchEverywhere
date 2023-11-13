@@ -37,7 +37,7 @@ public class WhisperMsg : Message {
     
     public string ThreadId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ThreadIdPattern );
     
-    public bool Turbo => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ) ) == 1;
+    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.TurboPattern );
     
     public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern );
 

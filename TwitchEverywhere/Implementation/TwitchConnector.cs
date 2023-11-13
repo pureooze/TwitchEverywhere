@@ -8,6 +8,8 @@ internal sealed class TwitchConnector : ITwitchConnector {
     private readonly IAuthorizer m_authorizer;
     private readonly IWebSocketConnection m_webSocketConnection;
     private readonly IMessageProcessor m_messageProcessor;
+    private TwitchConnectionOptions m_options;
+
 
     public TwitchConnector(
         IAuthorizer authorizer,
@@ -25,19 +27,64 @@ internal sealed class TwitchConnector : ITwitchConnector {
     ) {
         string token = await m_authorizer.GetToken();
 
+        m_options = options;
+
         bool result = await ConnectToWebsocket( 
             ws: m_webSocketConnection, 
             token: token, 
-            options: options, 
             callback: messageCallback 
         );
         return result;
     }
 
+    async Task<bool> ITwitchConnector.SendMessage(
+        string message,
+        MessageType messageType
+    ) {
+        if( m_webSocketConnection.State != WebSocketState.Open ) {
+            return false;
+        }
+
+        switch( messageType ) {
+            case MessageType.PrivMsg:
+                await SendMessage( m_webSocketConnection, $"PRIVMSG #{m_options.Channel} :{message}" );
+                break;
+            case MessageType.ClearChat:
+            case MessageType.ClearMsg:
+            case MessageType.GlobalUserState:
+            case MessageType.Notice:
+            case MessageType.RoomState:
+            case MessageType.UserNotice:
+            case MessageType.UserState:
+            case MessageType.Whisper:
+            case MessageType.Join:
+            case MessageType.Part:
+                await SendMessage( m_webSocketConnection, $"PART ${m_options.Channel}" );
+                break;
+            case MessageType.HostTarget:
+            case MessageType.Reconnect:
+            case MessageType.Unknown:
+            default:
+                break;
+        }
+        
+        return true;
+    }
+
+    async Task<bool> ITwitchConnector.Disconnect() {
+        await SendMessage( m_webSocketConnection, $"PART ${m_options.Channel}" );
+        await m_webSocketConnection.CloseAsync( 
+            closeStatus: WebSocketCloseStatus.NormalClosure, 
+            statusDescription: "Disconnect requested", 
+            cancellationToken: CancellationToken.None 
+        );
+
+        return true;
+    }
+
     private async Task<bool> ConnectToWebsocket(
         IWebSocketConnection ws,
         string token,
-        TwitchConnectionOptions options,
         Action<Message> callback
     ) {
         await ws.ConnectAsync(
@@ -51,14 +98,13 @@ internal sealed class TwitchConnector : ITwitchConnector {
             message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" 
         );
         await SendMessage( socketConnection: ws, message: $"PASS oauth:{token}" );
-        await SendMessage( socketConnection: ws, message: $"NICK {options.ClientName}" );
-        await SendMessage( socketConnection: ws, message: $"JOIN #{options.Channel}" );
+        await SendMessage( socketConnection: ws, message: $"NICK {m_options.ClientName}" );
+        await SendMessage( socketConnection: ws, message: $"JOIN #{m_options.Channel}" );
         
         while (ws.State == WebSocketState.Open) {
             await ReceiveWebSocketResponse( 
                 ws: ws, 
                 buffer: buffer, 
-                options: options, 
                 callback: callback 
             );
         }
@@ -69,7 +115,6 @@ internal sealed class TwitchConnector : ITwitchConnector {
     private async Task ReceiveWebSocketResponse(
         IWebSocketConnection ws,
         byte[] buffer,
-        TwitchConnectionOptions options,
         Action<Message> callback
     ) {
         WebSocketReceiveResult result = await ws.ReceiveAsync(
@@ -98,7 +143,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
                 } else {
                     m_messageProcessor.ProcessMessage(
                         response: response,
-                        channel: options.Channel, 
+                        channel: m_options.Channel, 
                         callback: callback
                     );
                 }

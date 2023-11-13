@@ -27,5 +27,5 @@ TwitchConnectionOptions options = new(
     ClientName: clientName
 );
 
-TwitchConnection twitchConnection = new();
-await twitchConnection.Connect( options );
+TwitchConnection twitchConnection = new( options );
+await twitchConnection.Connect();

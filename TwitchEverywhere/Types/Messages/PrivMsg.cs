@@ -42,7 +42,7 @@ public class PrivMsg : Message {
 
     public string Id => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.IdPattern );
 
-    public bool Mod => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ModPattern ) ) == 1;
+    public bool Mod => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.ModPattern );
 
     public long? PinnedChatPaidAmount {
         get {
@@ -81,7 +81,7 @@ public class PrivMsg : Message {
 
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
 
-    public bool Subscriber => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SubscriberPattern ) ) == 1;
+    public bool Subscriber => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.SubscriberPattern );
 
     public DateTime Timestamp {
         get {
@@ -95,7 +95,7 @@ public class PrivMsg : Message {
         }
     }
 
-    public bool Turbo => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ) ) == 1;
+    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.TurboPattern );
 
     public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern );
 

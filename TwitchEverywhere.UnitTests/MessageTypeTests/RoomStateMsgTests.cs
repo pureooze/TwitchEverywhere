@@ -28,16 +28,28 @@ public class RoomStateMsgTests {
 
     internal static IEnumerable<TestCaseData> RoomStateMsgMessages() {
         yield return new TestCaseData(
-            "@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #channel",
+            "@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0;room-id=240866033 :tmi.twitch.tv ROOMSTATE #channel",
             new TestData(
                 emoteOnly: false,
                 followersOnly: 0,
                 r9k: false,
-                roomId: "",
+                roomId: "240866033",
                 slow: 0,
                 subsOnly: false
             )
         ).SetName( "User joined channel with settings" );
+        
+        yield return new TestCaseData(
+            "@emote-only=1;room-id=240866033 :tmi.twitch.tv ROOMSTATE #channel",
+            new TestData(
+                emoteOnly: false,
+                followersOnly: 0,
+                r9k: false,
+                roomId: "240866033",
+                slow: 0,
+                subsOnly: false
+            )
+        ).SetName( "Emote only enabled" );
     }
 
     public class TestData {

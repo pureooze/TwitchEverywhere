@@ -47,13 +47,13 @@ public class UserNotice : Message {
         .Split( "=" )[1]
         .TrimEnd( ';' );
     
-    public bool Mod => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ModPattern ) ) == 1;
+    public bool Mod => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.ModPattern );
     
     public MsgIdType MsgId => GetMessageIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern ) );
     
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
     
-    public bool Subscriber => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SubscriberPattern ) ) == 1;
+    public bool Subscriber => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.SubscriberPattern );
     
     public string SystemMsg => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SystemMessagePattern );
     
@@ -69,7 +69,7 @@ public class UserNotice : Message {
         }
     }
     
-    public bool Turbo => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TurboPattern ) ) == 1;
+    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.TurboPattern );
     
     public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern );
     

@@ -10,6 +10,8 @@ public class NoticeMsg : Message {
         m_message = message;
     }
 
+    public string Message => m_message;
+    
     public override MessageType MessageType => MessageType.Notice;
 
     public NoticeMsgIdType MsgId => GetNoticeMsgIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern ) );

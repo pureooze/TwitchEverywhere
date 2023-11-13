@@ -14,15 +14,15 @@ public class RoomStateMsg : Message {
 
     public override MessageType MessageType => MessageType.RoomState;
     
-    public bool EmoteOnly => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.EmoteOnlyPattern ) ) == 1;
+    public bool EmoteOnly => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.EmoteOnlyPattern );
 
-    public int FollowersOnly => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.FollowersOnlyPattern ) );
+    public int FollowersOnly => MessagePluginUtils.GetIntValueFromResponse( m_message, MessagePluginUtils.FollowersOnlyPattern );
     
-    public bool R9K => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.R9KPattern ) ) == 1;
+    public bool R9K => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.R9KPattern );
     
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
     
-    public int Slow => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SlowPattern ) );
+    public int Slow => MessagePluginUtils.GetIntValueFromResponse( m_message, MessagePluginUtils.SlowPattern );
     
-    public bool SubsOnly => int.Parse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SubsOnlyPattern ) ) == 1;
+    public bool SubsOnly => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.SubsOnlyPattern );
 }
