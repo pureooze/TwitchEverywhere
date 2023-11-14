@@ -56,12 +56,9 @@ internal class TwitchConnection {
                 PrivMsg privMsg = (PrivMsg) message;
                 PrivMessageCallback( privMsg );
                 Console.WriteLine( $"PrivMsg: {privMsg.DisplayName}, {privMsg.Text}" );
-                bool sendMessage = await m_twitchEverywhere.SendMessage( "hello world", MessageType.PrivMsg );
+                bool sendMessage = await m_twitchEverywhere.SendMessage( "hello world", MessageType.ClearChat );
 
                 Console.WriteLine( sendMessage ? $"Sent message SUCCEEDED!" : $"Sent message FAILED!" );
-
-                await m_twitchEverywhere.Disconnect();
-
                 break;
             }
             case MessageType.ClearChat: {

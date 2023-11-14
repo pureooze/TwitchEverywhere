@@ -50,22 +50,44 @@ internal sealed class TwitchConnector : ITwitchConnector {
                 await SendMessage( m_webSocketConnection, $"PRIVMSG #{m_options.Channel} :{message}" );
                 break;
             case MessageType.ClearChat:
+                await SendMessage( m_webSocketConnection, $"CLEARCHAT #${m_options.Channel}" );
+                break;
             case MessageType.ClearMsg:
+                await SendMessage( m_webSocketConnection, $"CLEARMSG ${m_options.Channel}" );
+                break;
             case MessageType.GlobalUserState:
+                await SendMessage( m_webSocketConnection, $"GLOBALUSERSTATE ${m_options.Channel}" );
+                break;
             case MessageType.Notice:
+                await SendMessage( m_webSocketConnection, $"NOTICE ${m_options.Channel}" );
+                break;
             case MessageType.RoomState:
+                await SendMessage( m_webSocketConnection, $"ROOMSTATE ${m_options.Channel}" );
+                break;
             case MessageType.UserNotice:
+                await SendMessage( m_webSocketConnection, $"USERNOTICE ${m_options.Channel}" );
+                break;
             case MessageType.UserState:
+                await SendMessage( m_webSocketConnection, $"USERSTATE ${m_options.Channel}" );
+                break;
             case MessageType.Whisper:
+                await SendMessage( m_webSocketConnection, $"WHISPER ${m_options.Channel}" );
+                break;
             case MessageType.Join:
+                await SendMessage( m_webSocketConnection, $"JOIN ${m_options.Channel}" );
+                break;
             case MessageType.Part:
                 await SendMessage( m_webSocketConnection, $"PART ${m_options.Channel}" );
                 break;
             case MessageType.HostTarget:
+                await SendMessage( m_webSocketConnection, $"HOSTTARGET ${m_options.Channel}" );
+                break;
             case MessageType.Reconnect:
+                await SendMessage( m_webSocketConnection, $"RECONNECT ${m_options.Channel}" );
+                break;
             case MessageType.Unknown:
             default:
-                break;
+                throw new ArgumentOutOfRangeException( nameof(messageType), messageType, null );
         }
         
         return true;
