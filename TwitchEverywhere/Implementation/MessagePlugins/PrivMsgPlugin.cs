@@ -39,7 +39,7 @@ public class PrivMsgPlugin : IMessagePlugin {
             throw new UnexpectedUserMessageException();
         }
 
-        return new PrivMsg(
+        return new LazyLoadedPrivMsg(
             channel,
             response,
             timeSinceStartOfStream

@@ -15,7 +15,7 @@ public class PartMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new PartMsg( 
+        return new LazyLoadedPartMsg( 
             message: response, 
             channel: channel 
         );

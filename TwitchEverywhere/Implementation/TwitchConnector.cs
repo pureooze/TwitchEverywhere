@@ -1,6 +1,8 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 using TwitchEverywhere.Types;
+using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Implementation;
 
@@ -38,7 +40,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
     }
 
     async Task<bool> ITwitchConnector.SendMessage(
-        string message,
+        Message message,
         MessageType messageType
     ) {
         if( m_webSocketConnection.State != WebSocketState.Open ) {
@@ -47,7 +49,9 @@ internal sealed class TwitchConnector : ITwitchConnector {
 
         switch( messageType ) {
             case MessageType.PrivMsg:
-                await SendMessage( m_webSocketConnection, $"PRIVMSG #{m_options.Channel} :{message}" );
+                IPrivMsg lazyLoadedPrivMsg = (IPrivMsg)message;
+                Console.WriteLine( $"@reply-parent-msg-id={lazyLoadedPrivMsg.ReplyParentMsgId} PRIVMSG #{m_options.Channel} :{lazyLoadedPrivMsg.Text}" );
+                await SendMessage( m_webSocketConnection, $"@reply-parent-msg-id={lazyLoadedPrivMsg.ReplyParentMsgId} PRIVMSG #{m_options.Channel} :{lazyLoadedPrivMsg.Text}" );
                 break;
             case MessageType.ClearChat:
                 await SendMessage( m_webSocketConnection, $"CLEARCHAT #${m_options.Channel}" );

@@ -36,7 +36,7 @@ public sealed class TwitchEverywhere {
     }
 
     public async Task<bool> SendMessage(
-        string message,
+        Message message,
         MessageType messageType
     ) {
         return await m_twitchConnector.SendMessage( message, messageType );

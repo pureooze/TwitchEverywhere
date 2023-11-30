@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -15,6 +16,6 @@ public class WhisperMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new WhisperMsg( message: response );
+        return new LazyLoadedWhisperMsg( message: response );
     }
 }

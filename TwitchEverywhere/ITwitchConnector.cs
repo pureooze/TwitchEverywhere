@@ -10,7 +10,7 @@ public interface ITwitchConnector {
     );
 
     internal Task<bool> SendMessage(
-        string message,
+        Message message,
         MessageType messageType
     );
 
