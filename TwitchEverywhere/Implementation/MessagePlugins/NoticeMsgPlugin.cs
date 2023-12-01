@@ -1,6 +1,7 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
 using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -17,7 +18,7 @@ public class NoticeMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new ImmediateLoadedNoticeMsg(
+        return new LazyLoadedNoticeMsg(
             message: response
         );
     }

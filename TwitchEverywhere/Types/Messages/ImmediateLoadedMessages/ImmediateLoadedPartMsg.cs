@@ -23,4 +23,6 @@ public class ImmediateLoadedPartMsg : Message, IPartMsg {
 
     string IPartMsg.User => m_user;
 
+    string IPartMsg.Channel => m_channel;
+
 }

@@ -1,9 +1,10 @@
 using System.Collections.Immutable;
 using TwitchEverywhere.Implementation.MessagePlugins;
+using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedUserNotice : Message {
+public class LazyLoadedUserNotice : Message, IUserNotice {
     private readonly string m_message;
 
     public LazyLoadedUserNotice(

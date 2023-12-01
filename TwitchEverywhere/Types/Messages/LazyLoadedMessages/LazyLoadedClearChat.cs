@@ -1,9 +1,10 @@
 using System.Text.RegularExpressions;
 using TwitchEverywhere.Implementation.MessagePlugins;
+using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
-public class LazyLoadedClearChat : Message {
+public class LazyLoadedClearChat : Message, IClearChat {
     private readonly string m_channel;
     private readonly string m_message;
     

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
-namespace TwitchEverywhere.Types.Messages; 
+namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
 public class LazyLoadedPrivMsg : Message, IPrivMsg {
     private readonly string m_channel;

@@ -14,9 +14,9 @@ public class LazyLoadedPartMsg : Message, IPartMsg {
         Channel = channel;
     }
     
-    public override MessageType MessageType => MessageType.Join;
+    public override MessageType MessageType => MessageType.Part;
 
-    public string User => MessagePluginUtils.UserJoinPattern.Match( m_message ).Value;
+    public string User => MessagePluginUtils.UserJoinPattern.Match( m_message ).Groups[1].Value;
 
     public string Channel { get; }
 }

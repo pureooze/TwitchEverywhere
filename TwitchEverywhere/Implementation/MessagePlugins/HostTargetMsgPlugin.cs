@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -16,7 +17,7 @@ public class HostTargetMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new HostTargetMsg( 
+        return new LazyLoadedHostTargetMsg( 
             message: response, 
             channel: channel 
         );
