@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -15,7 +16,7 @@ public class PartMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new PartMsg( 
+        return new LazyLoadedPartMsg( 
             message: response, 
             channel: channel 
         );

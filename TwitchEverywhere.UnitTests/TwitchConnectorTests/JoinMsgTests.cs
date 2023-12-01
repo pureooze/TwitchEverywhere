@@ -3,6 +3,7 @@ using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
@@ -22,7 +23,7 @@ public class JoinMsgTests {
     
     [Test]
     [TestCaseSource(nameof(JoinMsgMessages))]
-    public async Task JoinMsg( IImmutableList<string> messages, JoinMsg expectedMessage ) {
+    public async Task JoinMsg( IImmutableList<string> messages, LazyLoadedJoinMsg expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -36,7 +37,7 @@ public class JoinMsgTests {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            JoinMsg msg = (JoinMsg)message;
+            LazyLoadedJoinMsg msg = (LazyLoadedJoinMsg)message;
             JoinMsgCallback( msg, expectedMessage );
         }
         
@@ -52,8 +53,8 @@ public class JoinMsgTests {
     }
     
     private void JoinMsgCallback(
-        JoinMsg globalUserState,
-        JoinMsg? expectedGlobalUserState
+        LazyLoadedJoinMsg globalUserState,
+        LazyLoadedJoinMsg? expectedGlobalUserState
     ) {
         Assert.Multiple(() => {
             Assert.That(globalUserState.User, Is.EqualTo(expectedGlobalUserState?.User), "User was not equal to expected value");
@@ -66,7 +67,7 @@ public class JoinMsgTests {
             new List<string> {
                 $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel"
             }.ToImmutableList(),
-            new JoinMsg(
+            new LazyLoadedJoinMsg(
                 message: $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel",
                 channel: "channel"
             )

@@ -34,4 +34,15 @@ public sealed class TwitchEverywhere {
             messageCallback: messageCallback
         );
     }
+
+    public async Task<bool> SendMessage(
+        Message message,
+        MessageType messageType
+    ) {
+        return await m_twitchConnector.SendMessage( message, messageType );
+    }
+
+    public Task<bool> Disconnect() {
+        return m_twitchConnector.Disconnect();
+    }
 }

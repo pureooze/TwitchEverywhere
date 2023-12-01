@@ -8,4 +8,11 @@ public interface ITwitchConnector {
         TwitchConnectionOptions options,
         Action<Message> messageCallback
     );
+
+    internal Task<bool> SendMessage(
+        Message message,
+        MessageType messageType
+    );
+
+    internal Task<bool> Disconnect();
 }

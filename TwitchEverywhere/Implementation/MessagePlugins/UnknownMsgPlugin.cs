@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -16,6 +17,6 @@ public class UnknownMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new UnknownMessage( response );
+        return new LazyLoadedUnknownMessage( response );
     }
 }

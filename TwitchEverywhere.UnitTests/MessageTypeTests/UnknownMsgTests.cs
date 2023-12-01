@@ -1,10 +1,11 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
 
 [TestFixture]
-public class UnknownMessageTests {
+public class LazyLoadedUnknownMessageTests {
 
     [Test]
     [TestCaseSource( nameof(UnknownMessageMessages) )]
@@ -12,11 +13,11 @@ public class UnknownMessageTests {
         string message,
         TestData expectedUnknownMessage
     ) {
-        UnknownMessage actualUnknownMessage = new( message: message );
+        LazyLoadedUnknownMessage actualLazyLoadedUnknownMessage = new( message: message );
 
-        Assert.That( actualUnknownMessage.MessageType, Is.EqualTo( MessageType.Unknown ) );
+        Assert.That( actualLazyLoadedUnknownMessage.MessageType, Is.EqualTo( MessageType.Unknown ) );
 
-        Assert.That( actualUnknownMessage.Message, Is.EqualTo( expectedUnknownMessage.Message ) );
+        Assert.That( actualLazyLoadedUnknownMessage.Message, Is.EqualTo( expectedUnknownMessage.Message ) );
     }
 
     internal static IEnumerable<TestCaseData> UnknownMessageMessages() {

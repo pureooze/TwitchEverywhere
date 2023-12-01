@@ -1,5 +1,8 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
 
@@ -12,13 +15,13 @@ public class NoticeMsgTests {
         string message,
         TestData expectedNoticeMsgMessage
     ) {
-        NoticeMsg actualNoticeMsgMessage = new( message: message );
+        INoticeMsg actualImmediateLoadedNoticeMsgMessage = new LazyLoadedNoticeMsg( message: message );
 
-        Assert.That( actualNoticeMsgMessage.MessageType, Is.EqualTo( MessageType.Notice ) );
+        Assert.That( actualImmediateLoadedNoticeMsgMessage.MessageType, Is.EqualTo( MessageType.Notice ) );
 
         Assert.Multiple(() => {
-            Assert.That( actualNoticeMsgMessage.MsgId, Is.EqualTo( expectedNoticeMsgMessage.MsgId ), "MsgId was not equal to expected value");
-            Assert.That( actualNoticeMsgMessage.TargetUserId, Is.EqualTo( expectedNoticeMsgMessage.TargetUserId ), "TargetUserId was not equal to expected value");
+            Assert.That( actualImmediateLoadedNoticeMsgMessage.MsgId, Is.EqualTo( expectedNoticeMsgMessage.MsgId ), "MsgId was not equal to expected value");
+            Assert.That( actualImmediateLoadedNoticeMsgMessage.TargetUserId, Is.EqualTo( expectedNoticeMsgMessage.TargetUserId ), "TargetUserId was not equal to expected value");
         });
     }
 

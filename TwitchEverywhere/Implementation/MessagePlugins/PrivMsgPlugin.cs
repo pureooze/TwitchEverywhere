@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -39,7 +40,7 @@ public class PrivMsgPlugin : IMessagePlugin {
             throw new UnexpectedUserMessageException();
         }
 
-        return new PrivMsg(
+        return new LazyLoadedPrivMsg(
             channel,
             response,
             timeSinceStartOfStream

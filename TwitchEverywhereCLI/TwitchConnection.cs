@@ -1,168 +1,190 @@
+using System.Text;
 using TwitchEverywhere;
+using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhereCLI.Implementation;
 
 namespace TwitchEverywhereCLI; 
 
 internal class TwitchConnection {
 
-    // private readonly MessageBuffer m_messageBuffer = new( buffer: new StringBuilder() );
-    // private readonly MessageBuffer m_clearChat = new( buffer: new StringBuilder() );
-    // private readonly MessageBuffer m_clearMsg = new( buffer: new StringBuilder() );
-    // private readonly ICompressor m_compressor = new BrotliCompressor();
-    // private DateTime m_startTimestamp = DateTime.UtcNow;
-    //
-    // private const int BUFFER_SIZE = 3;
-
-    public async Task Connect( TwitchConnectionOptions options ) {
-        TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( options );
-        await twitchEverywhere.ConnectToChannel( MessageCallback );
+    private readonly MessageBuffer m_messageBuffer = new( buffer: new StringBuilder() );
+    private readonly MessageBuffer m_clearChat = new( buffer: new StringBuilder() );
+    private readonly MessageBuffer m_clearMsg = new( buffer: new StringBuilder() );
+    private readonly ICompressor m_compressor = new BrotliCompressor();
+    private readonly TwitchEverywhere.TwitchEverywhere m_twitchEverywhere;
+    private const int BUFFER_SIZE = 3;
+    private DateTime m_startTimestamp = DateTime.UtcNow;
+    
+    public TwitchConnection(
+        TwitchConnectionOptions options
+    ) {
+        m_twitchEverywhere = new TwitchEverywhere.TwitchEverywhere( options );
     }
 
-    // private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
-    //     if( buffer.Length == 0 ) {
-    //         return;
-    //     }
-    //
-    //     string rawData = buffer.ToString();
-    //     byte[] byteBuffer = Encoding.UTF8.GetBytes( rawData );
-    //
-    //     byte[] compressedData = await m_compressor.Compress( byteBuffer );
-    //
-    //     string path = $"{fileName}-{startTimestamp.ToUniversalTime():yyyy-M-d_H-mm-ss}.json";
-    //     SaveBinaryDataToFile( path, compressedData );
-    // }
+    public async Task Connect(  ) {
+        await m_twitchEverywhere.ConnectToChannel( MessageCallback );
+    }
 
-    // private static void SaveBinaryDataToFile(
-    //     string path,
-    //     byte[] compressedData
-    // ) {
-    //     using FileStream fileStream = new (path, FileMode.Create);
-    //     fileStream.Write( compressedData, 0, compressedData.Length );
-    // }
+    private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
+        if( buffer.Length == 0 ) {
+            return;
+        }
+    
+        string rawData = buffer.ToString();
+        byte[] byteBuffer = Encoding.UTF8.GetBytes( rawData );
+    
+        byte[] compressedData = await m_compressor.Compress( byteBuffer );
+    
+        string path = $"{fileName}-{startTimestamp.ToUniversalTime():yyyy-M-d_H-mm-ss}.json";
+        SaveBinaryDataToFile( path, compressedData );
+    }
 
-    private void MessageCallback(
+    private static void SaveBinaryDataToFile(
+        string path,
+        byte[] compressedData
+    ) {
+        using FileStream fileStream = new (path, FileMode.Create);
+        fileStream.Write( compressedData, 0, compressedData.Length );
+    }
+
+    private async void MessageCallback(
         Message message
     ) {
         switch( message.MessageType ) {
             case MessageType.PrivMsg: {
-                PrivMsg privMsg = (PrivMsg) message;
-                // PrivMessageCallback( privMsg );
-                Console.WriteLine( $"PrivMsg: {privMsg.DisplayName}, {privMsg.Text}" );
+                IPrivMsg lazyLoadedPrivMsg = (LazyLoadedPrivMsg) message;
+                PrivMessageCallback( lazyLoadedPrivMsg );
+                Console.WriteLine( $"PrivMsg: {lazyLoadedPrivMsg.DisplayName}, {lazyLoadedPrivMsg.Text}" );
+
+                ImmediateLoadedPrivMsg reply = new(
+                    channel: "pureooze",
+                    replyParentMsgId: lazyLoadedPrivMsg.Id,
+                    text: "absolutely!"
+                );
+                
+                bool sendMessage = await m_twitchEverywhere.SendMessage( reply, MessageType.PrivMsg );
+
+                Console.WriteLine( sendMessage ? $"Sent message SUCCEEDED!" : $"Sent message FAILED!" );
                 break;
             }
             case MessageType.ClearChat: {
-                ClearChat clearChatMsg = (ClearChat) message;
-                // ClearChatCallback( clearChatMsg );
-                Console.WriteLine( $"ClearChat: {clearChatMsg.Text}" );
+                IClearChat lazyLoadedClearChatMsg = (LazyLoadedClearChat) message;
+                ClearChatCallback( lazyLoadedClearChatMsg );
+                Console.WriteLine( $"ClearChat: {lazyLoadedClearChatMsg.Text}" );
                 break;
             }
             case MessageType.ClearMsg: {
-                ClearMsg clearMsg = (ClearMsg) message;
-                // ClearMsgCallback( clearMsg );
-                Console.WriteLine( $"ClearChat: {clearMsg.Login}, {clearMsg.Timestamp}, {clearMsg.RoomId}" );
+                IClearMsg lazyLoadedClearMsg = (LazyLoadedClearMsg) message;
+                ClearMsgCallback( lazyLoadedClearMsg );
+                Console.WriteLine( $"ClearChat: {lazyLoadedClearMsg.Login}, {lazyLoadedClearMsg.Timestamp}, {lazyLoadedClearMsg.RoomId}" );
                 break;
             }
             case MessageType.GlobalUserState:
-                GlobalUserState globalUserStateMsg = (GlobalUserState) message;
-                Console.WriteLine( $"GlobalUserState: {globalUserStateMsg.UserId}, {globalUserStateMsg.UserType}, {globalUserStateMsg.DisplayName}" );
+                IGlobalUserState lazyLoadedGlobalUserStateMsg = (LazyLoadedGlobalUserState) message;
+                Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsg.UserId}, {lazyLoadedGlobalUserStateMsg.UserType}, {lazyLoadedGlobalUserStateMsg.DisplayName}" );
                 break;
             case MessageType.Notice:
-                NoticeMsg noticeMsg = (NoticeMsg) message;
-                // NoticeMsgCallback( noticeMsg );
-                Console.WriteLine( $"NoticeMsg: {noticeMsg.TargetUserId}, {noticeMsg.MsgId}" );
+                INoticeMsg lazyLoadedNoticeMsg = (LazyLoadedNoticeMsg) message;
+                NoticeMsgCallback( lazyLoadedNoticeMsg );
+                Console.WriteLine( $"NoticeMsg: {{ TargetUserId: {lazyLoadedNoticeMsg.TargetUserId}, MsgId: {lazyLoadedNoticeMsg.MsgId} }}" );
+                Console.WriteLine( $"NoticeMsg: {lazyLoadedNoticeMsg.RawMessage}" );
                 break;
             case MessageType.RoomState:
-                RoomStateMsg roomStateMsg = (RoomStateMsg) message;
-                Console.WriteLine( $"RoomStateMsg: {roomStateMsg.RoomId}, {roomStateMsg.R9K}, {roomStateMsg.Slow}" );
+                IRoomStateMsg lazyLoadedRoomStateMsg = (LazyLoadedRoomStateMsg) message;
+                Console.WriteLine( $"RoomStateMsg: {lazyLoadedRoomStateMsg.RoomId}, {lazyLoadedRoomStateMsg.R9K}, {lazyLoadedRoomStateMsg.Slow}" );
                 break;
             case MessageType.UserNotice:
-                UserNotice userNoticeMsg = (UserNotice) message;
-                Console.WriteLine( $"UserNotice: {userNoticeMsg}" );
+                IUserNotice lazyLoadedUserNoticeMsg = (LazyLoadedUserNotice) message;
+                Console.WriteLine( $"UserNotice: {lazyLoadedUserNoticeMsg}" );
                 break;
             case MessageType.UserState:
-                UserStateMsg userStateMsg = (UserStateMsg) message;
-                Console.WriteLine( $"UserStateMsg: {userStateMsg.DisplayName}, {userStateMsg.UserType}, {userStateMsg.Badges}" );
+                IUserStateMsg lazyLoadedUserStateMsg = (LazyLoadedUserStateMsg) message;
+                Console.WriteLine( $"UserStateMsg: {lazyLoadedUserStateMsg.DisplayName}, {lazyLoadedUserStateMsg.UserType}, {lazyLoadedUserStateMsg.Badges}" );
                 break;
             case MessageType.Whisper:
-                WhisperMsg whisperMsg = (WhisperMsg) message;
-                Console.WriteLine( $"WhisperMsg: {whisperMsg}" );
+                IWhisperMsg lazyLoadedWhisperMsg = (LazyLoadedWhisperMsg) message;
+                Console.WriteLine( $"WhisperMsg: {lazyLoadedWhisperMsg}" );
                 break;
             case MessageType.Join:
-                JoinMsg joinMsg = (JoinMsg) message;
-                Console.WriteLine( $"{joinMsg.User} joining {joinMsg.Channel}" );
+                IJoinMsg lazyLoadedJoinMsg = (LazyLoadedJoinMsg) message;
+                Console.WriteLine( $"{lazyLoadedJoinMsg.User} joining {lazyLoadedJoinMsg.Channel}" );
                 break;
             case MessageType.Part:
-                PartMsg partMsg = (PartMsg) message;
-                Console.WriteLine( $"{partMsg.User} leaving {partMsg.Channel}" );
+                IPartMsg lazyLoadedPartMsg = (LazyLoadedPartMsg) message;
+                Console.WriteLine( $"{lazyLoadedPartMsg.User} leaving {lazyLoadedPartMsg.Channel}" );
                 break;
             case MessageType.Unknown:
-                UnknownMessage unknownMsg = (UnknownMessage) message;
-                Console.WriteLine( $"UnknownMessage: {unknownMsg.Message}" );
+                IUnknownMessage lazyLoadedUnknownMsg = (LazyLoadedUnknownMessage) message;
+                Console.WriteLine( $"UnknownMessage: {lazyLoadedUnknownMsg.Message}" );
                 break;
             case MessageType.HostTarget:
-                HostTargetMsg hostTargetMsg = (HostTargetMsg) message;
+                IHostTargetMsg hostTargetMsg = (LazyLoadedHostTargetMsg) message;
                 Console.WriteLine( $"HostTargetMsg: {hostTargetMsg.HostingChannel}, {hostTargetMsg.NumberOfViewers}" );
                 break;
             case MessageType.Reconnect:
-                ReconnectMsg reconnectMsg = (ReconnectMsg) message;
-                Console.WriteLine( $"ReconnectMsg: {reconnectMsg}" );
+                IReconnectMsg lazyLoadedReconnectMsg = (LazyLoadedReconnectMsg) message;
+                Console.WriteLine( $"ReconnectMsg: {lazyLoadedReconnectMsg}" );
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
     
-    // private async void PrivMessageCallback(
-    //     PrivMsg privMsg
-    // ) {
-    //     if( m_messageBuffer.Count == BUFFER_SIZE ) {
-    //         await WriteToStore( m_messageBuffer, MessageType.PrivMsg );
-    //     }
-    //     
-    //     Console.WriteLine( $"{privMsg.DisplayName}: {privMsg.Text}" );
-    //     m_messageBuffer.AddToBuffer( privMsg.Text );
-    // }
-    //
-    // private async void ClearChatCallback(
-    //     ClearChat clearChat
-    // ) {
-    //     if( m_clearChat.Count == BUFFER_SIZE ) {
-    //         await WriteToStore( m_clearChat, MessageType.ClearChat );
-    //     }
-    //     
-    //     Console.WriteLine( $"ClearChat: On {clearChat.Timestamp} the user {clearChat.UserId} was muted/banned for {clearChat.Duration} seconds {clearChat.Text}" );
-    //     
-    //     if( clearChat.UserId != null ) {
-    //         m_clearChat.AddToBuffer( clearChat.UserId );
-    //     }
-    // }
-    //
-    // private async void ClearMsgCallback(
-    //     ClearMsg clearMsg
-    // ) {
-    //     if( m_clearMsg.Count == BUFFER_SIZE ) {
-    //         await WriteToStore( m_clearMsg, MessageType.ClearMsg );
-    //     }
-    //     
-    //     Console.WriteLine( $"ClearMsg: On {clearMsg.Timestamp} the user {clearMsg.Login} had a message deleted for message {clearMsg.TargetMessageId}" );
-    //     
-    //     m_clearMsg.AddToBuffer( clearMsg.TargetMessageId );
-    // }
+    private async void PrivMessageCallback(
+        IPrivMsg lazyLoadedPrivMsg
+    ) {
+        if( m_messageBuffer.Count == BUFFER_SIZE ) {
+            await WriteToStore( m_messageBuffer, MessageType.PrivMsg );
+        }
+        
+        Console.WriteLine( $"{lazyLoadedPrivMsg.DisplayName}: {lazyLoadedPrivMsg.Text}" );
+        m_messageBuffer.AddToBuffer( lazyLoadedPrivMsg.Text );
+    }
     
-    // private void NoticeMsgCallback(
-    //     NoticeMsg noticeMsg
-    // ) {      
-    //     Console.WriteLine( $"NoticeMsg: On {noticeMsg.MsgId} the user {noticeMsg.TargetUserId}" );
-    // }
+    private async void ClearChatCallback(
+        IClearChat lazyLoadedClearChat
+    ) {
+        if( m_clearChat.Count == BUFFER_SIZE ) {
+            await WriteToStore( m_clearChat, MessageType.ClearChat );
+        }
+        
+        Console.WriteLine( $"ClearChat: On {lazyLoadedClearChat.Timestamp} the user {lazyLoadedClearChat.UserId} was muted/banned for {lazyLoadedClearChat.Duration} seconds {lazyLoadedClearChat.Text}" );
+        
+        if( lazyLoadedClearChat.UserId != null ) {
+            m_clearChat.AddToBuffer( lazyLoadedClearChat.UserId );
+        }
+    }
+    
+    private async void ClearMsgCallback(
+        IClearMsg lazyLoadedClearMsg
+    ) {
+        if( m_clearMsg.Count == BUFFER_SIZE ) {
+            await WriteToStore( m_clearMsg, MessageType.ClearMsg );
+        }
+        
+        Console.WriteLine( $"ClearMsg: On {lazyLoadedClearMsg.Timestamp} the user {lazyLoadedClearMsg.Login} had a message deleted for message {lazyLoadedClearMsg.TargetMessageId}" );
+        
+        m_clearMsg.AddToBuffer( lazyLoadedClearMsg.TargetMessageId );
+    }
+    
+    private void NoticeMsgCallback(
+        INoticeMsg immediateLoadedNoticeMsg
+    ) {      
+        Console.WriteLine( $"NoticeMsg: On {immediateLoadedNoticeMsg.MsgId} the user {immediateLoadedNoticeMsg.TargetUserId}" );
+    }
 
-    // private async Task WriteToStore(
-    //     MessageBuffer messageBuffer, MessageType type 
-    // ) {
-    //     StringBuilder tempBuffer = new( messageBuffer.ReadAsString() );
-    //     DateTime tempStartTimestamp = new( m_startTimestamp.Ticks );
-    //     messageBuffer.Clear();
-    //     m_startTimestamp = DateTime.UtcNow;
-    //     await SaveBufferToFile( $"{type}", tempBuffer, tempStartTimestamp );
-    // }
+    private async Task WriteToStore(
+        MessageBuffer messageBuffer, MessageType type 
+    ) {
+        StringBuilder tempBuffer = new( messageBuffer.ReadAsString() );
+        DateTime tempStartTimestamp = new( m_startTimestamp.Ticks );
+        messageBuffer.Clear();
+        m_startTimestamp = DateTime.UtcNow;
+        await SaveBufferToFile( $"{type}", tempBuffer, tempStartTimestamp );
+    }
 }

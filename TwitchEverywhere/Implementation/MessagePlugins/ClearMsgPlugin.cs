@@ -16,7 +16,7 @@ public class ClearMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new ClearMsg(
+        return new LazyLoadedClearMsg(
             message: response
         );
     }

@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Implementation.MessagePlugins; 
 
@@ -15,6 +16,6 @@ public class JoinMsgPlugin : IMessagePlugin {
         string response,
         string channel
     ) {
-        return new JoinMsg( response, channel );
+        return new LazyLoadedJoinMsg( response, channel );
     }
 }

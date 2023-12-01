@@ -3,6 +3,8 @@ using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
@@ -22,7 +24,7 @@ public class PartMsgTests {
     
     [Test]
     [TestCaseSource(nameof(PartMsgMessages))]
-    public async Task PartMsg( IImmutableList<string> messages, PartMsg expectedMessage ) {
+    public async Task PartMsg( IImmutableList<string> messages, IPartMsg expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -36,7 +38,7 @@ public class PartMsgTests {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            PartMsg msg = (PartMsg)message;
+            LazyLoadedPartMsg msg = (LazyLoadedPartMsg)message;
             PartMsgCallback( msg, expectedMessage );
         }
         
@@ -52,12 +54,12 @@ public class PartMsgTests {
     }
     
     private void PartMsgCallback(
-        PartMsg partMsg,
-        PartMsg? expectedPartMsg
+        IPartMsg lazyLoadedPartMsg,
+        IPartMsg expectedPartMsg
     ) {
         Assert.Multiple(() => {
-            Assert.That(partMsg.User, Is.EqualTo(expectedPartMsg?.User), "User was not equal to expected value");
-            Assert.That(partMsg.Channel, Is.EqualTo(expectedPartMsg?.Channel), "Channel was not equal to expected value");
+            Assert.That(lazyLoadedPartMsg.User, Is.EqualTo(expectedPartMsg?.User), "User was not equal to expected value");
+            Assert.That(lazyLoadedPartMsg.Channel, Is.EqualTo(expectedPartMsg?.Channel), "Channel was not equal to expected value");
         });
     }
     
@@ -66,7 +68,7 @@ public class PartMsgTests {
             new List<string> {
                 $":ronni!ronni@ronni.tmi.twitch.tv PART #channel"
             }.ToImmutableList(),
-            new PartMsg(
+            new LazyLoadedPartMsg(
                 message: $":ronni!ronni@ronni.tmi.twitch.tv PART #channel",
                 channel: "channel"
             )
