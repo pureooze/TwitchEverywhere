@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
 
@@ -42,7 +43,7 @@ public class LazyLoadedRoomStateMsgTests {
         yield return new TestCaseData(
             "@emote-only=1;room-id=240866033 :tmi.twitch.tv ROOMSTATE #channel",
             new TestData(
-                emoteOnly: false,
+                emoteOnly: true,
                 followersOnly: 0,
                 r9k: false,
                 roomId: "240866033",

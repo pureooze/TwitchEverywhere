@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Moq;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
 
@@ -14,21 +15,21 @@ public class UserStateTests {
         string message,
         TestData expectedUserStateMessage
     ) {
-        UserStateMsg actualUserStateMsgMessage = new( message: message );
+        LazyLoadedUserStateMsg actualLazyLoadedUserStateMsgMessage = new( message: message );
 
-        Assert.That( actualUserStateMsgMessage.MessageType, Is.EqualTo( MessageType.UserState ) );
+        Assert.That( actualLazyLoadedUserStateMsgMessage.MessageType, Is.EqualTo( MessageType.UserState ) );
         
         Assert.Multiple(() => {
-            Assert.That(actualUserStateMsgMessage.BadgeInfo, Is.EqualTo(expectedUserStateMessage?.BadgeInfo), "BadgeInfo was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.Badges, Is.EqualTo(expectedUserStateMessage?.Badges), "Badges was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.Color, Is.EqualTo(expectedUserStateMessage?.Color), "Color was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.DisplayName, Is.EqualTo(expectedUserStateMessage?.DisplayName), "DisplayName was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.EmoteSets, Is.EqualTo(expectedUserStateMessage?.EmoteSets), "EmoteSets was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.Id, Is.EqualTo(expectedUserStateMessage?.Id), "MessageType was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.Mod, Is.EqualTo(expectedUserStateMessage?.Mod), "Mod was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.Subscriber, Is.EqualTo(expectedUserStateMessage?.Subscriber), "Subscriber was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.Turbo, Is.EqualTo(expectedUserStateMessage?.Turbo), "Turbo was not equal to expected value");
-            Assert.That(actualUserStateMsgMessage.UserType, Is.EqualTo(expectedUserStateMessage?.UserType), "UserType was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.BadgeInfo, Is.EqualTo(expectedUserStateMessage?.BadgeInfo), "BadgeInfo was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.Badges, Is.EqualTo(expectedUserStateMessage?.Badges), "Badges was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.Color, Is.EqualTo(expectedUserStateMessage?.Color), "Color was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.DisplayName, Is.EqualTo(expectedUserStateMessage?.DisplayName), "DisplayName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.EmoteSets, Is.EqualTo(expectedUserStateMessage?.EmoteSets), "EmoteSets was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.Id, Is.EqualTo(expectedUserStateMessage?.Id), "MessageType was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.Mod, Is.EqualTo(expectedUserStateMessage?.Mod), "Mod was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.Subscriber, Is.EqualTo(expectedUserStateMessage?.Subscriber), "Subscriber was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.Turbo, Is.EqualTo(expectedUserStateMessage?.Turbo), "Turbo was not equal to expected value");
+            Assert.That(actualLazyLoadedUserStateMsgMessage.UserType, Is.EqualTo(expectedUserStateMessage?.UserType), "UserType was not equal to expected value");
         });
     }
 

@@ -1,5 +1,7 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
 
@@ -12,13 +14,13 @@ public class PartMsgTests {
         string message,
         TestData expectedPartMsgMessage
     ) {
-        PartMsg actualPartMsgMessage = new( channel: "channel", message: message );
+        IPartMsg actualLazyLoadedPartMsgMessage = new LazyLoadedPartMsg( channel: "channel", message: message );
 
-        Assert.That( actualPartMsgMessage.MessageType, Is.EqualTo( MessageType.Part ) );
+        Assert.That( actualLazyLoadedPartMsgMessage.MessageType, Is.EqualTo( MessageType.Part ) );
 
         Assert.Multiple(() => {
-            Assert.That(actualPartMsgMessage.User, Is.EqualTo(expectedPartMsgMessage.User), "User was not equal to expected value");
-            Assert.That(actualPartMsgMessage.Channel, Is.EqualTo(expectedPartMsgMessage.Channel), "Channel was not equal to expected value");
+            Assert.That(actualLazyLoadedPartMsgMessage.User, Is.EqualTo(expectedPartMsgMessage.User), "User was not equal to expected value");
+            Assert.That(actualLazyLoadedPartMsgMessage.Channel, Is.EqualTo(expectedPartMsgMessage.Channel), "Channel was not equal to expected value");
         });
     }
 

@@ -3,6 +3,9 @@ using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests;
 
@@ -23,7 +26,7 @@ public class NoticeTests {
 
     [Test]
     [TestCaseSource(nameof(NoticeMessages))]
-    public async Task Notice( IImmutableList<string> messages, NoticeMsg expectedMessage ) {
+    public async Task Notice( IImmutableList<string> messages, INoticeMsg expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -37,7 +40,7 @@ public class NoticeTests {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            NoticeMsg msg = (NoticeMsg)message;
+            INoticeMsg msg = (LazyLoadedNoticeMsg)message;
             NoticeMessageCallback( msg, expectedMessage );
         }
         
@@ -53,12 +56,12 @@ public class NoticeTests {
     }
     
     private void NoticeMessageCallback(
-        NoticeMsg noticeMsg,
-        NoticeMsg? expectedNoticeMessage
+        INoticeMsg immediateLoadedNoticeMsg,
+        INoticeMsg expectedNoticeMessage
     ) {
-        Assert.That( noticeMsg.MsgId, Is.EqualTo( expectedNoticeMessage?.MsgId ), "MsgId was not equal to expected value");
-        Assert.That( noticeMsg.TargetUserId, Is.EqualTo( expectedNoticeMessage?.TargetUserId ), "TargetUserId was not equal to expected value");
-        Assert.That( noticeMsg.MessageType, Is.EqualTo( expectedNoticeMessage?.MessageType ), "MessageType was not equal to expected value");
+        Assert.That( immediateLoadedNoticeMsg.MsgId, Is.EqualTo( expectedNoticeMessage.MsgId ), "MsgId was not equal to expected value");
+        Assert.That( immediateLoadedNoticeMsg.TargetUserId, Is.EqualTo( expectedNoticeMessage?.TargetUserId ), "TargetUserId was not equal to expected value");
+        Assert.That( immediateLoadedNoticeMsg.MessageType, Is.EqualTo( expectedNoticeMessage?.MessageType ), "MessageType was not equal to expected value");
     }
     
     private static IEnumerable<TestCaseData> NoticeMessages() {
@@ -66,7 +69,7 @@ public class NoticeTests {
             new List<string> {
                 $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             }.ToImmutableList(),
-            new NoticeMsg(
+            new LazyLoadedNoticeMsg(
                 message: $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             )
         ).SetName("Message Delete Success, No User ID");
@@ -75,7 +78,7 @@ public class NoticeTests {
             new List<string> {
                 $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             }.ToImmutableList(),
-            new NoticeMsg(
+            new LazyLoadedNoticeMsg(
                 message: $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             )
         ).SetName("Whisper Restricted, With User ID");

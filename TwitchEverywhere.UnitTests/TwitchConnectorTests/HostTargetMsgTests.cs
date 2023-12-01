@@ -3,6 +3,8 @@ using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
@@ -22,7 +24,7 @@ public class HostTargetMsgTests {
     
     [Test]
     [TestCaseSource(nameof(HostTargetMsgMessages))]
-    public async Task HostTargetMsg( IImmutableList<string> messages, HostTargetMsg expectedMessage ) {
+    public async Task HostTargetMsg( IImmutableList<string> messages, IHostTargetMsg expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -36,7 +38,7 @@ public class HostTargetMsgTests {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
 
-            HostTargetMsg msg = (HostTargetMsg)message;
+            IHostTargetMsg msg = (LazyLoadedHostTargetMsg)message;
             HostTargetMsgCallback( msg, expectedMessage );
         }
         
@@ -52,8 +54,8 @@ public class HostTargetMsgTests {
     }
     
     private void HostTargetMsgCallback(
-        HostTargetMsg globalUserState,
-        HostTargetMsg? expectedGlobalUserState
+        IHostTargetMsg globalUserState,
+        IHostTargetMsg? expectedGlobalUserState
     ) {
         Assert.Multiple(() => {
             Assert.That(globalUserState.HostingChannel, Is.EqualTo(expectedGlobalUserState?.HostingChannel), "HostingChannel was not equal to expected value");
@@ -68,7 +70,7 @@ public class HostTargetMsgTests {
             new List<string> {
                 $":tmi.twitch.tv HOSTTARGET #channel :xyz 10"
             }.ToImmutableList(),
-            new HostTargetMsg(
+            new LazyLoadedHostTargetMsg(
                 message: $":tmi.twitch.tv HOSTTARGET #channel :xyz 10",
                 channel: "channel"
             )
@@ -78,7 +80,7 @@ public class HostTargetMsgTests {
             new List<string> {
                 $":tmi.twitch.tv HOSTTARGET #channel :- 10"
             }.ToImmutableList(),
-            new HostTargetMsg(
+            new LazyLoadedHostTargetMsg(
                 message: $":tmi.twitch.tv HOSTTARGET #channel :- 10",
                 channel: "channel"
             )

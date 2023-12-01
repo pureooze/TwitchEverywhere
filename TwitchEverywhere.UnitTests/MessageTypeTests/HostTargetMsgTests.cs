@@ -1,5 +1,7 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
 
@@ -12,7 +14,7 @@ public class HostTargetMsgTests {
         string message,
         TestData expectedHostTargetMessage
     ) {
-        HostTargetMsg actualHostTargetMsgMessage = new( channel: "channel", message: message );
+        IHostTargetMsg actualHostTargetMsgMessage = new LazyLoadedHostTargetMsg( channel: "channel", message: message );
 
         Assert.That( actualHostTargetMsgMessage.MessageType, Is.EqualTo( MessageType.HostTarget ) );
 

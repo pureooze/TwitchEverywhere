@@ -1,5 +1,7 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.Interfaces;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
 
@@ -12,13 +14,13 @@ public class JoinMsgTests {
         string message,
         TestData expectedJoinMsgMessage
     ) {
-        JoinMsg actualJoinMsgMessage = new( channel: "channel", message: message );
+        IJoinMsg actualLazyLoadedJoinMsgMessage = new LazyLoadedJoinMsg( channel: "channel", message: message );
 
-        Assert.That( actualJoinMsgMessage.MessageType, Is.EqualTo( MessageType.Join ) );
+        Assert.That( actualLazyLoadedJoinMsgMessage.MessageType, Is.EqualTo( MessageType.Join ) );
 
         Assert.Multiple(() => {
-            Assert.That(actualJoinMsgMessage.User, Is.EqualTo(expectedJoinMsgMessage.User), "User was not equal to expected value");
-            Assert.That(actualJoinMsgMessage.Channel, Is.EqualTo(expectedJoinMsgMessage.Channel), "Channel was not equal to expected value");
+            Assert.That(actualLazyLoadedJoinMsgMessage.User, Is.EqualTo(expectedJoinMsgMessage.User), "User was not equal to expected value");
+            Assert.That(actualLazyLoadedJoinMsgMessage.Channel, Is.EqualTo(expectedJoinMsgMessage.Channel), "Channel was not equal to expected value");
         });
     }
 
