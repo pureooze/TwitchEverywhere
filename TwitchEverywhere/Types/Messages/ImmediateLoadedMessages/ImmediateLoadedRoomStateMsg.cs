@@ -27,6 +27,8 @@ public class ImmediateLoadedRoomStateMsg : Message, IRoomStateMsg {
     }
 
     public override MessageType MessageType => MessageType.RoomState;
+    
+    public override string RawMessage => "";
 
     bool IRoomStateMsg.EmoteOnly => m_emoteOnly;
 

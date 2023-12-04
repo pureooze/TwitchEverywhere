@@ -16,6 +16,8 @@ public class LazyLoadedWhisperMsg : Message, IWhisperMsg {
     
     public override MessageType MessageType => MessageType.Whisper;
     
+    public override string RawMessage => m_message;
+    
     public IImmutableList<Badge> Badges {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern );

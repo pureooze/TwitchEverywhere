@@ -40,6 +40,8 @@ public class ImmediateLoadedUserStateMsg : Message, IUserStateMsg {
     }
 
     public override MessageType MessageType => MessageType.UserState;
+    
+    public override string RawMessage => "";
 
     IImmutableList<Badge> IUserStateMsg.BadgeInfo => m_badgeInfo;
 

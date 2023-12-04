@@ -15,6 +15,8 @@ public class LazyLoadedUserNotice : Message, IUserNotice {
     
     public override MessageType MessageType => MessageType.UserNotice;
     
+    public override string RawMessage => m_message;
+    
     public IImmutableList<Badge> BadgeInfo {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgeInfoPattern );

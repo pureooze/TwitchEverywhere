@@ -15,6 +15,8 @@ public class LazyLoadedGlobalUserState : Message, IGlobalUserState {
     
     public override MessageType MessageType => MessageType.GlobalUserState;
     
+    public override string RawMessage => m_message;
+    
     public IImmutableList<Badge> Badges {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern );

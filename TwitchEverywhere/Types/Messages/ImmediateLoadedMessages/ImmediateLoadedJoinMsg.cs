@@ -16,8 +16,16 @@ public class ImmediateLoadedJoinMsg : Message, IJoinMsg {
     }
 
     public override MessageType MessageType => MessageType.Join;
+    public override string RawMessage => GetRawMessage();
     string IJoinMsg.User => m_user;
     string IJoinMsg.Channel => m_channel;
+    
+    private string GetRawMessage() {
+        string message = string.Empty;
+        
+        message += $":{m_user} ";
+        message += $"JOIN #{m_channel}\n";
 
-
+        return message;
+    }
 }

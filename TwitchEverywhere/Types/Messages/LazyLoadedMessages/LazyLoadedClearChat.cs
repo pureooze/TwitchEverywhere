@@ -18,6 +18,8 @@ public class LazyLoadedClearChat : Message, IClearChat {
 
     public override MessageType MessageType => MessageType.ClearChat;
     
+    public override string RawMessage => m_message;
+    
     public long? Duration {
         get {
             string duration = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BanDurationPattern );

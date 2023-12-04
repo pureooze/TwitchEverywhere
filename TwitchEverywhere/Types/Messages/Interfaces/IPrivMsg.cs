@@ -4,6 +4,7 @@ namespace TwitchEverywhere.Types.Messages.Interfaces;
 
 public interface IPrivMsg {
     IImmutableList<Badge> Badges { get; }
+    IImmutableList<Badge> BadgeInfo { get; }
     string Bits { get; }
     string Color { get; }
     string DisplayName { get; }
@@ -28,5 +29,4 @@ public interface IPrivMsg {
     UserType UserType { get; }
     bool Vip { get; }
     string Text { get; }
-    string RawMessage { get; }
 }

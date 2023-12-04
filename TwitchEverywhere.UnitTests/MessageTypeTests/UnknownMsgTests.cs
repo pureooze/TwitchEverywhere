@@ -16,8 +16,6 @@ public class LazyLoadedUnknownMessageTests {
         LazyLoadedUnknownMessage actualLazyLoadedUnknownMessage = new( message: message );
 
         Assert.That( actualLazyLoadedUnknownMessage.MessageType, Is.EqualTo( MessageType.Unknown ) );
-
-        Assert.That( actualLazyLoadedUnknownMessage.Message, Is.EqualTo( expectedUnknownMessage.Message ) );
     }
 
     internal static IEnumerable<TestCaseData> UnknownMessageMessages() {

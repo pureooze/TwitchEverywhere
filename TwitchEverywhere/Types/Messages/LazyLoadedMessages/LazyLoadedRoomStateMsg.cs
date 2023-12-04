@@ -15,6 +15,8 @@ public class LazyLoadedRoomStateMsg : Message, IRoomStateMsg {
 
     public override MessageType MessageType => MessageType.RoomState;
     
+    public override string RawMessage => m_message;
+    
     public bool EmoteOnly => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.EmoteOnlyPattern );
 
     public int FollowersOnly => MessagePluginUtils.GetIntValueFromResponse( m_message, MessagePluginUtils.FollowersOnlyPattern );

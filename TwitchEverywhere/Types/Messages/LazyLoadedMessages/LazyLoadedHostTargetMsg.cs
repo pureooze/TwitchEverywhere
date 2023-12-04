@@ -14,6 +14,8 @@ namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages {
         }
 
         public override MessageType MessageType => MessageType.HostTarget;
+        
+        public override string RawMessage => m_message;
 
         public string HostingChannel { get; }
 

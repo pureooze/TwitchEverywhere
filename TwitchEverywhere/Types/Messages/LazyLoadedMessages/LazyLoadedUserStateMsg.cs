@@ -15,6 +15,8 @@ public class LazyLoadedUserStateMsg : Message, IUserStateMsg {
     
     public override MessageType MessageType => MessageType.UserState;
     
+    public override string RawMessage => m_message;
+    
     public IImmutableList<Badge> BadgeInfo {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgeInfoPattern );

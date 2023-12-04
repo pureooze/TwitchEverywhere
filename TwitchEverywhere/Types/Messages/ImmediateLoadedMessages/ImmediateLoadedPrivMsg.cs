@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using System.Globalization;
+using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
@@ -6,6 +8,7 @@ namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 public class ImmediateLoadedPrivMsg : Message, IPrivMsg {
     private readonly string m_channel;
     private IImmutableList<Badge> m_badges;
+    private IImmutableList<Badge> m_badgeInfo;
     private string m_bits;
     private string m_color;
     private string m_displayName;
@@ -34,6 +37,7 @@ public class ImmediateLoadedPrivMsg : Message, IPrivMsg {
     public ImmediateLoadedPrivMsg(
         string channel,
         IImmutableList<Badge>? badges = null,
+        IImmutableList<Badge>? badgeInfo = null,
         string? bits = null,
         string? color = null,
         string? displayName = null,
@@ -59,12 +63,13 @@ public class ImmediateLoadedPrivMsg : Message, IPrivMsg {
         bool vip = default,
         string? text = null
     ) {
-        m_badges = badges ?? new ImmutableArray<Badge>();
+        m_badges = badges ?? ImmutableArray<Badge>.Empty;
+        m_badgeInfo = badgeInfo ?? ImmutableArray<Badge>.Empty;
         m_bits = bits ?? string.Empty;
         m_color = color ?? string.Empty;
         m_displayName = displayName ?? string.Empty;
         m_channel = channel;
-        m_emotes = emotes;
+        m_emotes = emotes ?? ImmutableArray<Emote>.Empty;
         m_id = id ?? string.Empty;
         m_mod = mod;
         m_pinnedChatPaidAmount = pinnedChatPaidAmount;
@@ -89,8 +94,11 @@ public class ImmediateLoadedPrivMsg : Message, IPrivMsg {
 
     public override MessageType MessageType => MessageType.PrivMsg;
 
+    public override string RawMessage => GetRawMessageString();
 
     IImmutableList<Badge> IPrivMsg.Badges => m_badges;
+
+    IImmutableList<Badge> IPrivMsg.BadgeInfo => m_badgeInfo;
 
     string IPrivMsg.Bits => m_bits;
 
@@ -140,40 +148,112 @@ public class ImmediateLoadedPrivMsg : Message, IPrivMsg {
 
     string IPrivMsg.Text => m_text;
 
-    string IPrivMsg.RawMessage => GetRawMessageString();
-    
     private string GetRawMessageString() {
-        string rawMessage = string.Empty;
+        string message = "@";
         
-        rawMessage += $"badges={m_badges}";
-        rawMessage += $"bits={m_bits}";
-        rawMessage += $"color={m_color}";
-        rawMessage += $"display-name={m_displayName}";
-        rawMessage += $"emote-only={m_emotes}";
-        rawMessage += $"id={m_id}";
-        rawMessage += $"mod={m_mod}";
-        rawMessage += $"pinned-chat-paid-amount={m_pinnedChatPaidAmount}";
-        rawMessage += $"pinned-chat-paid-currency={m_pinnedChatPaidCurrency}";
-        rawMessage += $"pinned-chat-paid-exponent={m_pinnedChatPaidExponent}";
-        rawMessage += $"pinned-chat-paid-level={m_pinnedChatPaidLevel}";
-        rawMessage += $"pinned-chat-paid-is-system-message={m_pinnedChatPaidIsSystemMessage}";
-        rawMessage += $"reply-parent-msg-id={m_replyParentMsgId}";
-        rawMessage += $"reply-parent-user-id={m_replyParentUserId}";
-        rawMessage += $"reply-parent-user-login={m_replyParentUserLogin}";
-        rawMessage += $"reply-parent-display-name={m_replyParentDisplayName}";
-        rawMessage += $"reply-thread-parent-msg-id={m_replyThreadParentMsg}";
-        rawMessage += $"room-id={m_roomId}";
-        rawMessage += $"subscriber={m_subscriber}";
-        rawMessage += $"tmi-sent-ts={m_timestamp}";
-        rawMessage += $"turbo={m_turbo}";
-        rawMessage += $"user-id={m_userId}";
-        rawMessage += $"user-type={m_userType}";
-        rawMessage += $"vip={m_vip}";
-
-        rawMessage += $" PRIVMSG #{m_channel} :";
+        if( m_badges.Any() ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.BadgeInfo, () => string.Join( ",", m_badgeInfo.Select( b => $"{b.Name}/{b.Version}" ) ) );
+            message += SerializeProperty( MessagePluginUtils.Properties.Badges, () => string.Join( ",", m_badges.Select( b => $"{b.Name}/{b.Version}" ) ) );
+        }
         
-        rawMessage += $"{m_text}";
+        if( !string.IsNullOrEmpty( m_bits ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Bits, () => m_bits );
+        }
+        
+        if( !string.IsNullOrEmpty( m_color ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Color, () => m_color );
+        }
+        
+        if( !string.IsNullOrEmpty( m_displayName ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.DisplayName, () => m_displayName );
+        }
+        
+        message += SerializeProperty( MessagePluginUtils.Properties.Mod, () => m_mod ? "1" : "0" );
+        
+        if( m_emotes != null && m_emotes.Any() ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Emotes, () => {
+                var groupedEmotes = m_emotes
+                    .GroupBy( e => e.EmoteId )
+                    .Select(
+                        g => new {
+                            EmoteId = g.Key,
+                            Positions = string.Join( ",", g.Select( e => $"{e.Start}-{e.End}" ) )
+                        }
+                    );
 
-        return rawMessage;
+                return string.Join( "/", groupedEmotes.Select( e => $"{e.EmoteId}:{e.Positions}" ));
+            } );
+        }
+        
+        if( !string.IsNullOrEmpty( m_id ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Id, () => m_id );
+        }
+        
+        if( m_pinnedChatPaidAmount.HasValue ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidAmount, () => m_pinnedChatPaidAmount?.ToString() ?? string.Empty );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidCanonicalAmount, () => m_pinnedChatPaidAmount?.ToString() ?? string.Empty );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidCurrency, () => m_pinnedChatPaidCurrency );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidExponent, () => m_pinnedChatPaidExponent?.ToString() ?? string.Empty );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidIsSystemMessage, () => m_pinnedChatPaidIsSystemMessage ? "1" : "0" );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidLevel, () => m_pinnedChatPaidLevel?.ToString().ToUpper() ?? string.Empty );
+        }
+
+        if( !string.IsNullOrEmpty( m_replyParentMsgId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentMsgId, () => m_replyParentMsgId );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyParentUserId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentUserId, () => m_replyParentUserId );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyParentUserLogin ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentUserLogin, () => m_replyParentUserLogin );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyParentDisplayName ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentDisplayName, () => m_replyParentDisplayName );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyThreadParentMsg ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyThreadParentMsg, () => m_replyThreadParentMsg );
+        }
+        
+        if( !string.IsNullOrEmpty( m_roomId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.RoomId, () => m_roomId );
+        }
+
+        message += SerializeProperty( MessagePluginUtils.Properties.Subscriber, () => m_subscriber ? "1" : "0" );
+
+        message += SerializeProperty( MessagePluginUtils.Properties.Turbo, () => m_turbo ? "1" : "0" );
+        
+        if( !string.IsNullOrEmpty( m_userId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.UserId, () => m_userId );
+        }
+
+        if( m_userType != UserType.Normal ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.UserType, () => MessagePluginUtils.GetUserTypeText( m_userType ) );
+        }
+        
+        message += SerializeProperty( MessagePluginUtils.Properties.MessageTimestamp, () => new DateTimeOffset(m_timestamp).ToUnixTimeMilliseconds().ToString() );
+
+        if( m_vip ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Vip, () => "1");
+        }
+
+        message = message.Substring(0, message.Length - 1);
+
+        if( !string.IsNullOrEmpty( m_text ) ) {
+            message += $" :{m_channel}!{m_channel}@{m_channel}.tmi.twitch.tv {MessageType.ToString().ToUpper()} #{m_channel} :{m_text}";
+        }
+        
+        return message;
+    }
+
+    private string SerializeProperty(
+        MessagePluginUtils.Properties property,
+        Func<string> serializer
+    ) {
+
+        return string.Format( MessagePluginUtils.GetPropertyAsString( property ), serializer() );
     }
 }

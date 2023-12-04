@@ -48,6 +48,8 @@ public class ImmediateLoadedWhisperMsg : Message, IWhisperMsg {
 
     public override MessageType MessageType => MessageType.Whisper;
     
+    public override string RawMessage => "";
+    
     IImmutableList<Badge> IWhisperMsg.Badges => m_badges;
 
     string IWhisperMsg.Color => m_color;

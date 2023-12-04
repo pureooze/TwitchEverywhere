@@ -120,7 +120,7 @@ internal class TwitchConnection {
                 break;
             case MessageType.Unknown:
                 IUnknownMessage lazyLoadedUnknownMsg = (LazyLoadedUnknownMessage) message;
-                Console.WriteLine( $"UnknownMessage: {lazyLoadedUnknownMsg.Message}" );
+                Console.WriteLine( $"UnknownMessage: {lazyLoadedUnknownMsg}" );
                 break;
             case MessageType.HostTarget:
                 IHostTargetMsg hostTargetMsg = (LazyLoadedHostTargetMsg) message;
