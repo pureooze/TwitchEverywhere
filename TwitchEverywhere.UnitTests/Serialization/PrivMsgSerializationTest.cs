@@ -81,7 +81,7 @@ public class PrivMsgSerializationTest {
             )
         );
     }
-    
+
     [Test]
     public void VipChatter_ImmediateLoadedPrivMsg_SerializationToIRCMessage() {
 
@@ -109,7 +109,7 @@ public class PrivMsgSerializationTest {
             )
         );
     }
-    
+
     [Test]
     public void HypeChat_ImmediateLoadedPrivMsg_SerializationToIRCMessage() {
 
@@ -129,7 +129,9 @@ public class PrivMsgSerializationTest {
             pinnedChatPaidExponent: 2,
             pinnedChatPaidCurrency: "USD",
             pinnedChatPaidLevel: PinnedChatPaidLevel.One
-            
+        );
+
+        Assert.That(
             immediateLoadedPrivMsg.RawMessage,
             Is.EqualTo(
                 "@badge-info=;badges=glhf-pledge/1;mod=0;id=f6fb34f8-562f-4b4d-b628-32113d0ef4b0;pinned-chat-paid-amount=200;pinned-chat-paid-canonical-amount=200;pinned-chat-paid-currency=USD;pinned-chat-paid-exponent=2;pinned-chat-paid-is-system-message=0;pinned-chat-paid-level=ONE;room-id=12345678;subscriber=0;turbo=0;user-id=12345678;tmi-sent-ts=1687471984306"
