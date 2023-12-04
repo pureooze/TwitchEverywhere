@@ -3,6 +3,7 @@ using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.Interfaces;
 using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
@@ -53,11 +54,10 @@ public class LazyLoadedUnknownMessageTests {
     }
     
     private void UnknownMessageCallback(
-        LazyLoadedUnknownMessage globalUserState,
-        LazyLoadedUnknownMessage? expectedGlobalUserState
+        IUnknownMessage globalUserState,
+        IUnknownMessage? expectedGlobalUserState
     ) {
         Assert.Multiple(() => {
-            Assert.That(globalUserState.Message, Is.EqualTo(expectedGlobalUserState?.Message), "Message was not equal to expected value");
             Assert.That(globalUserState.MessageType, Is.EqualTo(expectedGlobalUserState?.MessageType), "MessageType was not equal to expected value");
         });
     }

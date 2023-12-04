@@ -36,6 +36,8 @@ public class ImmediateLoadedGlobalUserState : Message, IGlobalUserState {
 
     public override MessageType MessageType => MessageType.GlobalUserState;
     
+    public override string RawMessage => GetRawMessage();
+    
     IImmutableList<Badge> IGlobalUserState.Badges => m_badges;
 
     IImmutableList<Badge> IGlobalUserState.BadgeInfo => m_badgeInfo;
@@ -51,4 +53,33 @@ public class ImmediateLoadedGlobalUserState : Message, IGlobalUserState {
     string IGlobalUserState.UserId => m_userId;
 
     UserType IGlobalUserState.UserType => m_userType;
+    
+    private string GetRawMessage() {
+        string message = string.Empty;
+
+        // create if statements that add each property in this class to the message string
+        message += $"badges={string.Join( ", ", m_badges )} ";
+
+        message += $"badge-info={string.Join( ", ", m_badgeInfo )} ";
+
+        if( !string.IsNullOrEmpty( m_color ) ) {
+            message += $"color={m_color} ";
+        }
+        
+        if( !string.IsNullOrEmpty( m_displayName ) ) {
+            message += $"display-name={m_displayName} ";
+        }
+
+        message += $"emote-sets={string.Join( ", ", m_emoteSets )} ";
+
+        message += $"turbo={m_turbo} ";
+        
+        if( !string.IsNullOrEmpty( m_userId ) ) {
+            message += $"user-id={m_userId} ";
+        }
+        
+        message += $"user-type={m_userType} ";
+
+        return message;
+    }
 }

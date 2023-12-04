@@ -15,6 +15,8 @@ public class LazyLoadedPartMsg : Message, IPartMsg {
     }
     
     public override MessageType MessageType => MessageType.Part;
+    
+    public override string RawMessage => m_message;
 
     public string User => MessagePluginUtils.UserJoinPattern.Match( m_message ).Groups[1].Value;
 

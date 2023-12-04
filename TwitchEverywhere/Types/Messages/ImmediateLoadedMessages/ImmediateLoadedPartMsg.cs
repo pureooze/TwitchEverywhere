@@ -20,6 +20,7 @@ public class ImmediateLoadedPartMsg : Message, IPartMsg {
 
 
     public override MessageType MessageType => MessageType.Part;
+    public override string RawMessage => m_message;
 
     string IPartMsg.User => m_user;
 

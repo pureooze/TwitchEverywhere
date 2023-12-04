@@ -2,90 +2,100 @@ using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using TwitchEverywhere.Types;
 
-namespace TwitchEverywhere.Implementation.MessagePlugins; 
+namespace TwitchEverywhere.Implementation.MessagePlugins;
 
 internal static class MessagePluginUtils {
-    
+
     // When we drop .NET 6 these can use the GeneratedRegex source generator
     // https://devblogs.microsoft.com/dotnet/regular-expression-improvements-in-dotnet-7/
-    public readonly static Regex BadgeInfoPattern = new("badge-info=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex BadgesPattern = new("badges=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex BanDurationPattern = new("ban-duration=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex BitsPattern = new("bits=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ColorPattern = new("color=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex DisplayNamePattern = new("display-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex EmoteOnlyPattern = new("emote-only=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex EmoteSetsPattern = new("emote-sets=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex EmotesPattern = new("emotes=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex FollowersOnlyPattern = new("followers-only=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex FromUserPattern = new(@" :(.+?)!", RegexOptions.Compiled);
-    public readonly static Regex HostTargetPattern = new(@":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled);
-    public readonly static Regex HostViewerCountPattern = new(@"\d+$", RegexOptions.Compiled);
-    public readonly static Regex IdPattern = new(";id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex LoginPattern = new("login=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MessageIdPattern = new("message-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MessageTimestampPattern = new("tmi-sent-ts=([0-9]+)", RegexOptions.Compiled);
-    public readonly static Regex ModPattern = new("mod=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgIdPattern = new("msg-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamCumulativeMonthsPattern = new(@"msg-param-cumulative-months=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamDisplayNamePattern = new(@"msg-param-displayName=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamGiftMonthsPattern = new(@"msg-param-gift-months=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamLoginPattern = new(@"msg-param-login=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamMonthsPattern = new(@"msg-param-months=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamPromoGiftTotalPattern = new(@"msg-param-promo-gift-total=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamPromoNamePattern = new(@"msg-param-promo-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamRecipientDisplayNamePattern = new(@"msg-param-recipient-display-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamRecipientIdPattern = new(@"msg-param-recipient-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamRecipientUserNamePattern = new(@"msg-param-recipient-user-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamRitualNamePattern = new(@"msg-param-ritual-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamSenderLoginPattern = new(@"msg-param-sender-login=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamSenderNamePattern = new(@"msg-param-sender-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamShouldShareStreakPattern = new(@"msg-param-should-share-streak=([^;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamStreakMonthsPattern = new(@"msg-param-streak-months=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamSubPlanNamePattern = new(@"msg-param-sub-plan-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamSubPlanPattern = new(@"msg-param-sub-plan=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamThresholdPattern = new(@"msg-param-threshold=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgParamViewerCountPattern = new(@"msg-param-viewerCount=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex MsgTextPattern = new(@".+:(.+ ?).*", RegexOptions.Compiled);
-    public readonly static Regex PinnedChatPaidAmountPattern = new("pinned-chat-paid-amount=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex PinnedChatPaidCurrencyPattern = new("pinned-chat-paid-currency=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex PinnedChatPaidExponentPattern = new("pinned-chat-paid-exponent=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex PinnedChatPaidIsSystemMessagePattern = new("pinned-chat-paid-is-system-message=([^;]*)", RegexOptions.Compiled);
-    public readonly static Regex PinnedChatPaidLevelPattern = new("pinned-chat-paid-level=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex R9KPattern = new("r9k=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ReplyParentDisplayNamePattern = new("reply-parent-display-name=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ReplyParentMsgIdPattern = new("reply-parent-msg-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ReplyParentUserIdPattern = new("reply-parent-user-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ReplyParentUserLoginPattern = new("reply-parent-user-login=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ReplyThreadParentMsgPattern = new("reply-thread-parent-msg-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex RoomIdPattern = new("room-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex SlowPattern = new("slow=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex SubsOnlyPattern = new("subs-only=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex SubscriberPattern = new("subscriber=([^;]*)", RegexOptions.Compiled);
-    public readonly static Regex SystemMessagePattern = new("system-msg=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex TargetMessageIdPattern = new("target-msg-id=([^;]*)", RegexOptions.Compiled);
-    public readonly static Regex TargetUserIdPattern = new("target-user-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ThreadIdPattern = new("thread-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex ToUserPattern = new(@"WHISPER\s(.*?) :[^:]*$", RegexOptions.Compiled);
-    public readonly static Regex TurboPattern = new("turbo=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex UserIdPattern = new("user-id=([^ ;]*)", RegexOptions.Compiled);
-    public readonly static Regex UserJoinPattern = new(@":([^!]+)![^@]+@[^ ]+", RegexOptions.Compiled);
-    public readonly static Regex UserTypePattern = new("user-type=([^; ]+)", RegexOptions.Compiled);
-    public readonly static Regex VipPattern = new("vip=([^ ;]*)", RegexOptions.Compiled);
-    
-    public static string GetValueFromResponse( 
+    public readonly static Regex BadgeInfoPattern = new( "badge-info=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex BadgesPattern = new( "badges=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex BanDurationPattern = new( "ban-duration=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex BitsPattern = new( "bits=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ColorPattern = new( "color=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex DisplayNamePattern = new( "display-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex EmoteOnlyPattern = new( "emote-only=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex EmoteSetsPattern = new( "emote-sets=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex EmotesPattern = new( "emotes=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex FollowersOnlyPattern = new( "followers-only=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex FromUserPattern = new( @" :(.+?)!", RegexOptions.Compiled );
+    public readonly static Regex HostTargetPattern = new( @":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled );
+    public readonly static Regex HostViewerCountPattern = new( @"\d+$", RegexOptions.Compiled );
+    public readonly static Regex IdPattern = new( ";id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex LoginPattern = new( "login=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MessageIdPattern = new( "message-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MessageTimestampPattern = new( "tmi-sent-ts=([0-9]+)", RegexOptions.Compiled );
+    public readonly static Regex ModPattern = new( "mod=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgIdPattern = new( "msg-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamCumulativeMonthsPattern = new( @"msg-param-cumulative-months=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamDisplayNamePattern = new( @"msg-param-displayName=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamGiftMonthsPattern = new( @"msg-param-gift-months=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamLoginPattern = new( @"msg-param-login=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamMonthsPattern = new( @"msg-param-months=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamPromoGiftTotalPattern = new( @"msg-param-promo-gift-total=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamPromoNamePattern = new( @"msg-param-promo-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamRecipientDisplayNamePattern = new( @"msg-param-recipient-display-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamRecipientIdPattern = new( @"msg-param-recipient-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamRecipientUserNamePattern = new( @"msg-param-recipient-user-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamRitualNamePattern = new( @"msg-param-ritual-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamSenderLoginPattern = new( @"msg-param-sender-login=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamSenderNamePattern = new( @"msg-param-sender-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamShouldShareStreakPattern = new( @"msg-param-should-share-streak=([^;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamStreakMonthsPattern = new( @"msg-param-streak-months=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamSubPlanNamePattern = new( @"msg-param-sub-plan-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamSubPlanPattern = new( @"msg-param-sub-plan=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamThresholdPattern = new( @"msg-param-threshold=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgParamViewerCountPattern = new( @"msg-param-viewerCount=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex MsgTextPattern = new( @".+:(.+ ?).*", RegexOptions.Compiled );
+    public readonly static Regex PinnedChatPaidAmountPattern = new( "pinned-chat-paid-amount=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex PinnedChatPaidCurrencyPattern = new( "pinned-chat-paid-currency=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex PinnedChatPaidExponentPattern = new( "pinned-chat-paid-exponent=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex PinnedChatPaidIsSystemMessagePattern = new( "pinned-chat-paid-is-system-message=([^;]*)", RegexOptions.Compiled );
+    public readonly static Regex PinnedChatPaidLevelPattern = new( "pinned-chat-paid-level=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex R9KPattern = new( "r9k=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ReplyParentDisplayNamePattern = new( "reply-parent-display-name=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ReplyParentMsgIdPattern = new( "reply-parent-msg-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ReplyParentUserIdPattern = new( "reply-parent-user-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ReplyParentUserLoginPattern = new( "reply-parent-user-login=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ReplyThreadParentMsgPattern = new( "reply-thread-parent-msg-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex RoomIdPattern = new( "room-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex SlowPattern = new( "slow=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex SubsOnlyPattern = new( "subs-only=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex SubscriberPattern = new( "subscriber=([^;]*)", RegexOptions.Compiled );
+    public readonly static Regex SystemMessagePattern = new( "system-msg=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex TargetMessageIdPattern = new( "target-msg-id=([^;]*)", RegexOptions.Compiled );
+    public readonly static Regex TargetUserIdPattern = new( "target-user-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ThreadIdPattern = new( "thread-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex ToUserPattern = new( @"WHISPER\s(.*?) :[^:]*$", RegexOptions.Compiled );
+    public readonly static Regex TurboPattern = new( "turbo=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex UserIdPattern = new( "user-id=([^ ;]*)", RegexOptions.Compiled );
+    public readonly static Regex UserJoinPattern = new( @":([^!]+)![^@]+@[^ ]+", RegexOptions.Compiled );
+    public readonly static Regex UserTypePattern = new( "user-type=([^; ]+)", RegexOptions.Compiled );
+    public readonly static Regex VipPattern = new( "vip=([^ ;]*)", RegexOptions.Compiled );
+
+    public static string GetPropertyAsString(
+        Properties property
+    ) {
+        if( !Patterns.ContainsKey( property ) ) {
+            throw new ArgumentException( $"Property '{property}' is not defined." );
+        }
+
+        return Patterns[property];
+    }
+
+    public static string GetValueFromResponse(
         string message,
         Regex pattern
     ) {
         return pattern.Match( message ).Groups[1].Value;
     }
-    
-    public static int GetIntValueFromResponse( 
+
+    public static int GetIntValueFromResponse(
         string message,
         Regex pattern
     ) {
         string value = GetValueFromResponse( message, pattern );
-        
+
         return string.IsNullOrEmpty( value ) ? 0 : int.Parse( value );
 
     }
@@ -99,10 +109,10 @@ internal static class MessagePluginUtils {
         if( string.IsNullOrEmpty( value ) ) {
             return false;
         }
-        
+
         return int.Parse( value ) == 1;
     }
-    
+
     public static string GetLastSplitValuesFromResponse(
         string message,
         Regex pattern
@@ -110,7 +120,7 @@ internal static class MessagePluginUtils {
         string[] splitResult = pattern.Split( message );
         return splitResult.Length > 1 ? splitResult[1] : "";
     }
-    
+
     public static IImmutableList<Emote>? GetEmotesFromText(
         string emotesText
     ) {
@@ -128,21 +138,21 @@ internal static class MessagePluginUtils {
 
             foreach (string locationGroup in separatedEmoteLocationGroup) {
                 string[] separatedEmoteLocation = locationGroup.Split( "-" );
-                
+
                 emotes.Add(
-                    new Emote( 
-                        separatedEmote[0], 
-                        int.Parse( separatedEmoteLocation[0] ), 
+                    new Emote(
+                        separatedEmote[0],
+                        int.Parse( separatedEmoteLocation[0] ),
                         int.Parse( separatedEmoteLocation[1] )
                     )
                 );
             }
         }
-        
-        
+
+
         return emotes.ToImmutableList();
     }
-    
+
     public static IImmutableList<Badge> GetBadges(
         string badges
     ) {
@@ -164,7 +174,7 @@ internal static class MessagePluginUtils {
 
         return parsedBadges.ToImmutableList();
     }
-    
+
     public static PinnedChatPaidLevel? GetPinnedChatPaidLevelType(
         string pinnedChatPaidLevelText
     ) {
@@ -182,7 +192,7 @@ internal static class MessagePluginUtils {
             _ => null
         };
     }
-    
+
     public static UserType GetUserType(
         string userTypeText
     ) {
@@ -194,4 +204,152 @@ internal static class MessagePluginUtils {
             _ => UserType.Normal
         };
     }
+
+    public static string GetUserTypeText(
+        UserType userType
+    ) {
+        return userType switch {
+            UserType.Mod => "mod",
+            UserType.Admin => "admin",
+            UserType.GlobalMod => "global_mod",
+            UserType.Staff => "staff",
+            _ => "normal",
+        };
+    }
+
+    public enum Properties {
+        BadgeInfo,
+        Badges,
+        BanDuration,
+        Bits,
+        Color,
+        DisplayName,
+        EmoteOnly,
+        EmoteSets,
+        Emotes,
+        FollowersOnly,
+        FromUser,
+        HostTarget,
+        HostViewerCount,
+        Id,
+        Login,
+        MessageId,
+        MessageTimestamp,
+        Mod,
+        MsgId,
+        MsgParamCumulativeMonths,
+        MsgParamDisplayName,
+        MsgParamGiftMonths,
+        MsgParamLogin,
+        MsgParamMonths,
+        MsgParamPromoGiftTotal,
+        MsgParamPromoName,
+        MsgParamRecipientDisplayName,
+        MsgParamRecipientId,
+        MsgParamRecipientUserName,
+        MsgParamRitualName,
+        MsgParamSenderLogin,
+        MsgParamSenderName,
+        MsgParamShouldShareStreak,
+        MsgParamStreakMonths,
+        MsgParamSubPlanName,
+        MsgParamSubPlan,
+        MsgParamThreshold,
+        MsgParamViewerCount,
+        MsgText,
+        PinnedChatPaidAmount,
+        PinnedChatPaidCanonicalAmount,
+        PinnedChatPaidCurrency,
+        PinnedChatPaidExponent,
+        PinnedChatPaidIsSystemMessage,
+        PinnedChatPaidLevel,
+        R9K,
+        ReplyParentDisplayName,
+        ReplyParentMsgId,
+        ReplyParentUserId,
+        ReplyParentUserLogin,
+        ReplyThreadParentMsg,
+        RoomId,
+        Slow,
+        SubsOnly,
+        Subscriber,
+        SystemMessage,
+        TargetMessageId,
+        TargetUserId,
+        ThreadId,
+        ToUser,
+        Turbo,
+        UserId,
+        UserJoin,
+        UserType,
+        Vip
+    }
+
+    private readonly static Dictionary<Properties, string> Patterns = new() {
+        { Properties.BadgeInfo, "badge-info={0};" },
+        { Properties.Badges, "badges={0};" },
+        { Properties.BanDuration, "ban-duration={0};" },
+        { Properties.Bits, "bits={0};" },
+        { Properties.Color, "color={0};" },
+        { Properties.DisplayName, "display-name={0};" },
+        { Properties.EmoteOnly, "emote-only={0};" },
+        { Properties.EmoteSets, "emote-sets={0};" },
+        { Properties.Emotes, "emotes={0};" },
+        { Properties.FollowersOnly, "followers-only={0};" },
+        { Properties.FromUser, "from-user={0};" },
+        { Properties.HostTarget, "host-target={0};" },
+        { Properties.HostViewerCount, "host-viewer-count={0};" },
+        { Properties.Id, "id={0};" },
+        { Properties.Login, "login={0};" },
+        { Properties.MessageId, "message-id={0};" },
+        { Properties.MessageTimestamp, "tmi-sent-ts={0};" },
+        { Properties.Mod, "mod={0};" },
+        { Properties.MsgId, "msg-id={0};" },
+        { Properties.MsgParamCumulativeMonths, "msg-param-cumulative-months={0};" },
+        { Properties.MsgParamDisplayName, "msg-param-display-name={0};" },
+        { Properties.MsgParamGiftMonths, "msg-param-gift-months={0};" },
+        { Properties.MsgParamLogin, "msg-param-login={0};" },
+        { Properties.MsgParamMonths, "msg-param-months={0};" },
+        { Properties.MsgParamPromoGiftTotal, "msg-param-promo-gift-total={0};" },
+        { Properties.MsgParamPromoName, "msg-param-promo-name={0};" },
+        { Properties.MsgParamRecipientDisplayName, "msg-param-recipient-display-name={0};" },
+        { Properties.MsgParamRecipientId, "msg-param-recipient-id={0};" },
+        { Properties.MsgParamRecipientUserName, "msg-param-recipient-user-name={0};" },
+        { Properties.MsgParamRitualName, "msg-param-ritual-name={0};" },
+        { Properties.MsgParamSenderLogin, "msg-param-sender-login={0};" },
+        { Properties.MsgParamSenderName, "msg-param-sender-name={0};" },
+        { Properties.MsgParamShouldShareStreak, "msg-param-should-share-streak={0};" },
+        { Properties.MsgParamStreakMonths, "msg-param-streak-months={0};" },
+        { Properties.MsgParamSubPlanName, "msg-param-sub-plan-name={0};" },
+        { Properties.MsgParamSubPlan, "msg-param-sub-plan={0};" },
+        { Properties.MsgParamThreshold, "msg-param-threshold={0};" },
+        { Properties.MsgParamViewerCount, "msg-param-viewer-count={0};" },
+        { Properties.MsgText, "msg-text={0};" },
+        { Properties.PinnedChatPaidAmount, "pinned-chat-paid-amount={0};" },
+        { Properties.PinnedChatPaidCanonicalAmount, "pinned-chat-paid-canonical-amount={0};" },
+        { Properties.PinnedChatPaidCurrency, "pinned-chat-paid-currency={0};" },
+        { Properties.PinnedChatPaidExponent, "pinned-chat-paid-exponent={0};" },
+        { Properties.PinnedChatPaidIsSystemMessage, "pinned-chat-paid-is-system-message={0};" },
+        { Properties.PinnedChatPaidLevel, "pinned-chat-paid-level={0};" },
+        { Properties.R9K, "r9k={0};" },
+        { Properties.ReplyParentDisplayName, "reply-parent-display-name={0};" },
+        { Properties.ReplyParentMsgId, "reply-parent-msg-id={0};" },
+        { Properties.ReplyParentUserId, "reply-parent-user-id={0};" },
+        { Properties.ReplyParentUserLogin, "reply-parent-user-login={0};" },
+        { Properties.ReplyThreadParentMsg, "reply-thread-parent-msg={0};" },
+        { Properties.RoomId, "room-id={0};" },
+        { Properties.Slow, "slow={0};" },
+        { Properties.SubsOnly, "subs-only={0};" },
+        { Properties.Subscriber, "subscriber={0};" },
+        { Properties.SystemMessage, "system-message={0};" },
+        { Properties.TargetMessageId, "target-message-id={0};" },
+        { Properties.TargetUserId, "target-user-id={0};" },
+        { Properties.ThreadId, "thread-id={0};" },
+        { Properties.ToUser, "to-user={0};" },
+        { Properties.Turbo, "turbo={0};" },
+        { Properties.UserJoin, "user-join={0};" },
+        { Properties.UserId, "user-id={0};" },
+        { Properties.UserType, "user-type={0};" },
+        { Properties.Vip, "vip={0};" }
+    };
 }

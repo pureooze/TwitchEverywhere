@@ -13,6 +13,8 @@ public class LazyLoadedClearMsg : Message, IClearMsg {
     }
     
     public override MessageType MessageType => MessageType.ClearMsg;
+    
+    public override string RawMessage => m_message;
 
     public string Login => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.LoginPattern );
 

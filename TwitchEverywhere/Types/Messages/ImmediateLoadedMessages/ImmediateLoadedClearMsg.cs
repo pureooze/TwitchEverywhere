@@ -20,7 +20,7 @@ public class ImmediateLoadedClearMsg : Message, IClearMsg {
         m_timestamp = timestamp;
     }
     public override MessageType MessageType => MessageType.ClearMsg;
-
+    public override string RawMessage => GetRawMessage();
     string IClearMsg.Login => m_login;
 
     string IClearMsg.RoomId => m_roomId;
@@ -28,4 +28,23 @@ public class ImmediateLoadedClearMsg : Message, IClearMsg {
     string IClearMsg.TargetMessageId => m_targetMessageId;
 
     DateTime IClearMsg.Timestamp => m_timestamp;
+
+    private string GetRawMessage() {
+        string message = string.Empty;
+
+        if( !string.IsNullOrEmpty( m_login ) ) {
+            message += $"login={m_login};";
+        }
+        if( !string.IsNullOrEmpty( m_roomId ) ) {
+            message += $"room-id={m_roomId};";
+        }
+        if( !string.IsNullOrEmpty( m_targetMessageId ) ) {
+            message += $"target-msg-id={m_targetMessageId};";
+        }
+        if( m_timestamp != default ) {
+            message += $"tmi-sent-ts={m_timestamp};";
+        }
+
+        return message;
+    }
 }

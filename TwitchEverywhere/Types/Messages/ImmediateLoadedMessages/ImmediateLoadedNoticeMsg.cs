@@ -18,7 +18,7 @@ public class ImmediateLoadedNoticeMsg : Message, INoticeMsg {
 
     public override MessageType MessageType => MessageType.Notice;
     
-    string INoticeMsg.RawMessage => m_message;
+    public override string RawMessage => m_message;
 
     public NoticeMsgIdType MsgId { get; }
 

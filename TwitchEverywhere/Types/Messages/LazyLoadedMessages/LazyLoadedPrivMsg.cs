@@ -21,9 +21,18 @@ public class LazyLoadedPrivMsg : Message, IPrivMsg {
 
     public override MessageType MessageType => MessageType.PrivMsg;
 
+    public override string RawMessage => m_message;
+
     IImmutableList<Badge> IPrivMsg.Badges {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern );
+            return MessagePluginUtils.GetBadges( badges );
+        }
+    }
+    
+    IImmutableList<Badge> IPrivMsg.BadgeInfo {
+        get {
+            string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgeInfoPattern );
             return MessagePluginUtils.GetBadges( badges );
         }
     }
@@ -107,7 +116,4 @@ public class LazyLoadedPrivMsg : Message, IPrivMsg {
     TimeSpan SinceStartOfStream { get; }
 
     string IPrivMsg.Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"PRIVMSG #{m_channel} :") ).Trim('\n');
-    
-    string IPrivMsg.RawMessage => m_message;
-
 }

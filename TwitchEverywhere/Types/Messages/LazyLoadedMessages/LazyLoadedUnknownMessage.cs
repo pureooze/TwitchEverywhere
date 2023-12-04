@@ -3,14 +3,14 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
 public class LazyLoadedUnknownMessage : Message, IUnknownMessage {
+    private readonly string m_message;
 
     public LazyLoadedUnknownMessage(
         string message
     ) {
-        Message = message;
+        m_message = message;
     }
     
     public override MessageType MessageType => MessageType.Unknown;
-    
-    public string Message { get; }
+    public override string RawMessage => m_message;
 }

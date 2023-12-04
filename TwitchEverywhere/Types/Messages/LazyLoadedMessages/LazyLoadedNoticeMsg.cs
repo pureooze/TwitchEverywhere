@@ -14,7 +14,7 @@ public class LazyLoadedNoticeMsg : Message, INoticeMsg {
 
     public override MessageType MessageType => MessageType.Notice;
     
-    string INoticeMsg.RawMessage => m_message;
+    public override string RawMessage => m_message;
     
     public NoticeMsgIdType MsgId => GetNoticeMsgIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern ) );
 

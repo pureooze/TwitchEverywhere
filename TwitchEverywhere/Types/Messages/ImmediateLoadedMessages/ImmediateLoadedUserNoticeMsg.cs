@@ -114,6 +114,8 @@ public class ImmediateLoadedUserNoticeMsg : Message, IUserNotice {
         m_msgParamGiftMonths = msgParamGiftMonths;
     }
     public override MessageType MessageType => MessageType.UserNotice;
+    
+    public override string RawMessage => "";
 
     IImmutableList<Badge> IUserNotice.BadgeInfo => m_badgeInfo;
 
