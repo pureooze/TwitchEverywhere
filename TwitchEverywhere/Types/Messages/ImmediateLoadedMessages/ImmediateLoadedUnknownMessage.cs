@@ -2,16 +2,20 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedUnknownMessage : Message, IUnknownMessage {
+public class ImmediateLoadedUnknownMessage : IUnknownMessage {
     private readonly string m_message;
 
     public ImmediateLoadedUnknownMessage(
+        string channel,
         string message
     ) {
+        Channel = channel;
         m_message = message;
     }
     
-    public override MessageType MessageType => MessageType.Unknown;
+    public MessageType MessageType => MessageType.Unknown;
 
-    public override string RawMessage => m_message;
+    public string RawMessage => m_message;
+    
+    public string Channel { get; }
 }

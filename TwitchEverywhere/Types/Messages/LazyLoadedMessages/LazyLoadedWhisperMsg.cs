@@ -4,20 +4,24 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedWhisperMsg : Message, IWhisperMsg {
+public class LazyLoadedWhisperMsg : IWhisperMsg {
     private readonly string m_message;
 
     public LazyLoadedWhisperMsg(
+        string channel,
         string message
     ) {
+        Channel = channel;
         m_message = message;
 
     }
     
-    public override MessageType MessageType => MessageType.Whisper;
+    public MessageType MessageType => MessageType.Whisper;
     
-    public override string RawMessage => m_message;
+    public string RawMessage => m_message;
     
+    public string Channel { get; }
+
     public IImmutableList<Badge> Badges {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern );

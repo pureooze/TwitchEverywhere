@@ -15,7 +15,7 @@ public class UserStateTests {
         string message,
         TestData expectedUserStateMessage
     ) {
-        LazyLoadedUserStateMsg actualLazyLoadedUserStateMsgMessage = new( message: message );
+        LazyLoadedUserStateMsg actualLazyLoadedUserStateMsgMessage = new( channel: "channel", message: message );
 
         Assert.That( actualLazyLoadedUserStateMsgMessage.MessageType, Is.EqualTo( MessageType.UserState ) );
         

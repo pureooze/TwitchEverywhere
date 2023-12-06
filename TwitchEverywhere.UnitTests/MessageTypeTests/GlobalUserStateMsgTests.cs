@@ -14,7 +14,7 @@ public class GlobalUserStateMsgTests {
         string message,
         TestData expectedGlobalUserStateMessage
     ) {
-        LazyLoadedGlobalUserState actualLazyLoadedGlobalUserStateMessage = new( message: message );
+        LazyLoadedGlobalUserState actualLazyLoadedGlobalUserStateMessage = new( channel: "channel", message: message );
 
         Assert.That( actualLazyLoadedGlobalUserStateMessage.MessageType, Is.EqualTo( MessageType.GlobalUserState ) );
 

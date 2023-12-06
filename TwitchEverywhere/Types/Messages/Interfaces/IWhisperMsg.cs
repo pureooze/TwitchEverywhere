@@ -2,8 +2,7 @@ using System.Collections.Immutable;
 
 namespace TwitchEverywhere.Types.Messages.Interfaces;
 
-public interface IWhisperMsg {
-    MessageType MessageType { get; }
+public interface IWhisperMsg : IMessage {
     IImmutableList<Badge> Badges { get; }
     string Color { get; }
     string DisplayName { get; }

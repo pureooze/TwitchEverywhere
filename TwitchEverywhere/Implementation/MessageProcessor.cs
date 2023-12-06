@@ -36,7 +36,7 @@ public class MessageProcessor : IMessageProcessor {
     void IMessageProcessor.ProcessMessage(
         string response,
         string channel,
-        Action<Message> callback
+        Action<IMessage> callback
     ) {
 
         foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
@@ -44,7 +44,7 @@ public class MessageProcessor : IMessageProcessor {
                 continue;
             }
 
-            Message message = messagePlugin.GetMessageData( response, channel );
+            IMessage message = messagePlugin.GetMessageData( response, channel );
             callback( message );
             break;
         }

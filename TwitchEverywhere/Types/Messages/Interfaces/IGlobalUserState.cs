@@ -1,8 +1,7 @@
 using System.Collections.Immutable;
 
 namespace TwitchEverywhere.Types.Messages.Interfaces {
-    public interface IGlobalUserState {
-        MessageType MessageType { get; }
+    public interface IGlobalUserState : IMessage {
         IImmutableList<Badge> Badges { get; }
         IImmutableList<Badge> BadgeInfo { get; }
         string Color { get; }

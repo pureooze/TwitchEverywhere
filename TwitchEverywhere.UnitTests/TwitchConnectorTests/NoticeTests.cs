@@ -35,7 +35,7 @@ public class NoticeTests {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
         
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
@@ -70,6 +70,7 @@ public class NoticeTests {
                 $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             }.ToImmutableList(),
             new LazyLoadedNoticeMsg(
+                channel: "channel", 
                 message: $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
             )
         ).SetName("Message Delete Success, No User ID");
@@ -79,6 +80,7 @@ public class NoticeTests {
                 $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             }.ToImmutableList(),
             new LazyLoadedNoticeMsg(
+                channel: "channel", 
                 message: $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
             )
         ).SetName("Whisper Restricted, With User ID");

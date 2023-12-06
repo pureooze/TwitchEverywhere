@@ -1,8 +1,6 @@
 namespace TwitchEverywhere.Types.Messages.Interfaces; 
 
-public interface IPartMsg {
-    MessageType MessageType { get; }
+public interface IPartMsg : IMessage {
     string User { get; }
     
-    string Channel { get; }
 }

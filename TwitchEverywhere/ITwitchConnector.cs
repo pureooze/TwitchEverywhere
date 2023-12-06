@@ -6,11 +6,11 @@ namespace TwitchEverywhere;
 public interface ITwitchConnector {
     internal Task<bool> TryConnect(
         TwitchConnectionOptions options,
-        Action<Message> messageCallback
+        Action<IMessage> messageCallback
     );
 
     internal Task<bool> SendMessage(
-        Message message,
+        IMessage message,
         MessageType messageType
     );
 

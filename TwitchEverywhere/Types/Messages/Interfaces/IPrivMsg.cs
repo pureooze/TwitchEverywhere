@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace TwitchEverywhere.Types.Messages.Interfaces; 
 
-public interface IPrivMsg {
+public interface IPrivMsg : IMessage {
     IImmutableList<Badge> Badges { get; }
     IImmutableList<Badge> BadgeInfo { get; }
     string Bits { get; }

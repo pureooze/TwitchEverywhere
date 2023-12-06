@@ -3,7 +3,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages; 
 
-public class ImmediateLoadedJoinMsg : Message, IJoinMsg {
+public class ImmediateLoadedJoinMsg : IJoinMsg {
     private readonly string m_channel;
     private readonly string m_user;
 
@@ -15,10 +15,10 @@ public class ImmediateLoadedJoinMsg : Message, IJoinMsg {
         m_channel = channel;
     }
 
-    public override MessageType MessageType => MessageType.Join;
-    public override string RawMessage => GetRawMessage();
+    public MessageType MessageType => MessageType.Join;
+    public string RawMessage => GetRawMessage();
+    public string Channel => m_channel;
     string IJoinMsg.User => m_user;
-    string IJoinMsg.Channel => m_channel;
     
     private string GetRawMessage() {
         string message = string.Empty;

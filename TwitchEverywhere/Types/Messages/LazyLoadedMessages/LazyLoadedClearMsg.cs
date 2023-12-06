@@ -1,20 +1,24 @@
 ﻿using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
-namespace TwitchEverywhere.Types.Messages; 
+namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedClearMsg : Message, IClearMsg {
+public class LazyLoadedClearMsg : IClearMsg {
     private readonly string m_message;
     
     public LazyLoadedClearMsg(
+        string channel,
         string message
     ) {
+        Channel = channel;
         m_message = message;
     }
     
-    public override MessageType MessageType => MessageType.ClearMsg;
+    public MessageType MessageType => MessageType.ClearMsg;
     
-    public override string RawMessage => m_message;
+    public string RawMessage => m_message;
+
+    public string Channel { get; }
 
     public string Login => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.LoginPattern );
 

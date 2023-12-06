@@ -33,7 +33,7 @@ public class LazyLoadedReconnectMsgTests {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
 
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
@@ -55,7 +55,7 @@ public class LazyLoadedReconnectMsgTests {
             new List<string> {
                 $":tmi.twitch.tv RECONNECT"
             }.ToImmutableList(),
-            new LazyLoadedReconnectMsg()
+            new LazyLoadedReconnectMsg( channel: "channel" )
         ).SetName("Reconnect message");
     }
 }

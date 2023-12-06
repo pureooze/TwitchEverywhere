@@ -13,10 +13,13 @@ public class UnknownMsgPlugin : IMessagePlugin {
         return true;
     }
     
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new LazyLoadedUnknownMessage( response );
+        return new LazyLoadedUnknownMessage( 
+            channel: channel, 
+            message: response 
+        );
     }
 }

@@ -3,19 +3,22 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedNoticeMsg : Message, INoticeMsg {
+public class LazyLoadedNoticeMsg : INoticeMsg {
     private readonly string m_message;
     
     public LazyLoadedNoticeMsg(
+        string channel,
         string message
     ) {
+        Channel = channel;
         m_message = message;
     }
 
-    public override MessageType MessageType => MessageType.Notice;
+    public MessageType MessageType => MessageType.Notice;
     
-    public override string RawMessage => m_message;
-    
+    public string RawMessage => m_message;
+    public string Channel { get; }
+
     public NoticeMsgIdType MsgId => GetNoticeMsgIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern ) );
 
     public string TargetUserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TargetUserIdPattern );

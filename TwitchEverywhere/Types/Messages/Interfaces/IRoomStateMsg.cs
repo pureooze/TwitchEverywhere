@@ -1,6 +1,6 @@
 namespace TwitchEverywhere.Types.Messages.Interfaces;
 
-public interface IRoomStateMsg {
+public interface IRoomStateMsg : IMessage {
     bool EmoteOnly { get; }
     int FollowersOnly { get; }
     bool R9K { get; }

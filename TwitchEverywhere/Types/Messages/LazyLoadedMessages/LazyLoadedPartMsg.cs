@@ -3,7 +3,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedPartMsg : Message, IPartMsg {
+public class LazyLoadedPartMsg : IPartMsg {
     private readonly string m_message;
 
     public LazyLoadedPartMsg(
@@ -14,9 +14,9 @@ public class LazyLoadedPartMsg : Message, IPartMsg {
         Channel = channel;
     }
     
-    public override MessageType MessageType => MessageType.Part;
+    public MessageType MessageType => MessageType.Part;
     
-    public override string RawMessage => m_message;
+    public string RawMessage => m_message;
 
     public string User => MessagePluginUtils.UserJoinPattern.Match( m_message ).Groups[1].Value;
 

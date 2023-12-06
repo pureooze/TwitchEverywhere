@@ -15,7 +15,7 @@ public class NoticeMsgTests {
         string message,
         TestData expectedNoticeMsgMessage
     ) {
-        INoticeMsg actualImmediateLoadedNoticeMsgMessage = new LazyLoadedNoticeMsg( message: message );
+        INoticeMsg actualImmediateLoadedNoticeMsgMessage = new LazyLoadedNoticeMsg( channel: "channel", message: message );
 
         Assert.That( actualImmediateLoadedNoticeMsgMessage.MessageType, Is.EqualTo( MessageType.Notice ) );
 

@@ -13,10 +13,10 @@ public class ReconnectMsgPlugin : IMessagePlugin {
         return response.Contains( $" RECONNECT" );
     }
 
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new LazyLoadedReconnectMsg();
+        return new LazyLoadedReconnectMsg( channel );
     }
 }

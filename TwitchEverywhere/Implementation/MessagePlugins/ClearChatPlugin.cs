@@ -13,7 +13,7 @@ public class ClearChatPlugin : IMessagePlugin {
         return response.Contains( $" CLEARCHAT #{channel}" );
     }
 
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {

@@ -12,7 +12,7 @@ public class JoinMsgPlugin : IMessagePlugin {
     ) {
         return response.Contains( $" JOIN #{channel}" );
     }
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {

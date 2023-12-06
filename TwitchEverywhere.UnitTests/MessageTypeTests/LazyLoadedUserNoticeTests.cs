@@ -15,7 +15,7 @@ public class LazyLoadedUserNoticeTests {
         string message,
         TestData expectedUserNoticeMessage
     ) {
-        LazyLoadedUserNotice actualLazyLoadedUserNoticeMessage = new( message: message );
+        LazyLoadedUserNotice actualLazyLoadedUserNoticeMessage = new( channel: "channel", message: message );
 
         Assert.That( actualLazyLoadedUserNoticeMessage.MessageType, Is.EqualTo( MessageType.UserNotice ) );
         

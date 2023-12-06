@@ -5,7 +5,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedPrivMsg : Message, IPrivMsg {
+public class ImmediateLoadedPrivMsg : IPrivMsg {
     private readonly string m_channel;
     private IImmutableList<Badge> m_badges;
     private IImmutableList<Badge> m_badgeInfo;
@@ -92,9 +92,11 @@ public class ImmediateLoadedPrivMsg : Message, IPrivMsg {
         m_text = text ?? string.Empty;
     }
 
-    public override MessageType MessageType => MessageType.PrivMsg;
+    public MessageType MessageType => MessageType.PrivMsg;
 
-    public override string RawMessage => GetRawMessageString();
+    public string RawMessage => GetRawMessageString();
+    
+    public string Channel => m_channel;
 
     IImmutableList<Badge> IPrivMsg.Badges => m_badges;
 

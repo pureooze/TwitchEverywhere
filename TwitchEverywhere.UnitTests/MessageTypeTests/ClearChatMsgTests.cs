@@ -18,7 +18,7 @@ public class ClearChatMsgTests {
         Assert.Multiple(() => {
             Assert.That(actualLazyLoadedClearChatMessage.Duration, Is.EqualTo(expectedClearChatMessage.Duration), "Duration was not equal to expected value");
             Assert.That(actualLazyLoadedClearChatMessage.RoomId, Is.EqualTo(expectedClearChatMessage.RoomId), "RoomId was not equal to expected value");
-            Assert.That(actualLazyLoadedClearChatMessage.UserId, Is.EqualTo(expectedClearChatMessage.UserId), "UserId was not equal to expected value");
+            Assert.That(actualLazyLoadedClearChatMessage.TargetUserId, Is.EqualTo(expectedClearChatMessage.UserId), "UserId was not equal to expected value");
             Assert.That(actualLazyLoadedClearChatMessage.Timestamp, Is.EqualTo(expectedClearChatMessage.Timestamp), "Timestamp was not equal to expected value");
             Assert.That(actualLazyLoadedClearChatMessage.Text, Is.EqualTo(expectedClearChatMessage.Text), "Text was not equal to expected value");
         });

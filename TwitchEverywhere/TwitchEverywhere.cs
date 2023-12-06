@@ -27,7 +27,7 @@ public sealed class TwitchEverywhere {
     }
 
     public async Task ConnectToChannel(
-        Action<Message> messageCallback
+        Action<IMessage> messageCallback
     ) {
         await m_twitchConnector.TryConnect(
             options: m_options,
@@ -36,7 +36,7 @@ public sealed class TwitchEverywhere {
     }
 
     public async Task<bool> SendMessage(
-        Message message,
+        IMessage message,
         MessageType messageType
     ) {
         return await m_twitchConnector.SendMessage( message, messageType );

@@ -2,8 +2,7 @@ using System.Collections.Immutable;
 
 namespace TwitchEverywhere.Types.Messages.Interfaces;
 
-public interface IUserNotice {
-    MessageType MessageType { get; }
+public interface IUserNotice : IMessage {
     IImmutableList<Badge> BadgeInfo { get; }
     IImmutableList<Badge> Badges { get; }
     string Color { get; }

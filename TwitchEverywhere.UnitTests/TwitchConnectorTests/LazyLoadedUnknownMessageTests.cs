@@ -33,7 +33,7 @@ public class LazyLoadedUnknownMessageTests {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
 
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
@@ -68,6 +68,7 @@ public class LazyLoadedUnknownMessageTests {
                 $"foo bar baz"
             }.ToImmutableList(),
             new LazyLoadedUnknownMessage(
+                channel: "channel", 
                 message: $"foo bar baz"
             )
         ).SetName("Ignore messages with invalid format");
@@ -77,6 +78,7 @@ public class LazyLoadedUnknownMessageTests {
                 $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
             }.ToImmutableList(),
             new LazyLoadedUnknownMessage(
+                channel: "channel", 
                 message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
             )
         ).SetName("Ignore messages missing channel when its required");

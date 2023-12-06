@@ -21,7 +21,7 @@ public class PrivMsgPlugin : IMessagePlugin {
         return response.Contains( $" PRIVMSG #{channel}" );
     }
 
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {

@@ -2,7 +2,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedRoomStateMsg : Message, IRoomStateMsg {
+public class ImmediateLoadedRoomStateMsg : IRoomStateMsg {
     private readonly bool m_emoteOnly;
     private readonly int m_followersOnly;
     private readonly bool m_r9K;
@@ -11,6 +11,7 @@ public class ImmediateLoadedRoomStateMsg : Message, IRoomStateMsg {
     private readonly bool m_subsOnly;
     
     public ImmediateLoadedRoomStateMsg(
+        string channel,
         bool emoteOnly,
         int followersOnly,
         bool r9K,
@@ -18,6 +19,7 @@ public class ImmediateLoadedRoomStateMsg : Message, IRoomStateMsg {
         int slow,
         bool subsOnly
     ) {
+        Channel = channel;
         m_emoteOnly = emoteOnly;
         m_followersOnly = followersOnly;
         m_r9K = r9K;
@@ -26,9 +28,10 @@ public class ImmediateLoadedRoomStateMsg : Message, IRoomStateMsg {
         m_subsOnly = subsOnly;
     }
 
-    public override MessageType MessageType => MessageType.RoomState;
+    public MessageType MessageType => MessageType.RoomState;
     
-    public override string RawMessage => "";
+    public string RawMessage => "";
+    public string Channel { get; }
 
     bool IRoomStateMsg.EmoteOnly => m_emoteOnly;
 

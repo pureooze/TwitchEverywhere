@@ -14,7 +14,7 @@ public class PrivMsgTests {
     public void PrivMsg( string message, TestData expectedPrivMessage )
     {
         IPrivMsg actualLazyLoadedPrivMessage = new LazyLoadedPrivMsg( channel: "channel", message: message, TimeSpan.Zero );
-        MessageType actualType = ((Message)actualLazyLoadedPrivMessage).MessageType;
+        MessageType actualType = ((IMessage)actualLazyLoadedPrivMessage).MessageType;
         
         Assert.That(actualType, Is.EqualTo( MessageType.PrivMsg ));
         

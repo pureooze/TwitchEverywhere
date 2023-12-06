@@ -13,7 +13,7 @@ public class LazyLoadedUnknownMessageTests {
         string message,
         TestData expectedUnknownMessage
     ) {
-        LazyLoadedUnknownMessage actualLazyLoadedUnknownMessage = new( message: message );
+        LazyLoadedUnknownMessage actualLazyLoadedUnknownMessage = new( channel: "channel", message: message );
 
         Assert.That( actualLazyLoadedUnknownMessage.MessageType, Is.EqualTo( MessageType.Unknown ) );
     }

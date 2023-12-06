@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace TwitchEverywhere.Types.Messages.Interfaces;
 
-public interface IUserStateMsg {
+public interface IUserStateMsg : IMessage {
     IImmutableList<Badge> BadgeInfo { get; }
 
     IImmutableList<Badge> Badges { get; }

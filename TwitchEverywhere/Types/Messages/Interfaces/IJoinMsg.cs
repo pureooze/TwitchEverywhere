@@ -1,7 +1,5 @@
 namespace TwitchEverywhere.Types.Messages.Interfaces; 
 
-public interface IJoinMsg {
-    MessageType MessageType { get; }
+public interface IJoinMsg : IMessage {
     string User { get; }
-    string Channel { get; }
 }

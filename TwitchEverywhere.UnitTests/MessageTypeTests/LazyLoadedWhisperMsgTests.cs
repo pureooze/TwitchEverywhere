@@ -15,7 +15,7 @@ public class LazyLoadedWhisperMsgTests {
         string message,
         TestData expectedWhisperMsgMessage
     ) {
-        LazyLoadedWhisperMsg actualLazyLoadedWhisperMsgMessage = new( message: message );
+        LazyLoadedWhisperMsg actualLazyLoadedWhisperMsgMessage = new( channel: "channel", message: message );
 
         Assert.That( actualLazyLoadedWhisperMsgMessage.MessageType, Is.EqualTo( MessageType.Whisper ) );
         

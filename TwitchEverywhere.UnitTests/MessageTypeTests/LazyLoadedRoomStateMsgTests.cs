@@ -13,7 +13,7 @@ public class LazyLoadedRoomStateMsgTests {
         string message,
         TestData expectedRoomStateMsgMessage
     ) {
-        LazyLoadedRoomStateMsg actualLazyLoadedRoomStateMsgMessage = new( message: message );
+        LazyLoadedRoomStateMsg actualLazyLoadedRoomStateMsgMessage = new( channel: "channel", message: message );
 
         Assert.That( actualLazyLoadedRoomStateMsgMessage.MessageType, Is.EqualTo( MessageType.RoomState ) );
 

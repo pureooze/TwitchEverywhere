@@ -3,7 +3,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedUserNoticeMsg : Message, IUserNotice {
+public class ImmediateLoadedUserNoticeMsg : IUserNotice {
     private readonly IImmutableList<Badge> m_badgeInfo;
     private readonly IImmutableList<Badge> m_badges;
     private readonly string m_color;
@@ -41,6 +41,7 @@ public class ImmediateLoadedUserNoticeMsg : Message, IUserNotice {
     private readonly int? m_msgParamGiftMonths;
 
     public ImmediateLoadedUserNoticeMsg(
+        string channel,
         IImmutableList<Badge> badgeInfo,
         IImmutableList<Badge> badges,
         string color,
@@ -77,6 +78,7 @@ public class ImmediateLoadedUserNoticeMsg : Message, IUserNotice {
         string msgParamThreshold,
         int? msgParamGiftMonths
     ) {
+        Channel = channel;
         m_badgeInfo = badgeInfo;
         m_badges = badges;
         m_color = color;
@@ -113,9 +115,11 @@ public class ImmediateLoadedUserNoticeMsg : Message, IUserNotice {
         m_msgParamThreshold = msgParamThreshold;
         m_msgParamGiftMonths = msgParamGiftMonths;
     }
-    public override MessageType MessageType => MessageType.UserNotice;
+    public MessageType MessageType => MessageType.UserNotice;
     
-    public override string RawMessage => "";
+    public string RawMessage => "";
+    
+    public string Channel { get; }
 
     IImmutableList<Badge> IUserNotice.BadgeInfo => m_badgeInfo;
 

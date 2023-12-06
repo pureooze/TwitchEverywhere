@@ -32,7 +32,7 @@ public class MixedMessageTests {
         int index = 0;
         
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessageTypes[index] ), "Incorrect message type set" );

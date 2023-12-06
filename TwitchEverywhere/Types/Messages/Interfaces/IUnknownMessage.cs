@@ -1,5 +1,4 @@
 namespace TwitchEverywhere.Types.Messages.Interfaces;
 
-public interface IUnknownMessage {
-    MessageType MessageType { get; }
+public interface IUnknownMessage : IMessage {
 }

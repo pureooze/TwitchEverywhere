@@ -3,7 +3,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedGlobalUserState : Message, IGlobalUserState {
+public class ImmediateLoadedGlobalUserState : IGlobalUserState {
     
     private readonly IImmutableList<Badge> m_badges;
     private readonly IImmutableList<Badge> m_badgeInfo;
@@ -15,6 +15,7 @@ public class ImmediateLoadedGlobalUserState : Message, IGlobalUserState {
     private readonly UserType m_userType;
 
     public ImmediateLoadedGlobalUserState(
+        string channel,
         IImmutableList<Badge> badges,
         IImmutableList<Badge> badgeInfo,
         string color,
@@ -24,6 +25,7 @@ public class ImmediateLoadedGlobalUserState : Message, IGlobalUserState {
         string userId,
         UserType userType
     ) {
+        Channel = channel;
         m_badges = badges;
         m_badgeInfo = badgeInfo;
         m_color = color;
@@ -34,10 +36,11 @@ public class ImmediateLoadedGlobalUserState : Message, IGlobalUserState {
         m_userType = userType;
     }
 
-    public override MessageType MessageType => MessageType.GlobalUserState;
+    public MessageType MessageType => MessageType.GlobalUserState;
     
-    public override string RawMessage => GetRawMessage();
-    
+    public string RawMessage => GetRawMessage();
+    public string Channel { get; }
+
     IImmutableList<Badge> IGlobalUserState.Badges => m_badges;
 
     IImmutableList<Badge> IGlobalUserState.BadgeInfo => m_badgeInfo;

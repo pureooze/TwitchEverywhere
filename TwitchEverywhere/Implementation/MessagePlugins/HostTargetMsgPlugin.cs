@@ -13,7 +13,7 @@ public class HostTargetMsgPlugin : IMessagePlugin {
         return response.Contains( $" HOSTTARGET #{channel}" );
     }
 
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
