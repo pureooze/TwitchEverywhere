@@ -2,7 +2,7 @@ using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages {
-    public class LazyLoadedHostTargetMsg : Message, IHostTargetMsg {
+    public class LazyLoadedHostTargetMsg : IHostTargetMsg {
         private readonly string m_message;
 
         public LazyLoadedHostTargetMsg(
@@ -13,9 +13,9 @@ namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages {
             HostingChannel = channel;
         }
 
-        public override MessageType MessageType => MessageType.HostTarget;
+        public MessageType MessageType => MessageType.HostTarget;
         
-        public override string RawMessage => m_message;
+        public string RawMessage => m_message;
 
         public string HostingChannel { get; }
 

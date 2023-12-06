@@ -3,7 +3,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedWhisperMsg : Message, IWhisperMsg {
+public class ImmediateLoadedWhisperMsg : IWhisperMsg {
     private readonly IImmutableList<Badge> m_badges;
     private readonly string m_color;
     private readonly string m_displayName;
@@ -19,6 +19,7 @@ public class ImmediateLoadedWhisperMsg : Message, IWhisperMsg {
 
 
     public ImmediateLoadedWhisperMsg(
+        string channel,
         IImmutableList<Badge> badges = null,
         string color = null,
         string displayName = null,
@@ -32,6 +33,7 @@ public class ImmediateLoadedWhisperMsg : Message, IWhisperMsg {
         string toUser = null,
         string text = null
     ) {
+        Channel = channel;
         m_badges = badges;
         m_color = color;
         m_displayName = displayName;
@@ -46,9 +48,11 @@ public class ImmediateLoadedWhisperMsg : Message, IWhisperMsg {
         m_text = text;
     }
 
-    public override MessageType MessageType => MessageType.Whisper;
+    public MessageType MessageType => MessageType.Whisper;
     
-    public override string RawMessage => "";
+    public string RawMessage => "";
+    
+    public string Channel { get; }
     
     IImmutableList<Badge> IWhisperMsg.Badges => m_badges;
 

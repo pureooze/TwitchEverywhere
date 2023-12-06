@@ -13,10 +13,13 @@ public class GlobalUserStatePlugin : IMessagePlugin {
         return response.Contains( $" GLOBALUSERSTATE" );
     }
 
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new LazyLoadedGlobalUserState( message: response );
+        return new LazyLoadedGlobalUserState( 
+            channel: channel,
+            message: response 
+        );
     }
 }

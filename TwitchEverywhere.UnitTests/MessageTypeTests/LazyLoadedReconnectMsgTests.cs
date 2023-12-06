@@ -9,7 +9,7 @@ public class LazyLoadedReconnectMsgTests {
 
     [Test]
     public void ReconnectMsg() {
-        LazyLoadedReconnectMsg actualPartMsgMessage = new();
+        LazyLoadedReconnectMsg actualPartMsgMessage = new( channel: "channel" );
 
         Assert.That( actualPartMsgMessage.MessageType, Is.EqualTo( MessageType.Reconnect ) );
     }

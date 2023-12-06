@@ -1,8 +1,6 @@
 namespace TwitchEverywhere.Types.Messages.Interfaces; 
 
-public interface INoticeMsg {
-    MessageType MessageType { get; }
-
+public interface INoticeMsg : IMessage {
     NoticeMsgIdType MsgId { get; }
     
     string TargetUserId { get; }

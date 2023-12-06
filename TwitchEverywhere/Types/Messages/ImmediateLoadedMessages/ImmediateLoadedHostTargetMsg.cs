@@ -1,20 +1,22 @@
 using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages {
-    public class ImmediateLoadedHostTargetMsg : Message, IHostTargetMsg {
+    public class ImmediateLoadedHostTargetMsg : IHostTargetMsg {
         
         public ImmediateLoadedHostTargetMsg(
+            string channel,
             string hostingChannel,
             string targetChannel,
             int numberOfViewers
         ) {
+            Channel = channel;
             HostingChannel = hostingChannel;
             Channel = targetChannel;
             NumberOfViewers = numberOfViewers;
         }
         
-        public override MessageType MessageType => MessageType.HostTarget;
-        public override string RawMessage => GetRawMessage();
+        public MessageType MessageType => MessageType.HostTarget;
+        public string RawMessage => GetRawMessage();
         public string HostingChannel { get; }
         public string Channel { get; }
         public int NumberOfViewers { get; }

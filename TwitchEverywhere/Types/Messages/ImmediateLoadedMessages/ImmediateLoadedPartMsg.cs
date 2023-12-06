@@ -3,7 +3,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages; 
 
-public class ImmediateLoadedPartMsg : Message, IPartMsg {
+public class ImmediateLoadedPartMsg : IPartMsg {
     private readonly string m_message;
     private string m_channel;
     private string m_user;
@@ -19,11 +19,11 @@ public class ImmediateLoadedPartMsg : Message, IPartMsg {
     }
 
 
-    public override MessageType MessageType => MessageType.Part;
-    public override string RawMessage => m_message;
+    public MessageType MessageType => MessageType.Part;
+    public string RawMessage => m_message;
+    public string Channel => m_channel;
 
     string IPartMsg.User => m_user;
 
-    string IPartMsg.Channel => m_channel;
 
 }

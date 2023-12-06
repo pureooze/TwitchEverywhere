@@ -3,22 +3,25 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages; 
 
-public class ImmediateLoadedNoticeMsg : Message, INoticeMsg {
-    private readonly string m_message;
+public class ImmediateLoadedNoticeMsg : INoticeMsg {
 
     public ImmediateLoadedNoticeMsg(
+        string channel,
         string message,
         NoticeMsgIdType msgId,
         string targetUserId
     ) {
-        m_message = message;
+        Channel = channel;
+        RawMessage = message;
         MsgId = msgId;
         TargetUserId = targetUserId;
     }
 
-    public override MessageType MessageType => MessageType.Notice;
+    public MessageType MessageType => MessageType.Notice;
     
-    public override string RawMessage => m_message;
+    public string RawMessage { get; }
+
+    public string Channel { get; }
 
     public NoticeMsgIdType MsgId { get; }
 

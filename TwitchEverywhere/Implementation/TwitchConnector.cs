@@ -25,7 +25,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
     
     async Task<bool> ITwitchConnector.TryConnect( 
         TwitchConnectionOptions options, 
-        Action<Message> messageCallback
+        Action<IMessage> messageCallback
     ) {
         string token = await m_authorizer.GetToken();
 
@@ -40,7 +40,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
     }
 
     async Task<bool> ITwitchConnector.SendMessage(
-        Message message,
+        IMessage message,
         MessageType messageType
     ) {
         if( m_webSocketConnection.State != WebSocketState.Open ) {
@@ -111,7 +111,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
     private async Task<bool> ConnectToWebsocket(
         IWebSocketConnection ws,
         string token,
-        Action<Message> callback
+        Action<IMessage> callback
     ) {
         await ws.ConnectAsync(
             uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"), 
@@ -141,7 +141,7 @@ internal sealed class TwitchConnector : ITwitchConnector {
     private async Task ReceiveWebSocketResponse(
         IWebSocketConnection ws,
         byte[] buffer,
-        Action<Message> callback
+        Action<IMessage> callback
     ) {
         WebSocketReceiveResult result = await ws.ReceiveAsync(
             buffer: buffer, 

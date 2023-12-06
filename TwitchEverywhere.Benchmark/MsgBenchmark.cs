@@ -39,7 +39,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.PrivMsg: {
@@ -71,7 +71,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.ClearMsg: {
@@ -103,7 +103,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.ClearChat: {
@@ -135,7 +135,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.Notice: {
@@ -167,7 +167,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.GlobalUserState: {
@@ -199,7 +199,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.Whisper: {
@@ -231,7 +231,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.UserNotice: {
@@ -263,7 +263,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.RoomState: {
@@ -295,7 +295,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.Join: {
@@ -327,7 +327,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.Part: {
@@ -359,7 +359,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.HostTarget: {
@@ -391,7 +391,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.Reconnect: {
@@ -423,7 +423,7 @@ public class MsgBenchmark {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
     
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             switch( message.MessageType ) {
                 case MessageType.UserState: {

@@ -1,5 +1,6 @@
 using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages;
+using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests; 
 
@@ -9,7 +10,7 @@ public class LazyLoadedClearMsgTests {
     [Test]
     [TestCaseSource(nameof(ClearMsgMessages))]
     public void ClearMsg( string message, TestData expectedClearChatMessage ) {
-        LazyLoadedClearMsg actualLazyLoadedClearChatMessage = new( message: message );
+        LazyLoadedClearMsg actualLazyLoadedClearChatMessage = new( channel: "channel", message: message );
         
         Assert.That(actualLazyLoadedClearChatMessage.MessageType, Is.EqualTo( MessageType.ClearMsg ));
         

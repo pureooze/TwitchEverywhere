@@ -13,10 +13,13 @@ public class UserStateMsgPlugin : IMessagePlugin {
         return response.Contains( $" USERSTATE #{channel}" );
     }
 
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new LazyLoadedUserStateMsg( response );
+        return new LazyLoadedUserStateMsg(
+            channel: channel,
+            message: response 
+        );
     }
 }

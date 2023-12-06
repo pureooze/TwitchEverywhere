@@ -12,10 +12,13 @@ public class UserNoticePlugin : IMessagePlugin {
     ) {
         return response.Contains( $" USERNOTICE #{channel}" );
     }
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new LazyLoadedUserNotice( response );
+        return new LazyLoadedUserNotice( 
+            channel: channel,
+            message: response 
+        );
     }
 }

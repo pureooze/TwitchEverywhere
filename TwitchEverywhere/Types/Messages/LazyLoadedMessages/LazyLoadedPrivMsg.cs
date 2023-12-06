@@ -5,8 +5,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedPrivMsg : Message, IPrivMsg {
-    private readonly string m_channel;
+public class LazyLoadedPrivMsg : IPrivMsg {
     private readonly string m_message;
     
     public LazyLoadedPrivMsg(
@@ -14,14 +13,16 @@ public class LazyLoadedPrivMsg : Message, IPrivMsg {
         string message,
         TimeSpan? sinceStartOfStream = null
     ) {
-        m_channel = channel;
+        Channel = channel;
         m_message = message;
         SinceStartOfStream = sinceStartOfStream ?? TimeSpan.Zero;
     }
 
-    public override MessageType MessageType => MessageType.PrivMsg;
+    public MessageType MessageType => MessageType.PrivMsg;
 
-    public override string RawMessage => m_message;
+    public string RawMessage => m_message;
+    
+    public string Channel { get; }
 
     IImmutableList<Badge> IPrivMsg.Badges {
         get {
@@ -115,5 +116,5 @@ public class LazyLoadedPrivMsg : Message, IPrivMsg {
 
     TimeSpan SinceStartOfStream { get; }
 
-    string IPrivMsg.Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"PRIVMSG #{m_channel} :") ).Trim('\n');
+    string IPrivMsg.Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"PRIVMSG #{Channel} :") ).Trim('\n');
 }

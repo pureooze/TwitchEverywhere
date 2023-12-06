@@ -53,7 +53,7 @@ internal class TwitchConnection {
     }
 
     private async void MessageCallback(
-        Message message
+        IMessage message
     ) {
         switch( message.MessageType ) {
             case MessageType.PrivMsg: {
@@ -153,10 +153,10 @@ internal class TwitchConnection {
             await WriteToStore( m_clearChat, MessageType.ClearChat );
         }
         
-        Console.WriteLine( $"ClearChat: On {lazyLoadedClearChat.Timestamp} the user {lazyLoadedClearChat.UserId} was muted/banned for {lazyLoadedClearChat.Duration} seconds {lazyLoadedClearChat.Text}" );
+        Console.WriteLine( $"ClearChat: On {lazyLoadedClearChat.Timestamp} the user {lazyLoadedClearChat.TargetUserId} was muted/banned for {lazyLoadedClearChat.Duration} seconds {lazyLoadedClearChat.Text}" );
         
-        if( lazyLoadedClearChat.UserId != null ) {
-            m_clearChat.AddToBuffer( lazyLoadedClearChat.UserId );
+        if( lazyLoadedClearChat.TargetUserId != null ) {
+            m_clearChat.AddToBuffer( lazyLoadedClearChat.TargetUserId );
         }
     }
     

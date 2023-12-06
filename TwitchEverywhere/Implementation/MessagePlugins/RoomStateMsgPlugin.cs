@@ -13,10 +13,13 @@ public class RoomStateMsgPlugin : IMessagePlugin {
         return response.Contains( $" ROOMSTATE #{channel}" );
     }
     
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new LazyLoadedRoomStateMsg( response );
+        return new LazyLoadedRoomStateMsg(
+            channel: channel,
+            message: response
+        );
     }
 }

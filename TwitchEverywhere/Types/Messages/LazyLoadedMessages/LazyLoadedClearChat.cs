@@ -4,7 +4,7 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
-public class LazyLoadedClearChat : Message, IClearChat {
+public class LazyLoadedClearChat : IClearChat {
     private readonly string m_channel;
     private readonly string m_message;
     
@@ -16,10 +16,12 @@ public class LazyLoadedClearChat : Message, IClearChat {
         m_message = message;
     }
 
-    public override MessageType MessageType => MessageType.ClearChat;
+    public MessageType MessageType => MessageType.ClearChat;
     
-    public override string RawMessage => m_message;
-    
+    public string RawMessage => m_message;
+
+    public string Channel => m_channel;
+
     public long? Duration {
         get {
             string duration = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BanDurationPattern );
@@ -29,7 +31,7 @@ public class LazyLoadedClearChat : Message, IClearChat {
 
     public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
 
-    public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TargetUserIdPattern );
+    public string TargetUserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TargetUserIdPattern );
     
     public DateTime Timestamp {
         get {
@@ -44,4 +46,6 @@ public class LazyLoadedClearChat : Message, IClearChat {
     }
 
     public string Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"CLEARCHAT #{m_channel} :") ).Trim('\n');
+
+    public string TargetUserName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgTextPattern );
 }

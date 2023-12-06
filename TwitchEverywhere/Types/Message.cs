@@ -1,7 +1,9 @@
 namespace TwitchEverywhere.Types;
 
-public abstract class Message {
-    public abstract MessageType MessageType { get; }
+public interface IMessage {
+    public MessageType MessageType { get; }
     
-    public abstract string RawMessage { get; }
+    public string RawMessage { get; }
+    
+    public string Channel { get; }
 }

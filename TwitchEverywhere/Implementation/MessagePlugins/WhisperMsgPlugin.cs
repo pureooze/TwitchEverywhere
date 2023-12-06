@@ -12,10 +12,13 @@ public class WhisperMsgPlugin : IMessagePlugin {
     ) {
         return response.Contains( $" WHISPER " );
     }
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
-        return new LazyLoadedWhisperMsg( message: response );
+        return new LazyLoadedWhisperMsg(
+            channel: channel,
+            message: response 
+        );
     }
 }

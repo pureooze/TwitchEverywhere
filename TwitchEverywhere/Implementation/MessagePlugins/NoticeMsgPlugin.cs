@@ -14,11 +14,12 @@ public class NoticeMsgPlugin : IMessagePlugin {
         return response.Contains( $" NOTICE #{channel}" );
     }
 
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {
         return new LazyLoadedNoticeMsg(
+            channel: channel,
             message: response
         );
     }

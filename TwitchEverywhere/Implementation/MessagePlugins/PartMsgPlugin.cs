@@ -12,7 +12,7 @@ public class PartMsgPlugin : IMessagePlugin {
     ) {
         return response.Contains( $" PART #{channel}" );
     }
-    Message IMessagePlugin.GetMessageData(
+    IMessage IMessagePlugin.GetMessageData(
         string response,
         string channel
     ) {

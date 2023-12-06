@@ -4,19 +4,22 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedGlobalUserState : Message, IGlobalUserState {
+public class LazyLoadedGlobalUserState : IGlobalUserState {
     private readonly string m_message;
     
     public LazyLoadedGlobalUserState(
+        string channel,
         string message
     ) {
+        Channel = channel;
         m_message = message;
     }
     
-    public override MessageType MessageType => MessageType.GlobalUserState;
+    public MessageType MessageType => MessageType.GlobalUserState;
     
-    public override string RawMessage => m_message;
-    
+    public string RawMessage => m_message;
+    public string Channel { get; }
+
     public IImmutableList<Badge> Badges {
         get {
             string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern );

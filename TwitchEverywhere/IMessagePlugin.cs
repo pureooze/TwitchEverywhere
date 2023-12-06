@@ -8,7 +8,7 @@ public interface IMessagePlugin {
         string channel
     );
     
-    Message GetMessageData(
+    IMessage GetMessageData(
         string response,
         string channel
     );

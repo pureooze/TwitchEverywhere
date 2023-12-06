@@ -6,6 +6,6 @@ public interface IMessageProcessor {
     void ProcessMessage(
         string response,
         string channel,
-        Action<Message> callback
+        Action<IMessage> callback
     );
 }

@@ -33,7 +33,7 @@ public class LazyLoadedRoomStateMsgTests {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
 
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
@@ -74,6 +74,7 @@ public class LazyLoadedRoomStateMsgTests {
                 $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #channel"
             }.ToImmutableList(),
             new LazyLoadedRoomStateMsg(
+                channel: "channel", 
                 message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #channel"
             )
         ).SetName("User joined channel with settings");

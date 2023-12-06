@@ -33,7 +33,7 @@ public class LazyLoadedClearChatTests {
         IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
 
         void MessageCallback(
-            Message message
+            IMessage message
         ) {
             Assert.That( message, Is.Not.Null );
             Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
@@ -60,7 +60,7 @@ public class LazyLoadedClearChatTests {
         Assert.Multiple(() => {
             Assert.That(lazyLoadedClearChat.Duration, Is.EqualTo(expectedClearChatMessage?.Duration), "Duration was not equal to expected value");
             Assert.That(lazyLoadedClearChat.RoomId, Is.EqualTo(expectedClearChatMessage?.RoomId), "RoomId was not equal to expected value");
-            Assert.That(lazyLoadedClearChat.UserId, Is.EqualTo(expectedClearChatMessage?.UserId), "UserId was not equal to expected value");
+            Assert.That(lazyLoadedClearChat.TargetUserId, Is.EqualTo(expectedClearChatMessage?.TargetUserId), "UserId was not equal to expected value");
             Assert.That(lazyLoadedClearChat.Timestamp, Is.EqualTo(expectedClearChatMessage?.Timestamp), "Timestamp was not equal to expected value");
             Assert.That(lazyLoadedClearChat.Text, Is.EqualTo(expectedClearChatMessage?.Text), "Text was not equal to expected value");
             Assert.That(lazyLoadedClearChat.MessageType, Is.EqualTo(expectedClearChatMessage?.MessageType), "MessageType was not equal to expected value");
