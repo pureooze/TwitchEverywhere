@@ -5,4 +5,5 @@ public interface IClearMsg : IMessage {
     string RoomId { get; }
     string TargetMessageId { get; }
     DateTime Timestamp { get; }
+    string Text { get; }
 }

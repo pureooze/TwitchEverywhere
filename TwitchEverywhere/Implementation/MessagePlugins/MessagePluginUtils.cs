@@ -342,7 +342,7 @@ internal static class MessagePluginUtils {
         { Properties.SubsOnly, "subs-only={0};" },
         { Properties.Subscriber, "subscriber={0};" },
         { Properties.SystemMessage, "system-message={0};" },
-        { Properties.TargetMessageId, "target-message-id={0};" },
+        { Properties.TargetMessageId, "target-msg-id={0};" },
         { Properties.TargetUserId, "target-user-id={0};" },
         { Properties.ThreadId, "thread-id={0};" },
         { Properties.ToUser, "to-user={0};" },
