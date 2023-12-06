@@ -1,4 +1,5 @@
-﻿using TwitchEverywhere.Implementation.MessagePlugins;
+﻿using System.Text.RegularExpressions;
+using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
@@ -37,4 +38,6 @@ public class LazyLoadedClearMsg : IClearMsg {
             return DateTimeOffset.FromUnixTimeMilliseconds( rawTimestamp ).UtcDateTime;
         }
     }
+
+    string IClearMsg.Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"CLEARMSG #{Channel} :") ).Trim('\n');
 }
