@@ -301,7 +301,7 @@ internal static class MessagePluginUtils {
         { Properties.HostViewerCount, "host-viewer-count={0};" },
         { Properties.Id, "id={0};" },
         { Properties.Login, "login={0};" },
-        { Properties.MessageId, "message-id={0};" },
+        { Properties.MessageId, "msg-id={0};" },
         { Properties.MessageTimestamp, "tmi-sent-ts={0};" },
         { Properties.Mod, "mod={0};" },
         { Properties.MsgId, "msg-id={0};" },
