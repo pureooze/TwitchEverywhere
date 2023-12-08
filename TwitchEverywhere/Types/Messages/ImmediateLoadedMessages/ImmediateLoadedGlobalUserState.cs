@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
@@ -13,33 +14,35 @@ public class ImmediateLoadedGlobalUserState : IGlobalUserState {
     private readonly bool m_turbo;
     private readonly string m_userId;
     private readonly UserType m_userType;
+    private readonly string m_channel;
 
     public ImmediateLoadedGlobalUserState(
         string channel,
-        IImmutableList<Badge> badges,
-        IImmutableList<Badge> badgeInfo,
-        string color,
-        string displayName,
-        IImmutableList<string> emoteSets,
-        bool turbo,
-        string userId,
-        UserType userType
+        IImmutableList<Badge>? badges = null,
+        IImmutableList<Badge>? badgeInfo = null,
+        string? color = null,
+        string? displayName = null,
+        IImmutableList<string>? emoteSets = null,
+        bool? turbo = null,
+        string? userId = null,
+        UserType? userType = null
     ) {
-        Channel = channel;
-        m_badges = badges;
-        m_badgeInfo = badgeInfo;
-        m_color = color;
-        m_displayName = displayName;
-        m_emoteSets = emoteSets;
-        m_turbo = turbo;
-        m_userId = userId;
-        m_userType = userType;
+        m_channel = channel;
+        m_badges = badges ?? ImmutableArray<Badge>.Empty;
+        m_badgeInfo = badgeInfo ?? ImmutableArray<Badge>.Empty;
+        m_color = color ?? string.Empty;
+        m_displayName = displayName ?? string.Empty;
+        m_emoteSets = emoteSets ?? ImmutableArray<string>.Empty;
+        m_turbo = turbo ?? default;
+        m_userId = userId ?? string.Empty;
+        m_userType = userType ?? UserType.Normal;
     }
 
     public MessageType MessageType => MessageType.GlobalUserState;
     
     public string RawMessage => GetRawMessage();
-    public string Channel { get; }
+    
+    public string Channel => m_channel;
 
     IImmutableList<Badge> IGlobalUserState.Badges => m_badges;
 
@@ -58,31 +61,48 @@ public class ImmediateLoadedGlobalUserState : IGlobalUserState {
     UserType IGlobalUserState.UserType => m_userType;
     
     private string GetRawMessage() {
-        string message = string.Empty;
+        string message = "@";
 
-        // create if statements that add each property in this class to the message string
-        message += $"badges={string.Join( ", ", m_badges )} ";
-
-        message += $"badge-info={string.Join( ", ", m_badgeInfo )} ";
+        if( m_badges.Any() ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.BadgeInfo, () => string.Join( ",", m_badgeInfo.Select( b => $"{b.Name}/{b.Version}" ) ) );
+            message += SerializeProperty( MessagePluginUtils.Properties.Badges, () => string.Join( ",", m_badges.Select( b => $"{b.Name}/{b.Version}" ) ) );
+        }
 
         if( !string.IsNullOrEmpty( m_color ) ) {
-            message += $"color={m_color} ";
+            message += SerializeProperty( MessagePluginUtils.Properties.Color, () => m_color );
         }
         
         if( !string.IsNullOrEmpty( m_displayName ) ) {
-            message += $"display-name={m_displayName} ";
+            message += SerializeProperty( MessagePluginUtils.Properties.DisplayName, () => m_displayName );
         }
-
-        message += $"emote-sets={string.Join( ", ", m_emoteSets )} ";
-
-        message += $"turbo={m_turbo} ";
+        
+        if( m_emoteSets.Any() ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.EmoteSets, () => string.Join( ",", m_emoteSets.Select( b => b ) ) );
+        }
+        
+        message += SerializeProperty( MessagePluginUtils.Properties.Turbo, () => m_turbo ? "1" : "0" );
         
         if( !string.IsNullOrEmpty( m_userId ) ) {
-            message += $"user-id={m_userId} ";
+            message += SerializeProperty( MessagePluginUtils.Properties.UserId, () => m_userId );
         }
         
-        message += $"user-type={m_userType} ";
+        if( m_userType != UserType.Normal ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.UserType, () => MessagePluginUtils.GetUserTypeText( m_userType ) );
+        }
 
+        message = message.Substring(0, message.Length - 1);
+
+        message += $" :tmi.twitch.tv {MessageType.ToString().ToUpper()}";
+        
+        
         return message;
+    }
+    
+    private string SerializeProperty(
+        MessagePluginUtils.Properties property,
+        Func<string> serializer
+    ) {
+
+        return string.Format( MessagePluginUtils.GetPropertyAsString( property ), serializer() );
     }
 }
