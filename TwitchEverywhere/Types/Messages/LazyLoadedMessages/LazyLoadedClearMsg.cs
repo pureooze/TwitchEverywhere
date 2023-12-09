@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
+using MessagePluginUtils = TwitchEverywhere.Implementation.MessagePluginUtils;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
@@ -21,16 +22,16 @@ public class LazyLoadedClearMsg : IClearMsg {
 
     public string Channel { get; }
 
-    public string Login => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.LoginPattern );
+    public string Login => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.LoginPattern() );
 
-    public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
+    public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern() );
     
-    public string TargetMessageId => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.TargetMessageIdPattern );
+    public string TargetMessageId => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, MessagePluginUtils.TargetMessageIdPattern() );
     
     public DateTime Timestamp {
         get {
             long rawTimestamp = Convert.ToInt64(
-                MessagePluginUtils.MessageTimestampPattern.Match( m_message ).Value
+                MessagePluginUtils.MessageTimestampPattern().Match( m_message ).Value
                     .Split( "=" )[1]
                     .TrimEnd( ';' )
             );

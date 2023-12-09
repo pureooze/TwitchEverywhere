@@ -2,76 +2,201 @@ using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using TwitchEverywhere.Types;
 
-namespace TwitchEverywhere.Implementation.MessagePlugins;
+namespace TwitchEverywhere.Implementation;
 
-internal static class MessagePluginUtils {
+internal static partial class MessagePluginUtils {
 
-    // When we drop .NET 6 these can use the GeneratedRegex source generator
-    // https://devblogs.microsoft.com/dotnet/regular-expression-improvements-in-dotnet-7/
-    public readonly static Regex BadgeInfoPattern = new( "badge-info=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex BadgesPattern = new( "badges=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex BanDurationPattern = new( "ban-duration=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex BitsPattern = new( "bits=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ColorPattern = new( "color=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex DisplayNamePattern = new( "display-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex EmoteOnlyPattern = new( "emote-only=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex EmoteSetsPattern = new( "emote-sets=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex EmotesPattern = new( "emotes=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex FollowersOnlyPattern = new( "followers-only=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex FromUserPattern = new( @" :(.+?)!", RegexOptions.Compiled );
-    public readonly static Regex HostTargetPattern = new( @":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled );
-    public readonly static Regex HostViewerCountPattern = new( @"\d+$", RegexOptions.Compiled );
-    public readonly static Regex IdPattern = new( ";id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex LoginPattern = new( "login=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MessageIdPattern = new( "message-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MessageTimestampPattern = new( "tmi-sent-ts=([0-9]+)", RegexOptions.Compiled );
-    public readonly static Regex ModPattern = new( "mod=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgIdPattern = new( "msg-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamCumulativeMonthsPattern = new( @"msg-param-cumulative-months=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamDisplayNamePattern = new( @"msg-param-displayName=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamGiftMonthsPattern = new( @"msg-param-gift-months=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamLoginPattern = new( @"msg-param-login=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamMonthsPattern = new( @"msg-param-months=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamPromoGiftTotalPattern = new( @"msg-param-promo-gift-total=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamPromoNamePattern = new( @"msg-param-promo-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamRecipientDisplayNamePattern = new( @"msg-param-recipient-display-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamRecipientIdPattern = new( @"msg-param-recipient-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamRecipientUserNamePattern = new( @"msg-param-recipient-user-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamRitualNamePattern = new( @"msg-param-ritual-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamSenderLoginPattern = new( @"msg-param-sender-login=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamSenderNamePattern = new( @"msg-param-sender-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamShouldShareStreakPattern = new( @"msg-param-should-share-streak=([^;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamStreakMonthsPattern = new( @"msg-param-streak-months=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamSubPlanNamePattern = new( @"msg-param-sub-plan-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamSubPlanPattern = new( @"msg-param-sub-plan=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamThresholdPattern = new( @"msg-param-threshold=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgParamViewerCountPattern = new( @"msg-param-viewerCount=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex MsgTextPattern = new( @".+:(.+ ?).*", RegexOptions.Compiled );
-    public readonly static Regex PinnedChatPaidAmountPattern = new( "pinned-chat-paid-amount=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex PinnedChatPaidCurrencyPattern = new( "pinned-chat-paid-currency=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex PinnedChatPaidExponentPattern = new( "pinned-chat-paid-exponent=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex PinnedChatPaidIsSystemMessagePattern = new( "pinned-chat-paid-is-system-message=([^;]*)", RegexOptions.Compiled );
-    public readonly static Regex PinnedChatPaidLevelPattern = new( "pinned-chat-paid-level=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex R9KPattern = new( "r9k=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ReplyParentDisplayNamePattern = new( "reply-parent-display-name=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ReplyParentMsgIdPattern = new( "reply-parent-msg-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ReplyParentUserIdPattern = new( "reply-parent-user-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ReplyParentUserLoginPattern = new( "reply-parent-user-login=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ReplyThreadParentMsgPattern = new( "reply-thread-parent-msg-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex RoomIdPattern = new( "room-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex SlowPattern = new( "slow=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex SubsOnlyPattern = new( "subs-only=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex SubscriberPattern = new( "subscriber=([^;]*)", RegexOptions.Compiled );
-    public readonly static Regex SystemMessagePattern = new( "system-msg=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex TargetMessageIdPattern = new( "target-msg-id=([^;]*)", RegexOptions.Compiled );
-    public readonly static Regex TargetUserIdPattern = new( "target-user-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ThreadIdPattern = new( "thread-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex ToUserPattern = new( @"WHISPER\s(.*?) :[^:]*$", RegexOptions.Compiled );
-    public readonly static Regex TurboPattern = new( "turbo=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex UserIdPattern = new( "user-id=([^ ;]*)", RegexOptions.Compiled );
-    public readonly static Regex UserJoinPattern = new( @":([^!]+)![^@]+@[^ ]+", RegexOptions.Compiled );
-    public readonly static Regex UserTypePattern = new( "user-type=([^; ]+)", RegexOptions.Compiled );
-    public readonly static Regex VipPattern = new( "vip=([^ ;]*)", RegexOptions.Compiled );
+    [GeneratedRegex("badge-info=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex BadgeInfoPattern();
+    
+    [GeneratedRegex("badges=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex BadgesPattern();
+
+    [GeneratedRegex("ban-duration=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex BanDurationPattern();
+
+    [GeneratedRegex("bits=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex BitsPattern();
+
+    [GeneratedRegex("color=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ColorPattern();
+
+    [GeneratedRegex("display-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex DisplayNamePattern();
+
+    [GeneratedRegex("emote-only=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex EmoteOnlyPattern();
+
+    [GeneratedRegex("emote-sets=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex EmoteSetsPattern();
+
+    [GeneratedRegex("emotes=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex EmotesPattern();
+
+    [GeneratedRegex("followers-only=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex FollowersOnlyPattern();
+
+    [GeneratedRegex(@" :(.+?)!", RegexOptions.Compiled)]
+    public static partial Regex FromUserPattern();
+
+    [GeneratedRegex(@":([a-zA-Z-]+)(?=\s\d+)", RegexOptions.Compiled)]
+    public static partial Regex HostTargetPattern();
+
+    [GeneratedRegex(@"\d+$", RegexOptions.Compiled)]
+    public static partial Regex HostViewerCountPattern();
+
+    [GeneratedRegex(";id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex IdPattern();
+
+    [GeneratedRegex("login=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex LoginPattern();
+
+    [GeneratedRegex("message-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MessageIdPattern();
+
+    [GeneratedRegex("tmi-sent-ts=([0-9]+)", RegexOptions.Compiled)]
+    public static partial Regex MessageTimestampPattern();
+
+    [GeneratedRegex("mod=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ModPattern();
+
+    [GeneratedRegex("msg-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgIdPattern();
+
+    [GeneratedRegex(@"msg-param-cumulative-months=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamCumulativeMonthsPattern();
+
+    [GeneratedRegex(@"msg-param-displayName=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamDisplayNamePattern();
+
+    [GeneratedRegex(@"msg-param-gift-months=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamGiftMonthsPattern();
+
+    [GeneratedRegex(@"msg-param-login=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamLoginPattern();
+
+    [GeneratedRegex(@"msg-param-months=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamMonthsPattern();
+
+    [GeneratedRegex(@"msg-param-promo-gift-total=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamPromoGiftTotalPattern();
+
+    [GeneratedRegex(@"msg-param-promo-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamPromoNamePattern();
+
+    [GeneratedRegex(@"msg-param-recipient-display-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamRecipientDisplayNamePattern();
+
+    [GeneratedRegex(@"msg-param-recipient-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamRecipientIdPattern();
+
+    [GeneratedRegex(@"msg-param-recipient-user-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamRecipientUserNamePattern();
+
+    [GeneratedRegex(@"msg-param-ritual-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamRitualNamePattern();
+
+    [GeneratedRegex(@"msg-param-sender-login=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamSenderLoginPattern();
+
+    [GeneratedRegex(@"msg-param-sender-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamSenderNamePattern();
+
+    [GeneratedRegex(@"msg-param-should-share-streak=([^;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamShouldShareStreakPattern();
+
+    [GeneratedRegex(@"msg-param-streak-months=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamStreakMonthsPattern();
+
+    [GeneratedRegex(@"msg-param-sub-plan-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamSubPlanNamePattern();
+
+    [GeneratedRegex(@"msg-param-sub-plan=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamSubPlanPattern();
+
+    [GeneratedRegex(@"msg-param-threshold=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamThresholdPattern();
+
+    [GeneratedRegex(@"msg-param-viewerCount=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex MsgParamViewerCountPattern();
+
+    [GeneratedRegex(@".+:(.+ ?).*", RegexOptions.Compiled)]
+    public static partial Regex MsgTextPattern();
+
+    [GeneratedRegex("pinned-chat-paid-amount=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex PinnedChatPaidAmountPattern();
+
+    [GeneratedRegex("pinned-chat-paid-currency=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex PinnedChatPaidCurrencyPattern();
+
+    [GeneratedRegex("pinned-chat-paid-exponent=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex PinnedChatPaidExponentPattern();
+
+    [GeneratedRegex("pinned-chat-paid-is-system-message=([^;]*)", RegexOptions.Compiled)]
+    public static partial Regex PinnedChatPaidIsSystemMessagePattern();
+
+    [GeneratedRegex("pinned-chat-paid-level=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex PinnedChatPaidLevelPattern();
+
+    [GeneratedRegex("r9k=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex R9KPattern();
+
+    [GeneratedRegex("reply-parent-display-name=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ReplyParentDisplayNamePattern();
+
+    [GeneratedRegex("reply-parent-msg-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ReplyParentMsgIdPattern();
+
+    [GeneratedRegex("reply-parent-user-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ReplyParentUserIdPattern();
+
+    [GeneratedRegex("reply-parent-user-login=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ReplyParentUserLoginPattern();
+
+    [GeneratedRegex("reply-thread-parent-msg-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ReplyThreadParentMsgPattern();
+
+    [GeneratedRegex("room-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex RoomIdPattern();
+
+    [GeneratedRegex("slow=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex SlowPattern();
+
+    [GeneratedRegex("subs-only=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex SubsOnlyPattern();
+
+    [GeneratedRegex("subscriber=([^;]*)", RegexOptions.Compiled)]
+    public static partial Regex SubscriberPattern();
+
+    [GeneratedRegex("system-msg=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex SystemMessagePattern();
+
+    [GeneratedRegex("target-msg-id=([^;]*)", RegexOptions.Compiled)]
+    public static partial Regex TargetMessageIdPattern();
+
+    [GeneratedRegex("target-user-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex TargetUserIdPattern();
+
+    [GeneratedRegex("thread-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex ThreadIdPattern();
+
+    [GeneratedRegex(@"WHISPER\s(.*?) :[^:]*$", RegexOptions.Compiled)]
+    public static partial Regex ToUserPattern();
+
+    [GeneratedRegex("turbo=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex TurboPattern();
+
+    [GeneratedRegex("user-id=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex UserIdPattern();
+
+    [GeneratedRegex(@":([^!]+)![^@]+@[^ ]+", RegexOptions.Compiled)]
+    public static partial Regex UserJoinPattern();
+
+    [GeneratedRegex("user-type=([^; ]+)", RegexOptions.Compiled)]
+    public static partial Regex UserTypePattern();
+
+    [GeneratedRegex("vip=([^ ;]*)", RegexOptions.Compiled)]
+    public static partial Regex VipPattern();
 
     public static string GetPropertyAsString(
         Properties property
