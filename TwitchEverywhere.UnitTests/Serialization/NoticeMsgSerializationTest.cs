@@ -22,14 +22,14 @@ public class NoticeMsgSerializationTest {
     [Test]
     public void MessageDeletedSuccessfully_ImmediateLoadedNoticeMsg_SerializationToIRCMessage() {
 
-        ImmediateLoadedNoticeMsg immediateLoadedClearChatMsg = new(
+        ImmediateLoadedNoticeMsg immediateLoadedNoticeMsg = new(
             channel: "dallas",
             msgId: NoticeMsgIdType.DeleteMessageSuccess,
             message: "The message from foo is now deleted."
         );
 
         Assert.That(
-            immediateLoadedClearChatMsg.RawMessage,
+            immediateLoadedNoticeMsg.RawMessage,
             Is.EqualTo(
                 "@msg-id=delete_message_success :tmi.twitch.tv NOTICE #dallas :The message from foo is now deleted."
             )
@@ -39,7 +39,7 @@ public class NoticeMsgSerializationTest {
     [Test]
     public void UserUnableToSendMessage_ImmediateLoadedNoticeMsg_SerializationToIRCMessage() {
 
-        ImmediateLoadedNoticeMsg immediateLoadedClearChatMsg = new(
+        ImmediateLoadedNoticeMsg immediateLoadedNoticeMsg = new(
             channel: "dallas",
             msgId: NoticeMsgIdType.WhisperRestricted,
             message: "Your settings prevent you from sending this whisper.",
@@ -47,7 +47,7 @@ public class NoticeMsgSerializationTest {
         );
 
         Assert.That(
-            immediateLoadedClearChatMsg.RawMessage,
+            immediateLoadedNoticeMsg.RawMessage,
             Is.EqualTo(
                 "@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #dallas :Your settings prevent you from sending this whisper."
             )
