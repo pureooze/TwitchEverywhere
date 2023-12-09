@@ -28,7 +28,7 @@ public class PrivMsgPlugin : IMessagePlugin {
         string[] segments = response.Split( $"PRIVMSG #{channel} :" );
 
         long rawTimestamp = Convert.ToInt64(
-            MessagePluginUtils.MessageTimestampPattern.Match( response ).Value
+            Implementation.MessagePluginUtils.MessageTimestampPattern().Match( response ).Value
             .Split( "=" )[1]
             .TrimEnd( ';' )
         );

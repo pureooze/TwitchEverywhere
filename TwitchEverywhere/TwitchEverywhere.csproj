@@ -9,10 +9,10 @@
         <RepositoryUrl>https://github.com/pureooze/TwitchEverywhere</RepositoryUrl>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>11</LangVersion>
+        <LangVersion>default</LangVersion>
         <Version>0.3.1</Version>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
         <PackRelease>true</PackRelease>
     </PropertyGroup>
 

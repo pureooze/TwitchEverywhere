@@ -1,5 +1,6 @@
 using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
+using MessagePluginUtils = TwitchEverywhere.Implementation.MessagePluginUtils;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
@@ -19,9 +20,9 @@ public class LazyLoadedNoticeMsg : INoticeMsg {
     public string RawMessage => m_message;
     public string Channel { get; }
 
-    public NoticeMsgIdType MsgId => GetNoticeMsgIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern ) );
+    public NoticeMsgIdType MsgId => GetNoticeMsgIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern() ) );
 
-    public string TargetUserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TargetUserIdPattern );
+    public string TargetUserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TargetUserIdPattern() );
     
     private static NoticeMsgIdType GetNoticeMsgIdType(
         string targetMessageId

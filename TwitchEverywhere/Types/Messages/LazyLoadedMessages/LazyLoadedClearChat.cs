@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
+using MessagePluginUtils = TwitchEverywhere.Implementation.MessagePluginUtils;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
@@ -24,19 +25,19 @@ public class LazyLoadedClearChat : IClearChat {
 
     public long? Duration {
         get {
-            string duration = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BanDurationPattern );
+            string duration = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BanDurationPattern() );
             return string.IsNullOrEmpty( duration ) ? null : long.Parse( duration );
         }
     }
 
-    public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern );
+    public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern() );
 
-    public string TargetUserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TargetUserIdPattern );
+    public string TargetUserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.TargetUserIdPattern() );
     
     public DateTime Timestamp {
         get {
             long rawTimestamp = Convert.ToInt64(
-                MessagePluginUtils.MessageTimestampPattern.Match( m_message ).Value
+                MessagePluginUtils.MessageTimestampPattern().Match( m_message ).Value
                     .Split( "=" )[1]
                     .TrimEnd( ';' )
             );
@@ -47,5 +48,5 @@ public class LazyLoadedClearChat : IClearChat {
 
     public string Text => MessagePluginUtils.GetLastSplitValuesFromResponse( m_message, new Regex($"CLEARCHAT #{m_channel} :") ).Trim('\n');
 
-    public string TargetUserName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgTextPattern );
+    public string TargetUserName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgTextPattern() );
 }
