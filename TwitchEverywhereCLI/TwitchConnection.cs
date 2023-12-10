@@ -1,8 +1,6 @@
 using System.Text;
 using TwitchEverywhere;
-using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
-using TwitchEverywhere.Types.Messages;
 using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Types.Messages.Interfaces;
 using TwitchEverywhere.Types.Messages.LazyLoadedMessages;

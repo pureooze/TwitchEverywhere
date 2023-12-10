@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using TwitchEverywhere.Types;
-using TwitchEverywhere.Types.Messages;
 using TwitchEverywhere.Types.Messages.Interfaces;
 using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
