@@ -31,13 +31,14 @@
     * [WHISPER Tags](#whisper-tags)
 <!-- TOC -->
 
-`TwitchEverywhere` is a .NET (6 and 7) library that allows connecting to a Twitch chat and subscribing to messages in that chat.
+`TwitchEverywhere` is a .NET library that allows connecting to a Twitch chat and subscribing to messages in that chat.
 
 The goal of this library is to provide a lightweight, strongly typed API for clients so they can avoid parsing raw strings as much as possible.
 Additionally, Twitch requires an authenticated connection to the IRC server which can get a bit complicated to setup and maintain. 
 Fortunately `TwitchEverywhere` can do that for you! 😀
 
-If you are planning on using `TwitchEverywhere` on AWS I suggest using .NET 6 for compatibility reasons.
+The library will support the latest LTS version of .NET and non LTS versions IF it is newer than the LTS version.
+So for example before .NET 8, the library supported .NET 6 (LTS) and 7 but once .NET 8 was released support for 6 and 7 was dropped.
 
 ## How To Use It
 You will need to provide the following values as parameters to the `TwitchConnectionOptions` record:
