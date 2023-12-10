@@ -10,10 +10,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
-        <Version>0.3.1</Version>
+        <Version>0.4.0</Version>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
         <PackRelease>true</PackRelease>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

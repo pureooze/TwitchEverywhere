@@ -62,7 +62,7 @@ internal class TwitchConnection {
                 ImmediateLoadedPrivMsg reply = new(
                     channel: "pureooze",
                     replyParentMsgId: lazyLoadedPrivMsg.Id,
-                    text: "absolutely!"
+                    text: lazyLoadedPrivMsg.Text + "? hmm maybe..."
                 );
                 
                 bool sendMessage = await m_twitchEverywhere.SendMessage( reply, MessageType.PrivMsg );
