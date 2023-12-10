@@ -1,6 +1,5 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnostics.Windows.Configs;
-using TwitchEverywhere.Implementation.MessagePlugins;
 using MessagePluginUtils = TwitchEverywhere.Implementation.MessagePluginUtils;
 
 namespace TwitchEverywhere.Benchmark;

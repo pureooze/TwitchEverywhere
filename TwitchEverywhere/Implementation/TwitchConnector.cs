@@ -1,7 +1,6 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 using TwitchEverywhere.Types;
-using TwitchEverywhere.Types.Messages;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Implementation;

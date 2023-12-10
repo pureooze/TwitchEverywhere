@@ -1,4 +1,3 @@
-using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.ImmediateLoadedMessages; 

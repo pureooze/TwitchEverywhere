@@ -1,4 +1,3 @@
-using System.Net.WebSockets;
 using TwitchEverywhere.Types;
 
 namespace TwitchEverywhere; 

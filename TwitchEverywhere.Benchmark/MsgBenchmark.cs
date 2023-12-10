@@ -4,7 +4,6 @@ using BenchmarkDotNet.Jobs;
 using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
-using TwitchEverywhere.Types.Messages;
 
 namespace TwitchEverywhere.Benchmark; 
 

@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types.Messages.Interfaces;
 using MessagePluginUtils = TwitchEverywhere.Implementation.MessagePluginUtils;
 

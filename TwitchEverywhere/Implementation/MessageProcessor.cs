@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using TwitchEverywhere.Implementation.MessagePlugins;
 using TwitchEverywhere.Types;
 

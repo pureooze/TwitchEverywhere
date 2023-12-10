@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
-using Moq;
 using TwitchEverywhere.Types;
-using TwitchEverywhere.Types.Messages;
 using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests;
