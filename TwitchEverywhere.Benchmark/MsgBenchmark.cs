@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnostics.Windows.Configs;
+using BenchmarkDotNet.Jobs;
 using Moq;
 using TwitchEverywhere.Implementation;
 using TwitchEverywhere.Types;
@@ -9,6 +10,7 @@ namespace TwitchEverywhere.Benchmark;
 
 [MemoryDiagnoser]
 [NativeMemoryProfiler]
+[SimpleJob(RuntimeMoniker.Net80)]
 public class MsgBenchmark {
     
     private readonly TwitchConnectionOptions m_options = new(
@@ -24,7 +26,7 @@ public class MsgBenchmark {
         
     private ITwitchConnector m_twitchConnector;
 
-    [Params(500)]
+    [Params(50)]
     public int Iterations;
 
     [Benchmark]

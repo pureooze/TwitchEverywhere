@@ -9,7 +9,7 @@ namespace TwitchEverywhere.Benchmark;
 [NativeMemoryProfiler]
 public class RegexBenchmark {
 
-    [Params( 100 )] public int Iterations;
+    [Params( 10 )] public int Iterations;
 
     private readonly string m_message =
         "@emote-only=0;msg-id=delete_message_success;target-user-id=12345678;followers-only=0;bits=1;r9k=0;slow=0;login=ronni;target-msg-id=abc-123-def;ban-duration=350;subs-only=0;room-id=240866033;tmi-sent-ts=1642715756806;msg-param-cumulative-months=6;msg-param-streak-months=2;msg-param-should-share-streak=1;msg-param-sub-plan=Prime;msg-param-sub-plan-name=Prime;room-id=12345678;subscriber=1;system-msg=ronni\\shas\\ssubscribed\\sfor\\s6\\smonths!;badge-info=subscriber/8;badges=subscriber/6;subscriber=0;color=#0D4200;display-name=dallas;emote-sets=0,33,50,237,793,2126,3517,4578,5569,9400,10337,12239;turbo=0;user-id=12345678;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;user-type=admin :ronni!ronni@ronni.tmi.twitch.tv JOIN #channel";
