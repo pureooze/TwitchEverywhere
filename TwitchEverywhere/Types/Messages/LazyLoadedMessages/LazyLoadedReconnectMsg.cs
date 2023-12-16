@@ -2,17 +2,11 @@ using TwitchEverywhere.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedReconnectMsg : IReconnectMsg {
-    
-    public LazyLoadedReconnectMsg(
-        string channel
-    ) {
-        Channel = channel;
-    }
+public class LazyLoadedReconnectMsg( string channel ) : IReconnectMsg {
 
     public MessageType MessageType => MessageType.Reconnect;
     
     public string RawMessage => "";
     
-    public string Channel { get; }
+    public string Channel { get; } = channel;
 }

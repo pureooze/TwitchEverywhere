@@ -14,5 +14,8 @@ public enum MessageType {
     Part,
     HostTarget,
     Reconnect,
+    CapReq,
+    JoinCount,
+    JoinEnd,
     Unknown
 }
