@@ -4,70 +4,64 @@ using MessagePluginUtils = TwitchEverywhere.Implementation.MessagePluginUtils;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedUserNotice : IUserNotice {
-    private readonly string m_message;
+public class LazyLoadedUserNotice(
+    string channel,
+    string message
+) : IUserNotice {
 
-    public LazyLoadedUserNotice(
-        string channel,
-        string message
-    ) {
-        Channel = channel;
-        m_message = message;
-    }
-    
     public MessageType MessageType => MessageType.UserNotice;
     
-    public string RawMessage => m_message;
+    public string RawMessage => message;
     
-    public string Channel { get; }
+    public string Channel { get; } = channel;
 
     public IImmutableList<Badge> BadgeInfo {
         get {
-            string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgeInfoPattern() );
+            string badges = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.BadgeInfoPattern() );
             return GetBadges( badges );
         }
     }
     
     public IImmutableList<Badge> Badges {
         get {
-            string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern() );
+            string badges = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.BadgesPattern() );
             return GetBadges( badges );
         }
     }
     
-    public string Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern() );
+    public string Color => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ColorPattern() );
     
-    public string DisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.DisplayNamePattern() );
+    public string DisplayName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.DisplayNamePattern() );
     
     public IImmutableList<Emote> Emotes {
         get {
-            string emotesText = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.EmotesPattern() );
+            string emotesText = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.EmotesPattern() );
             return GetEmotesFromText( emotesText );
         }
     }
     
-    public string Id => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.IdPattern() );
+    public string Id => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.IdPattern() );
     
     public string Login => MessagePluginUtils.LoginPattern()
-        .Match( m_message )
+        .Match( message )
         .Value
         .Split( "=" )[1]
         .TrimEnd( ';' );
     
-    public bool Mod => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.ModPattern() );
+    public bool Mod => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.ModPattern() );
     
-    public MsgIdType MsgId => GetMessageIdType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgIdPattern() ) );
+    public MsgIdType MsgId => GetMessageIdType( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgIdPattern() ) );
     
-    public string RoomId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.RoomIdPattern() );
+    public string RoomId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.RoomIdPattern() );
     
-    public bool Subscriber => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.SubscriberPattern() );
+    public bool Subscriber => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.SubscriberPattern() );
     
-    public string SystemMsg => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.SystemMessagePattern() );
+    public string SystemMsg => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.SystemMessagePattern() );
     
     public DateTime Timestamp {
         get {
             long rawTimestamp = Convert.ToInt64(
-                MessagePluginUtils.MessageTimestampPattern().Match( m_message ).Value
+                MessagePluginUtils.MessageTimestampPattern().Match( message ).Value
                     .Split( "=" )[1]
                     .TrimEnd( ';' )
             );
@@ -76,15 +70,15 @@ public class LazyLoadedUserNotice : IUserNotice {
         }
     }
     
-    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.TurboPattern() );
+    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.TurboPattern() );
     
-    public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern() );
+    public string UserId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserIdPattern() );
     
-    public UserType UserType => GetUserType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserTypePattern() ) );
+    public UserType UserType => GetUserType( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserTypePattern() ) );
     
     public int? MsgParamCumulativeMonths {
         get {
-            string value = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamCumulativeMonthsPattern() );
+            string value = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamCumulativeMonthsPattern() );
 
             if( string.IsNullOrEmpty( value ) ) {
                 return null;
@@ -94,13 +88,13 @@ public class LazyLoadedUserNotice : IUserNotice {
         }
     }
 
-    public string MsgParamDisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamDisplayNamePattern() );
+    public string MsgParamDisplayName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamDisplayNamePattern() );
     
-    public string MsgParamLogin => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamLoginPattern() );
+    public string MsgParamLogin => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamLoginPattern() );
     
     public int? MsgParamMonths {
         get {
-            string value = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamMonthsPattern() );
+            string value = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamMonthsPattern() );
             
             if( string.IsNullOrEmpty( value ) ) {
                 return null;
@@ -112,7 +106,7 @@ public class LazyLoadedUserNotice : IUserNotice {
 
     public int? MsgParamPromoGiftTotal {
         get {
-            string value = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamPromoGiftTotalPattern() );
+            string value = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamPromoGiftTotalPattern() );
             
             if( string.IsNullOrEmpty( value ) ) {
                 return null;
@@ -122,23 +116,23 @@ public class LazyLoadedUserNotice : IUserNotice {
         }
     }
 
-    public string MsgParamPromoName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamPromoNamePattern() );
+    public string MsgParamPromoName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamPromoNamePattern() );
     
-    public string MsgParamRecipientDisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamRecipientDisplayNamePattern() );
+    public string MsgParamRecipientDisplayName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamRecipientDisplayNamePattern() );
     
-    public string MsgParamRecipientId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamRecipientIdPattern() );
+    public string MsgParamRecipientId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamRecipientIdPattern() );
     
-    public string MsgParamRecipientUserName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamRecipientUserNamePattern() );
+    public string MsgParamRecipientUserName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamRecipientUserNamePattern() );
     
-    public string MsgParamSenderLogin => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamSenderLoginPattern() );
+    public string MsgParamSenderLogin => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamSenderLoginPattern() );
     
-    public string MsgParamSenderName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamSenderNamePattern() );
+    public string MsgParamSenderName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamSenderNamePattern() );
     
-    public bool? MsgParamShouldShareStreak => int.TryParse( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamShouldShareStreakPattern() ), out _ );
+    public bool? MsgParamShouldShareStreak => int.TryParse( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamShouldShareStreakPattern() ), out _ );
 
     public int? MsgParamStreakMonths {
         get {
-            string value = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamStreakMonthsPattern() );
+            string value = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamStreakMonthsPattern() );
             
             if( string.IsNullOrEmpty( value ) ) {
                 return null;
@@ -148,13 +142,13 @@ public class LazyLoadedUserNotice : IUserNotice {
         }
     }
 
-    public MsgSubPlanType MsgParamSubPlan => GetMessageSubPlanType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamSubPlanPattern() ) );
+    public MsgSubPlanType MsgParamSubPlan => GetMessageSubPlanType( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamSubPlanPattern() ) );
     
-    public string MsgParamSubPlanName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamSubPlanNamePattern() );
+    public string MsgParamSubPlanName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamSubPlanNamePattern() );
     
     public int? MsgParamViewerCount {
         get {
-            string value = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamViewerCountPattern() );
+            string value = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamViewerCountPattern() );
             
             if( string.IsNullOrEmpty( value ) ) {
                 return null;
@@ -164,13 +158,13 @@ public class LazyLoadedUserNotice : IUserNotice {
         }
     }
 
-    public string MsgParamRitualName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamRitualNamePattern() );
+    public string MsgParamRitualName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamRitualNamePattern() );
     
-    public string MsgParamThreshold => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamThresholdPattern() );
+    public string MsgParamThreshold => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamThresholdPattern() );
     
     public int? MsgParamGiftMonths {
         get {
-            string value = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgParamGiftMonthsPattern() );
+            string value = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgParamGiftMonthsPattern() );
             
             if( string.IsNullOrEmpty( value ) ) {
                 return null;

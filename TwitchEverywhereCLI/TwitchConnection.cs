@@ -54,7 +54,7 @@ internal class TwitchConnection {
         IMessage message
     ) {
         switch( message.MessageType ) {
-            case MessageType.PrivMsg: {
+            case MessageType.PrivMsg:
                 IPrivMsg lazyLoadedPrivMsg = (LazyLoadedPrivMsg) message;
                 PrivMessageCallback( lazyLoadedPrivMsg );
                 Console.WriteLine( $"PrivMsg: {lazyLoadedPrivMsg.DisplayName}, {lazyLoadedPrivMsg.Text}" );
@@ -69,19 +69,16 @@ internal class TwitchConnection {
 
                 Console.WriteLine( sendMessage ? $"Sent message SUCCEEDED!" : $"Sent message FAILED!" );
                 break;
-            }
-            case MessageType.ClearChat: {
+            case MessageType.ClearChat:
                 IClearChat lazyLoadedClearChatMsg = (LazyLoadedClearChat) message;
                 ClearChatCallback( lazyLoadedClearChatMsg );
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearChatMsg.Text}" );
                 break;
-            }
-            case MessageType.ClearMsg: {
+            case MessageType.ClearMsg:
                 IClearMsg lazyLoadedClearMsg = (LazyLoadedClearMsg) message;
                 ClearMsgCallback( lazyLoadedClearMsg );
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearMsg.Login}, {lazyLoadedClearMsg.Timestamp}, {lazyLoadedClearMsg.RoomId}" );
                 break;
-            }
             case MessageType.GlobalUserState:
                 IGlobalUserState lazyLoadedGlobalUserStateMsg = (LazyLoadedGlobalUserState) message;
                 Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsg.UserId}, {lazyLoadedGlobalUserStateMsg.UserType}, {lazyLoadedGlobalUserStateMsg.DisplayName}" );
@@ -127,6 +124,18 @@ internal class TwitchConnection {
             case MessageType.Reconnect:
                 IReconnectMsg lazyLoadedReconnectMsg = (LazyLoadedReconnectMsg) message;
                 Console.WriteLine( $"ReconnectMsg: {lazyLoadedReconnectMsg}" );
+                break;
+            case MessageType.CapReq:
+                ICapReq lazyLoadedCapReqMsg = (LazyLoadedCapReq) message;
+                Console.WriteLine( $"CapReq: {lazyLoadedCapReqMsg.RawMessage}" );
+                break;
+            case MessageType.JoinCount:
+                IJoinCountMsg lazyLoadedJoinCountMsg = (LazyLoadedJoinCountMsg) message;
+                Console.WriteLine( $"JoinCount: {lazyLoadedJoinCountMsg.RawMessage}" );
+                break;
+            case MessageType.JoinEnd:
+                IJoinEndMsg lazyLoadedIJoinEndMsg = (IJoinEndMsg) message;
+                Console.WriteLine( $"JoinEnd: {lazyLoadedIJoinEndMsg.RawMessage}" );
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

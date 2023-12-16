@@ -26,7 +26,7 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
     private string m_replyThreadParentMsg;
     private string m_roomId;
     private bool m_subscriber;
-    private DateTime m_timestamp;
+    private DateTime? m_timestamp;
     private bool m_turbo;
     private string m_userId;
     private UserType m_userType;
@@ -55,7 +55,7 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
         string? replyThreadParentMsg = null,
         string? roomId = null,
         bool subscriber = default,
-        DateTime timestamp = default,
+        DateTime? timestamp = null,
         bool turbo = default,
         string? userId = null,
         UserType userType = default,
@@ -83,7 +83,7 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
         m_replyThreadParentMsg = replyThreadParentMsg ?? string.Empty;
         m_roomId = roomId ?? string.Empty;
         m_subscriber = subscriber;
-        m_timestamp = timestamp;
+        m_timestamp = timestamp ?? null;
         m_turbo = turbo;
         m_userId = userId ?? string.Empty;
         m_userType = userType;
@@ -137,7 +137,7 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
 
     bool IPrivMsg.Subscriber => m_subscriber;
 
-    DateTime IPrivMsg.Timestamp => m_timestamp;
+    DateTime? IPrivMsg.Timestamp => m_timestamp;
 
     bool IPrivMsg.Turbo => m_turbo;
 
@@ -234,8 +234,10 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
         if( m_userType != UserType.Normal ) {
             message += SerializeProperty( MessagePluginUtils.Properties.UserType, () => MessagePluginUtils.GetUserTypeText( m_userType ) );
         }
-        
-        message += SerializeProperty( MessagePluginUtils.Properties.MessageTimestamp, () => new DateTimeOffset(m_timestamp).ToUnixTimeMilliseconds().ToString() );
+
+        if( m_timestamp != null ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.MessageTimestamp, () => new DateTimeOffset( m_timestamp.Value ).ToUnixTimeMilliseconds().ToString() );
+        }
 
         if( m_vip ) {
             message += SerializeProperty( MessagePluginUtils.Properties.Vip, () => "1");

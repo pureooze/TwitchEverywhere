@@ -48,9 +48,9 @@ internal sealed class TwitchConnector : ITwitchConnector {
 
         switch( messageType ) {
             case MessageType.PrivMsg:
-                IPrivMsg lazyLoadedPrivMsg = (IPrivMsg)message;
-                Console.WriteLine( $"@reply-parent-msg-id={lazyLoadedPrivMsg.ReplyParentMsgId} PRIVMSG #{m_options.Channel} :{lazyLoadedPrivMsg.Text}" );
-                await SendMessage( m_webSocketConnection, $"@reply-parent-msg-id={lazyLoadedPrivMsg.ReplyParentMsgId} PRIVMSG #{m_options.Channel} :{lazyLoadedPrivMsg.Text}" );
+                // Console.WriteLine( $"@reply-parent-msg-id={lazyLoadedPrivMsg.ReplyParentMsgId} PRIVMSG #{m_options.Channel} :{lazyLoadedPrivMsg.Text}" );
+                Console.WriteLine( message.RawMessage );
+                await SendMessage( m_webSocketConnection, message.RawMessage.Replace( $":{m_options.Channel}!{m_options.Channel}@{m_options.Channel}.tmi.twitch.tv", "" ) );
                 break;
             case MessageType.ClearChat:
                 await SendMessage( m_webSocketConnection, $"CLEARCHAT #${m_options.Channel}" );

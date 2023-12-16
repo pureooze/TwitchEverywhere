@@ -4,57 +4,50 @@ using MessagePluginUtils = TwitchEverywhere.Implementation.MessagePluginUtils;
 
 namespace TwitchEverywhere.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedWhisperMsg : IWhisperMsg {
-    private readonly string m_message;
+public class LazyLoadedWhisperMsg(
+    string channel,
+    string message
+) : IWhisperMsg {
 
-    public LazyLoadedWhisperMsg(
-        string channel,
-        string message
-    ) {
-        Channel = channel;
-        m_message = message;
-
-    }
-    
     public MessageType MessageType => MessageType.Whisper;
     
-    public string RawMessage => m_message;
+    public string RawMessage => message;
     
-    public string Channel { get; }
+    public string Channel { get; } = channel;
 
     public IImmutableList<Badge> Badges {
         get {
-            string badges = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.BadgesPattern() );
+            string badges = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.BadgesPattern() );
             return GetBadges( badges );
         }
     }
     
-    public string Color => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ColorPattern() );
+    public string Color => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ColorPattern() );
     
-    public string DisplayName => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.DisplayNamePattern() );
+    public string DisplayName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.DisplayNamePattern() );
     
     public IImmutableList<Emote>? Emotes {
         get {
-            string emotesText = MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.EmotesPattern() );
+            string emotesText = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.EmotesPattern() );
             return GetEmotesFromText( emotesText );
         }
     }
     
-    public string MsgId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MessageIdPattern() );
+    public string MsgId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MessageIdPattern() );
     
-    public string ThreadId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ThreadIdPattern() );
+    public string ThreadId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ThreadIdPattern() );
     
-    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( m_message, MessagePluginUtils.TurboPattern() );
+    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.TurboPattern() );
     
-    public string UserId => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserIdPattern() );
+    public string UserId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserIdPattern() );
 
-    public UserType UserType => GetUserType( MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.UserTypePattern() ) );
+    public UserType UserType => GetUserType( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserTypePattern() ) );
 
-    public string FromUser => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.FromUserPattern() );
+    public string FromUser => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.FromUserPattern() );
     
-    public string ToUser => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.ToUserPattern() );
+    public string ToUser => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ToUserPattern() );
     
-    public string Text => MessagePluginUtils.GetValueFromResponse( m_message, MessagePluginUtils.MsgTextPattern() );
+    public string Text => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgTextPattern() );
     private static UserType GetUserType(
         string userTypeText
     ) {

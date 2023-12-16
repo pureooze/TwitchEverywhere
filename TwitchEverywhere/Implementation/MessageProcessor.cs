@@ -13,6 +13,9 @@ public class MessageProcessor : IMessageProcessor {
             // Membership
             new JoinMsgPlugin(),
             new PartMsgPlugin(),
+            new CapReqPlugin(),
+            new JoinCountMsgPlugin(),
+            new JoinEndMsgPlugin(),
             
             // IRC Commands
             new PrivMsgPlugin( dateTimeService: dateTimeService ),

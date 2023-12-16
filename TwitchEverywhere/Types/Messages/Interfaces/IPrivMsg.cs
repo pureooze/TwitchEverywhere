@@ -23,7 +23,7 @@ public interface IPrivMsg : IMessage {
     string ReplyThreadParentMsg { get; }
     string RoomId { get; }
     bool Subscriber { get; }
-    DateTime Timestamp { get; }
+    DateTime? Timestamp { get; }
     bool Turbo { get; }
     string UserId { get; }
     UserType UserType { get; }
