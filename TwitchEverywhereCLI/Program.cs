@@ -6,6 +6,14 @@ using TwitchConnection = TwitchEverywhereCLI.TwitchConnection;
 
 Console.WriteLine( "Hello, World!" );
 
+bool ircClient = false;
+
+foreach (string arg in args) {
+    if( arg == "-i" ) {
+        ircClient = true;
+    }
+}
+
 IConfigurationBuilder builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
@@ -28,4 +36,10 @@ TwitchConnectionOptions options = new(
 );
 
 TwitchConnection twitchConnection = new( options );
-await twitchConnection.Connect();
+
+if( ircClient ) {
+    await twitchConnection.ConnectToIrcClient();
+} else {
+    await twitchConnection.ConnectToRestClient();
+}
+
