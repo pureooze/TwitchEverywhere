@@ -14,4 +14,7 @@ public interface ITwitchConnector {
     );
 
     internal Task<bool> Disconnect();
+    Task<GetUsersResponse> GetUsers(
+        IEnumerable<string> users
+    );
 }

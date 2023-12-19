@@ -22,7 +22,8 @@ public sealed class TwitchEverywhere {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer,
             webSocketConnection: new WebSocketConnection(),
-            messageProcessor: new MessageProcessor( dateTimeService: new DateTimeService() )
+            messageProcessor: new MessageProcessor( dateTimeService: new DateTimeService() ),
+            restApiService: new RestApiService( m_options )
         );
     }
 
@@ -40,6 +41,12 @@ public sealed class TwitchEverywhere {
         MessageType messageType
     ) {
         return await m_twitchConnector.SendMessage( message, messageType );
+    }
+
+    public async Task<GetUsersResponse> GetUsers(
+        IEnumerable<string> users
+    ) {
+        return await m_twitchConnector.GetUsers( users );
     }
 
     public Task<bool> Disconnect() {

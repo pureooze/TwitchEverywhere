@@ -4,30 +4,37 @@ using TwitchEverywhere.Types;
 using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Types.Messages.Interfaces;
 using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Types.RestApi;
 using TwitchEverywhereCLI.Implementation;
 
 namespace TwitchEverywhereCLI; 
 
-internal class TwitchConnection {
+internal class TwitchConnection( 
+    TwitchConnectionOptions options 
+) {
 
     private readonly MessageBuffer m_messageBuffer = new( buffer: new StringBuilder() );
     private readonly MessageBuffer m_clearChat = new( buffer: new StringBuilder() );
     private readonly MessageBuffer m_clearMsg = new( buffer: new StringBuilder() );
     private readonly ICompressor m_compressor = new BrotliCompressor();
-    private readonly TwitchEverywhere.TwitchEverywhere m_twitchEverywhere;
+    private readonly TwitchEverywhere.TwitchEverywhere m_twitchEverywhere = new( options );
     private const int BUFFER_SIZE = 3;
     private DateTime m_startTimestamp = DateTime.UtcNow;
-    
-    public TwitchConnection(
-        TwitchConnectionOptions options
-    ) {
-        m_twitchEverywhere = new TwitchEverywhere.TwitchEverywhere( options );
-    }
 
-    public async Task Connect(  ) {
+    public async Task ConnectToIrcClient() {
         await m_twitchEverywhere.ConnectToChannel( MessageCallback );
     }
 
+    public async Task ConnectToRestClient() {
+        GetUsersResponse response = await m_twitchEverywhere.GetUsers( 
+            users: [ "cohh", "cohhcarnage" ] 
+        );
+
+        foreach (UserEntry entry in response.ApiResponse.Data) {
+            Console.WriteLine( entry );
+        }
+    }
+    
     private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
         if( buffer.Length == 0 ) {
             return;
