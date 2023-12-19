@@ -46,7 +46,8 @@ public class PrivMsgTests {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor
+            messageProcessor: messageProcessor,
+            restApiService: new RestApiService( m_options )
         );
         
         bool result = await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );

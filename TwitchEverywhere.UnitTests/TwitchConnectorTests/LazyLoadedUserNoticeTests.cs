@@ -45,7 +45,8 @@ public class LazyLoadedUserNoticeTests {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor
+            messageProcessor: messageProcessor,
+            restApiService: new RestApiService( m_options )
         );
         
         bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
