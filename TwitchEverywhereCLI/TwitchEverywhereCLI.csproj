@@ -9,7 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TwitchEverywhere\TwitchEverywhere.csproj" />
+      <ProjectReference Include="..\TwitchEverywhere.Irc\TwitchEverywhere.Irc.csproj" />
+      <ProjectReference Include="..\TwitchEverywhere.Rest\TwitchEverywhere.Rest.csproj" />
     </ItemGroup>
 
     <ItemGroup>

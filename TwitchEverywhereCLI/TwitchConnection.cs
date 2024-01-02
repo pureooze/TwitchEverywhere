@@ -1,10 +1,12 @@
 using System.Text;
-using TwitchEverywhere;
-using TwitchEverywhere.Types;
-using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
-using TwitchEverywhere.Types.Messages.Interfaces;
-using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
-using TwitchEverywhere.Types.RestApi;
+using TwitchEverywhere.Core;
+using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
+using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.RestApi;
+using TwitchEverywhere.Irc;
+using TwitchEverywhere.Rest;
 using TwitchEverywhereCLI.Implementation;
 
 namespace TwitchEverywhereCLI; 
@@ -17,19 +19,20 @@ internal class TwitchConnection(
     private readonly MessageBuffer m_clearChat = new( buffer: new StringBuilder() );
     private readonly MessageBuffer m_clearMsg = new( buffer: new StringBuilder() );
     private readonly ICompressor m_compressor = new BrotliCompressor();
-    private readonly TwitchEverywhere.TwitchEverywhere m_twitchEverywhere = new( options );
+    private readonly IrcClient m_ircClient = new( options );
+    private readonly RestClient m_restClient = new( options );
     private const int BUFFER_SIZE = 3;
     private DateTime m_startTimestamp = DateTime.UtcNow;
 
     public async Task ConnectToIrcClient() {
-        await m_twitchEverywhere.ConnectToChannel( MessageCallback );
+        await m_ircClient.ConnectToChannel( MessageCallback );
     }
 
     public async Task ConnectToRestClient() {
-        GetUsersResponse response = await m_twitchEverywhere.GetUsers( 
+        GetUsersResponse response = await m_restClient.GetUsers( 
             users: [ "cohh", "cohhcarnage" ] 
         );
-
+     
         foreach (UserEntry entry in response.ApiResponse.Data) {
             Console.WriteLine( entry );
         }
@@ -72,7 +75,7 @@ internal class TwitchConnection(
                     text: lazyLoadedPrivMsg.Text + "? hmm maybe..."
                 );
                 
-                bool sendMessage = await m_twitchEverywhere.SendMessage( reply, MessageType.PrivMsg );
+                bool sendMessage = await m_ircClient.SendMessage( reply, MessageType.PrivMsg );
 
                 Console.WriteLine( sendMessage ? $"Sent message SUCCEEDED!" : $"Sent message FAILED!" );
                 break;

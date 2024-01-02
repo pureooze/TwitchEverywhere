@@ -1,25 +1,23 @@
 using System.Net.WebSockets;
 using System.Text;
+using TwitchEverywhere.Irc;
 
 namespace TwitchEverywhere.Benchmark; 
 
-internal class TestWebSocketConnection : IWebSocketConnection {
-    private readonly int m_iterations;
-    private readonly string m_baseMessage;
+internal class TestWebSocketConnection( 
+    int iterations, 
+    string baseMessage 
+) : IWebSocketConnection {
+    
     private WebSocketState m_state;
 
     private int m_invocationCount;
     
     private IEnumerable<string> TestData() {
-        while ( m_invocationCount < m_iterations ) {
+        while ( m_invocationCount < iterations ) {
             m_invocationCount += 1;
-            yield return $"{m_baseMessage} {m_invocationCount}";
+            yield return $"{baseMessage} {m_invocationCount}";
         }
-    }
-    
-    public TestWebSocketConnection( int iterations, string baseMessage ) {
-        m_iterations = iterations;
-        m_baseMessage = baseMessage;
     }
 
     async Task IWebSocketConnection.ConnectAsync(

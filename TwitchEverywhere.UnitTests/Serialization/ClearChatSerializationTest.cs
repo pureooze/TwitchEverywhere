@@ -1,5 +1,5 @@
-using TwitchEverywhere.Types.Messages.ImmediateLoadedMessages;
-using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Serialization;
 

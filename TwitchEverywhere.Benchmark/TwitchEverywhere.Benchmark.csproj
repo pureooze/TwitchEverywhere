@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TwitchEverywhere\TwitchEverywhere.csproj" />
+      <ProjectReference Include="..\TwitchEverywhere.Irc\TwitchEverywhere.Irc.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere", "TwitchEverywhere\TwitchEverywhere.csproj", "{545E1F17-E7FC-49CC-A731-C29815FE7B36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere.Irc", "TwitchEverywhere.Irc\TwitchEverywhere.Irc.csproj", "{545E1F17-E7FC-49CC-A731-C29815FE7B36}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhereCLI", "TwitchEverywhereCLI\TwitchEverywhereCLI.csproj", "{3CA1E382-85DD-4794-95DC-E05EF86D64AB}"
 EndProject
@@ -16,6 +16,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere.UnitTests", "TwitchEverywhere.UnitTests\TwitchEverywhere.UnitTests.csproj", "{715E4920-2F8E-4407-AE23-561AA8AC04F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere.Benchmark", "TwitchEverywhere.Benchmark\TwitchEverywhere.Benchmark.csproj", "{BCFD7F10-4B9C-44F9-8158-32595C6150AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere.Rest", "TwitchEverywhere.Rest\TwitchEverywhere.Rest.csproj", "{35256AC8-C9D4-4FDA-8D56-44F63E26C73C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchEverywhere.Core", "TwitchEverywhere.Core\TwitchEverywhere.Core.csproj", "{A068CFEE-CA85-4F74-8D33-FA8B052DCB5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,5 +43,13 @@ Global
 		{BCFD7F10-4B9C-44F9-8158-32595C6150AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFD7F10-4B9C-44F9-8158-32595C6150AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCFD7F10-4B9C-44F9-8158-32595C6150AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35256AC8-C9D4-4FDA-8D56-44F63E26C73C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35256AC8-C9D4-4FDA-8D56-44F63E26C73C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35256AC8-C9D4-4FDA-8D56-44F63E26C73C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35256AC8-C9D4-4FDA-8D56-44F63E26C73C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A068CFEE-CA85-4F74-8D33-FA8B052DCB5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A068CFEE-CA85-4F74-8D33-FA8B052DCB5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A068CFEE-CA85-4F74-8D33-FA8B052DCB5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A068CFEE-CA85-4F74-8D33-FA8B052DCB5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

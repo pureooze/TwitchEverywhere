@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Microsoft.Extensions.Configuration;
-using TwitchEverywhere;
+using TwitchEverywhere.Core;
 using TwitchConnection = TwitchEverywhereCLI.TwitchConnection;
 
 Console.WriteLine( "Hello, World!" );

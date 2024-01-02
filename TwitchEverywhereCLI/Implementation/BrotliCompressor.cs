@@ -1,5 +1,5 @@
 using System.IO.Compression;
-using TwitchEverywhere;
+using TwitchEverywhere.Irc;
 
 namespace TwitchEverywhereCLI.Implementation; 
 

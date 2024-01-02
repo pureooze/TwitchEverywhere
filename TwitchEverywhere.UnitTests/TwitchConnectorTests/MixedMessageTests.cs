@@ -1,7 +1,9 @@
 using System.Collections.Immutable;
 using Moq;
-using TwitchEverywhere.Implementation;
-using TwitchEverywhere.Types;
+using TwitchEverywhere.Core;
+using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Irc;
+using TwitchEverywhere.Irc.Implementation;
 
 namespace TwitchEverywhere.UnitTests.TwitchConnectorTests; 
 
@@ -44,9 +46,7 @@ public class MixedMessageTests {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
-        );
+            messageProcessor: messageProcessor);
         
         bool result = await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
         Assert.That( actual: result, expression: Is.True );
