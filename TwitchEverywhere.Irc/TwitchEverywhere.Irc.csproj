@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>VodOnDemand.TwitchEverywhere.Core</PackageId>
+        <Authors>Uzair Shamim</Authors>
+        <Description>A dotnet library that allows connecting to Twitch</Description>
+        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+        <PackageTags>Twitch, Stream, Chat, VOD</PackageTags>
+        <RepositoryUrl>https://github.com/pureooze/TwitchEverywhere</RepositoryUrl>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+        <Version>0.4.0</Version>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackRelease>true</PackRelease>
+        <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TwitchEverywhere.Core\TwitchEverywhere.Core.csproj" />
+    </ItemGroup>
+
+</Project>

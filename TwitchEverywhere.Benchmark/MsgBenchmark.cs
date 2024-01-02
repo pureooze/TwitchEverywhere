@@ -2,8 +2,10 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using BenchmarkDotNet.Jobs;
 using Moq;
-using TwitchEverywhere.Implementation;
-using TwitchEverywhere.Types;
+using TwitchEverywhere.Core;
+using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Irc;
+using TwitchEverywhere.Irc.Implementation;
 
 namespace TwitchEverywhere.Benchmark; 
 
@@ -55,8 +57,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -88,8 +89,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -121,8 +121,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -154,8 +153,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -187,8 +185,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -220,8 +217,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -253,8 +249,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -286,8 +281,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -319,8 +313,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -352,8 +345,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -385,8 +377,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -418,8 +409,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
@@ -451,8 +441,7 @@ public class MsgBenchmark {
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
             webSocketConnection: webSocket,
-            messageProcessor: messageProcessor,
-            restApiService: new RestApiService( m_options )
+            messageProcessor: messageProcessor
         );
         
         await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );

@@ -31,17 +31,17 @@
     * [WHISPER Tags](#whisper-tags)
 <!-- TOC -->
 
-`TwitchEverywhere` is a .NET library that allows connecting to a Twitch chat and subscribing to messages in that chat.
+`TwitchEverywhere.Irc` is a .NET library that allows connecting to a Twitch chat and subscribing to messages in that chat.
 
 The goal of this library is to provide a lightweight, strongly typed API for clients so they can avoid parsing raw strings as much as possible.
 Additionally, Twitch requires an authenticated connection to the IRC server which can get a bit complicated to setup and maintain. 
-Fortunately `TwitchEverywhere` can do that for you! 😀
+Fortunately `TwitchEverywhere.Irc` can do that for you! 😀
 
 The library will support the latest LTS version of .NET and non LTS versions IF it is newer than the LTS version.
 So for example before .NET 8, the library supported .NET 6 (LTS) and 7 but once .NET 8 was released support for 6 and 7 was dropped.
 
 ## How To Use It
-You will need to provide the following values as parameters to the `TwitchConnectionOptions` record:
+You will need to provide the following values as parameters to the `TwitchEverywhere.Core.TwitchConnectionOptions` record:
 ```csharp
 TwitchConnectionOptions options = new(
     Channel: channel,
@@ -54,11 +54,11 @@ TwitchConnectionOptions options = new(
 ```
 
 Next define a `MessageCallback` method that will handle any messages that `TwitchEverywhere` sends to your application.
-The input will be of type `TwitchEverywhere.Types.Message` and return type `void`.
+The input will be of type `TwitchEverywhere.Core.Types.Message` and return type `void`.
 ```csharp
 
 // This example only handles MessageType.PrivMsg but you should handle other types here too
-private void MessageCallback( Message message ) {
+private async void MessageCallback( Message message ) {
     switch( message.MessageType ) {
         case MessageType.PrivMsg: {
             PrivMsg privMsg = (PrivMsg) message;
@@ -72,11 +72,11 @@ private void MessageCallback( Message message ) {
 }
 ```
 
-Then initialize `TwitchEverywhere` and pass in the options to the constructor.
+Then initialize `IrcClient` and pass in the options to the constructor.
 Finally call the `TwitchEverywhere.ConnectToChannel` method and pass in your callback as a parameter.
 ```csharp
-TwitchEverywhere.TwitchEverywhere twitchEverywhere = new( options );
-await twitchEverywhere.ConnectToChannel( MessageCallback );
+IrcClient ircClient = new( options );
+await ircClient.ConnectToChannel( MessageCallback );
 ```
 
 Now whenever `TwitchEverywhere` receives a message it will pass it to your callback! 🎉

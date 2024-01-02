@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using TwitchEverywhere.Types;
-using TwitchEverywhere.Types.Messages.Interfaces;
-using TwitchEverywhere.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
+using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.MessageTypeTests; 
 
@@ -13,7 +13,7 @@ public class PrivMsgTests {
     public void PrivMsg( string message, TestData expectedPrivMessage )
     {
         IPrivMsg actualLazyLoadedPrivMessage = new LazyLoadedPrivMsg( channel: "channel", message: message, TimeSpan.Zero );
-        MessageType actualType = ((IMessage)actualLazyLoadedPrivMessage).MessageType;
+        MessageType actualType = actualLazyLoadedPrivMessage.MessageType;
         
         Assert.That(actualType, Is.EqualTo( MessageType.PrivMsg ));
         

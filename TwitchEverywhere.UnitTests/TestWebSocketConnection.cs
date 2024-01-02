@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Net.WebSockets;
 using System.Text;
+using TwitchEverywhere.Irc;
 
 namespace TwitchEverywhere.UnitTests; 
 
