@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace TwitchEverywhere.Core.Types.RestApi;
+namespace TwitchEverywhere.Core.Types.RestApi.Videos;
 
 public enum VideoEntryType {
     [EnumMember(Value = "archive")]

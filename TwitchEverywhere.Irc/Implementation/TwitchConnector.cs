@@ -2,6 +2,7 @@
 using System.Text;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Irc.Implementation;
 

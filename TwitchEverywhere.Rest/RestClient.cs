@@ -1,5 +1,6 @@
 ﻿using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Rest.Implementation;
 
 namespace TwitchEverywhere.Rest;
@@ -27,8 +28,8 @@ public class RestClient {
     }
     
     public async Task<GetVideosResponse> GetVideos(
-        IEnumerable<string> users
+        string userId
     ) {
-        return await m_restService.GetVideos( users.ToArray() );
+        return await m_restService.GetVideos( userId );
     }
 }

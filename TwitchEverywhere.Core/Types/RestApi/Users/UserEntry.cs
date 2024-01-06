@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace TwitchEverywhere.Core.Types.RestApi;
+namespace TwitchEverywhere.Core.Types.RestApi.Users;
 
 public record UserEntry(
     [property: JsonPropertyName("id")] string Id,

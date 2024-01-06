@@ -1,4 +1,5 @@
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Rest;
 
@@ -8,6 +9,6 @@ public interface IRestApiService {
     );
     
     Task<GetVideosResponse> GetVideos(
-        string[] userIds
+        string userId
     );
 }

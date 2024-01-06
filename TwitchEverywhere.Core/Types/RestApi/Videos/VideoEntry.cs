@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace TwitchEverywhere.Core.Types.RestApi;
+namespace TwitchEverywhere.Core.Types.RestApi.Videos;
 
 public record VideoEntry(
     [property: JsonPropertyName("id")] string Id,
