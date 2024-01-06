@@ -26,4 +26,9 @@ public class RestClient {
         return await m_restService.GetUsers( users.ToArray() );
     }
     
+    public async Task<GetVideosResponse> GetVideos(
+        IEnumerable<string> users
+    ) {
+        return await m_restService.GetVideos( users.ToArray() );
+    }
 }

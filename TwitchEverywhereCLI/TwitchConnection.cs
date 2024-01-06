@@ -29,13 +29,22 @@ internal class TwitchConnection(
     }
 
     public async Task ConnectToRestClient() {
-        GetUsersResponse response = await m_restClient.GetUsers( 
+        GetUsersResponse users = await m_restClient.GetUsers(
             users: [ "cohh", "cohhcarnage" ] 
         );
-     
-        foreach (UserEntry entry in response.ApiResponse.Data) {
-            Console.WriteLine( entry );
+        
+        foreach (UserEntry userEntry in users.ApiResponse.Data) {
+            Console.WriteLine( userEntry );
+            
+            GetVideosResponse response = await m_restClient.GetVideos( 
+                users: [ userEntry.Id ]
+            );
+         
+            foreach (VideoEntry videoEntry in response.ApiResponse.Data) {
+                Console.WriteLine( videoEntry );
+            }
         }
+        
     }
     
     private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
