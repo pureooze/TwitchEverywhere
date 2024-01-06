@@ -5,6 +5,9 @@ using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Core.Types.RestApi;
+using TwitchEverywhere.Core.Types.RestApi.Users;
+using TwitchEverywhere.Core.Types.RestApi.Videos;
+using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Rest;
 using TwitchEverywhereCLI.Implementation;
@@ -29,13 +32,22 @@ internal class TwitchConnection(
     }
 
     public async Task ConnectToRestClient() {
-        GetUsersResponse response = await m_restClient.GetUsers( 
-            users: [ "cohh", "cohhcarnage" ] 
+        GetUsersResponse users = await m_restClient.GetUsers(
+            users: [ "pureooze" ] 
         );
-     
-        foreach (UserEntry entry in response.ApiResponse.Data) {
-            Console.WriteLine( entry );
+        
+        foreach (UserEntry userEntry in users.ApiResponse.Data) {
+            Console.WriteLine( userEntry );
+            
+            GetVideosResponse response = await m_restClient.GetVideos( 
+                userId: userEntry.Id
+            );
+         
+            foreach (VideoEntry videoEntry in response.ApiResponse.Data) {
+                Console.WriteLine( videoEntry );
+            }
         }
+        
     }
     
     private async Task SaveBufferToFile( string fileName, StringBuilder buffer, DateTime startTimestamp ) {
