@@ -18,6 +18,15 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
         );
     }
     
+    async Task<GetUsersResponse> IRestApiService.UpdateUser(
+        string description
+    ) {
+        return await m_usersApiService.UpdateUser(
+            httpClient: m_httpClient,
+            description: description
+        );
+    }
+
     async Task<GetVideosResponse> IRestApiService.GetVideos(
         string userId
     ) {

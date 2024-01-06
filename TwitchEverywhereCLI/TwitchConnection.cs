@@ -4,7 +4,6 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
-using TwitchEverywhere.Core.Types.RestApi;
 using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Videos;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
@@ -38,6 +37,10 @@ internal class TwitchConnection(
         
         foreach (UserEntry userEntry in users.ApiResponse.Data) {
             Console.WriteLine( userEntry );
+            
+            GetUsersResponse updatedUser = await m_restClient.UpdateUser(
+                description: "Did it work"
+            );
             
             GetVideosResponse response = await m_restClient.GetVideos( 
                 userId: userEntry.Id
