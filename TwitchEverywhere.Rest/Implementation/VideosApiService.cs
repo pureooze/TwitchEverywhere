@@ -12,7 +12,7 @@ public class VideosApiService(
 ) : IVideosApiService {
 
     async Task<GetVideosResponse> IVideosApiService.GetVideos(
-        HttpClient httpClient,
+        IHttpClientWrapper httpClientWrapper,
         string userId
     ) {
         using HttpRequestMessage request = new (
@@ -28,7 +28,7 @@ public class VideosApiService(
             name: "Authorization", value: "Bearer " + option.AccessToken 
         );
         
-        using HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        using HttpResponseMessage response = await httpClientWrapper.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
 
         JsonSerializerOptions options = new() {

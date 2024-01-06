@@ -5,15 +5,15 @@ namespace TwitchEverywhere.Rest.Implementation;
 
 public class RestApiService( TwitchConnectionOptions option ) : IRestApiService {
     
-    private readonly HttpClient m_httpClient = new(){ Timeout = TimeSpan.FromSeconds(30) };
-    private readonly IUsersApiService m_usersApiService = new UsersApiService( option );
+    private readonly IHttpClientWrapper m_httpClientWrapper = new HttpClientWrapper();
+    private readonly IUsersApiService m_usersApiService = new GetUsers( option );
     private readonly IVideosApiService m_videosApiService = new VideosApiService( option );
 
     async Task<GetUsersResponse> IRestApiService.GetUsers(
         string[] userIds
     ) {
         return await m_usersApiService.GetUsers(
-            httpClient: m_httpClient,
+            httpClient: m_httpClientWrapper,
             userIds: userIds
         );
     }
@@ -22,7 +22,7 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
         string description
     ) {
         return await m_usersApiService.UpdateUser(
-            httpClient: m_httpClient,
+            httpClient: m_httpClientWrapper,
             description: description
         );
     }
@@ -31,7 +31,7 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
         string userId
     ) {
         return await m_videosApiService.GetVideos(
-            httpClient: m_httpClient,
+            httpClient: m_httpClientWrapper,
             userId: userId
         );
     }
