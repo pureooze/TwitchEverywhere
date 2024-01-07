@@ -3,15 +3,19 @@ using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 namespace TwitchEverywhere.Rest;
 
 public interface IRestApiService {
-    Task<GetUsersResponse> GetUsers(
+    Task<GetUsersResponse> GetUsersById(
         string[] userIds
+    );
+    
+    Task<GetUsersResponse> GetUsersByLogin(
+        string[] logins
     );
     
     Task<GetUsersResponse> UpdateUser(
         string description
     );
     
-    Task<GetVideosResponse> GetVideos(
+    Task<GetVideosResponse> GetVideosForUsersById(
         string userId
     );
 }

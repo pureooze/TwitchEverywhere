@@ -9,7 +9,7 @@ using TwitchEverywhere.Rest.Implementation;
 namespace TwitchEverywhere.UnitTests.Rest.Users;
 
 [TestFixture]
-public class GetUsersTests {
+public class UsersApiServiceTests {
     private TwitchConnectionOptions m_options;
     private readonly Mock<IHttpClientWrapper> m_httpClient = new( MockBehavior.Strict );
 
@@ -40,10 +40,10 @@ public class GetUsersTests {
                 } 
             );
         
-        IUsersApiService usersApiService = new GetUsers( m_options );
+        IUsersApiService usersApiService = new UsersApiService( m_options );
         
         // Act
-        GetUsersResponse result = await usersApiService.GetUsers( 
+        GetUsersResponse result = await usersApiService.GetUsersById( 
             m_httpClient.Object, 
             Array.Empty<string>() 
         );
@@ -91,10 +91,10 @@ public class GetUsersTests {
             } 
         );
         
-        IUsersApiService usersApiService = new GetUsers( m_options );
+        IUsersApiService usersApiService = new UsersApiService( m_options );
         
         // Act
-        GetUsersResponse result = await usersApiService.GetUsers( 
+        GetUsersResponse result = await usersApiService.GetUsersById( 
             m_httpClient.Object, 
             ["user"]
         );
@@ -166,10 +166,10 @@ public class GetUsersTests {
             } 
         );
         
-        IUsersApiService usersApiService = new GetUsers( m_options );
+        IUsersApiService usersApiService = new UsersApiService( m_options );
         
         // Act
-        GetUsersResponse result = await usersApiService.GetUsers( 
+        GetUsersResponse result = await usersApiService.GetUsersById( 
             m_httpClient.Object, 
             ["user", "anotheruser"]
         );

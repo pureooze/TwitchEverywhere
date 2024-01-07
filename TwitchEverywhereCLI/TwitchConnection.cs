@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
@@ -31,9 +32,14 @@ internal class TwitchConnection(
     }
 
     public async Task ConnectToRestClient() {
-        GetUsersResponse users = await m_restClient.GetUsers(
-            users: [ "pureooze" ] 
+        GetUsersResponse users = await m_restClient.GetUsersByLogin(
+            logins: [ "pureooze" ] 
         );
+        
+        if (users.StatusCode != HttpStatusCode.OK) {
+            Console.WriteLine( "Error in GetUsers request with status code: " + users.StatusCode );
+            return;
+        }
         
         foreach (UserEntry userEntry in users.ApiResponse.Data) {
             Console.WriteLine( userEntry );
@@ -42,9 +48,19 @@ internal class TwitchConnection(
                 description: "Did it work"
             );
             
-            GetVideosResponse response = await m_restClient.GetVideos( 
+            if (updatedUser.StatusCode != HttpStatusCode.OK) {
+                Console.WriteLine( "Error in UpdateUser request with status code: " + updatedUser.StatusCode );
+                return;
+            }
+            
+            GetVideosResponse response = await m_restClient.GetVideosForUsersById( 
                 userId: userEntry.Id
             );
+            
+            if (response.StatusCode != HttpStatusCode.OK) {
+                Console.WriteLine( "Error in GetVideos request with status code: " + response.StatusCode );
+                return;
+            }
          
             foreach (VideoEntry videoEntry in response.ApiResponse.Data) {
                 Console.WriteLine( videoEntry );
