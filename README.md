@@ -1,35 +1,6 @@
 # TwitchEverywhere
 
-<!-- TOC -->
-* [How To Use It](#how-to-use-it)
-* [Sample CLI App](#sample-cli-app)
-* [Performance](#performance)
-* [Supported Functionality](#supported-functionality)
-  * [IRC Commands](#irc-commands)
-    * [CLEARCHAT](#clearchat)
-    * [CLEARMSG](#clearmsg)
-    * [GLOBALUSERSTATE](#globaluserstate)
-    * [HOSTTARGET](#hosttarget)
-    * [NOTICE](#notice)
-    * [RECONNECT](#reconnect)
-    * [ROOMSTATE](#roomstate)
-    * [USERNOTICE](#usernotice)
-    * [USERSTATE](#userstate)
-    * [WHISPER](#whisper)
-  * [IRC Membership](#irc-membership)
-    * [JOIN](#join)
-    * [PART](#part)
-  * [IRC Tags](#irc-tags)
-    * [PRIVMSG Tags](#privmsg-tags)
-    * [CLEARCHAT Tags](#clearchat-tags)
-    * [CLEARMSG Tags](#clearmsg-tags)
-    * [GLOBALUSERSTATE Tags](#globaluserstate-tags)
-    * [NOTICE Tags](#notice-tags)
-    * [ROOMSTATE Tags](#roomstate-tags)
-    * [USERNOTICE Tags](#usernotice-tags)
-    * [USERSTATE Tags](#userstate-tags)
-    * [WHISPER Tags](#whisper-tags)
-<!-- TOC -->
+
 
 `TwitchEverywhere` is a .NET library that allows connecting to a Twitch chat and subscribing to messages in that chat.
 
