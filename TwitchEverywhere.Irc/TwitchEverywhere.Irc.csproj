@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>VodOnDemand.TwitchEverywhere.Core</PackageId>
+        <PackageId>VodOnDemand.TwitchEverywhere.Irc</PackageId>
         <Authors>Uzair Shamim</Authors>
         <Description>A dotnet library that allows connecting to Twitch</Description>
         <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-        <PackageTags>Twitch, Stream, Chat, VOD</PackageTags>
+        <PackageTags>Twitch, Stream, Chat, VOD, IRC</PackageTags>
         <RepositoryUrl>https://github.com/pureooze/TwitchEverywhere</RepositoryUrl>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>

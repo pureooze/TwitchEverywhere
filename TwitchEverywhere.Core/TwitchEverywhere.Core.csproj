@@ -1,9 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <PackageId>VodOnDemand.TwitchEverywhere.Core</PackageId>
+        <Authors>Uzair Shamim</Authors>
+        <Description>The core data types and classes used by TwitchEverywhere</Description>
+        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+        <PackageTags>Twitch, Stream, Chat, VOD, IRC, REST</PackageTags>
+        <RepositoryUrl>https://github.com/pureooze/TwitchEverywhere</RepositoryUrl>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+        <Version>0.4.0</Version>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackRelease>true</PackRelease>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
