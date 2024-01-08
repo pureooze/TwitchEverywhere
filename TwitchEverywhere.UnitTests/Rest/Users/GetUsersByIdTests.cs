@@ -9,7 +9,7 @@ using TwitchEverywhere.Rest.Implementation;
 namespace TwitchEverywhere.UnitTests.Rest.Users;
 
 [TestFixture]
-public class UsersApiServiceTests {
+public class GetUsersByIdTests {
     private TwitchConnectionOptions m_options;
     private readonly Mock<IHttpClientWrapper> m_httpClient = new( MockBehavior.Strict );
 
@@ -96,7 +96,7 @@ public class UsersApiServiceTests {
         // Act
         GetUsersResponse result = await usersApiService.GetUsersById( 
             m_httpClient.Object, 
-            ["user"]
+            ["240866033"]
         );
         
         // Assert
@@ -171,7 +171,7 @@ public class UsersApiServiceTests {
         // Act
         GetUsersResponse result = await usersApiService.GetUsersById( 
             m_httpClient.Object, 
-            ["user", "anotheruser"]
+            ["240866033", "140866000"]
         );
         
         // Assert

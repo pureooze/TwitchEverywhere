@@ -1,6 +1,4 @@
-﻿using System.Net;
-using TwitchEverywhere.Core;
-using TwitchEverywhere.Core.Types.RestApi.Users;
+﻿using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Rest.Implementation;
 
