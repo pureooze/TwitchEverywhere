@@ -19,6 +19,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TwitchEverywhere.Irc\TwitchEverywhere.Irc.csproj" />
+      <ProjectReference Include="..\TwitchEverywhere.Rest\TwitchEverywhere.Rest.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Irc\" />
     </ItemGroup>
 
 </Project>

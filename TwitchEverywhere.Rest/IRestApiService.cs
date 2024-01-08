@@ -1,14 +1,21 @@
-using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Rest;
 
 public interface IRestApiService {
-    Task<GetUsersResponse> GetUsers(
+    Task<GetUsersResponse> GetUsersById(
         string[] userIds
     );
     
-    Task<GetVideosResponse> GetVideos(
+    Task<GetUsersResponse> GetUsersByLogin(
+        string[] logins
+    );
+    
+    Task<GetUsersResponse> UpdateUser(
+        string description
+    );
+    
+    Task<GetVideosResponse> GetVideosForUsersById(
         string userId
     );
 }

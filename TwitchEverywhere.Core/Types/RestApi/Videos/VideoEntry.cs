@@ -4,7 +4,7 @@ namespace TwitchEverywhere.Core.Types.RestApi.Videos;
 
 public record VideoEntry(
     [property: JsonPropertyName("id")] string Id,
-    [property: JsonPropertyName("stream_id")] string StreamId,
+    [property: JsonPropertyName("stream_id")] string? StreamId,
     [property: JsonPropertyName("user_id")] string  UserId,
     [property: JsonPropertyName("user_login")] string  UserLogin,
     [property: JsonPropertyName("user_name")] string  UserName,

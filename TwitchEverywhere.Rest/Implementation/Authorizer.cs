@@ -28,7 +28,7 @@ internal class Authorizer(
     }
 
     private async Task<TwitchRefreshTokenResponse?> RefreshToken() {
-        HttpClient httpClient = new ();
+        IHttpClientWrapper httpClientWrapper = new HttpClientWrapper();
         HttpRequestMessage request = new (
             method: HttpMethod.Post,
             requestUri: new Uri( "https://id.twitch.tv/oauth2/token" )
@@ -42,7 +42,7 @@ internal class Authorizer(
             mediaType: "application/x-www-form-urlencoded"
         ); 
         
-        using HttpResponseMessage response = await httpClient.SendAsync(request);
+        using HttpResponseMessage response = await httpClientWrapper.SendAsync(request);
         response.EnsureSuccessStatusCode();
         
         return await response.Content.ReadFromJsonAsync<TwitchRefreshTokenResponse>();

@@ -1,10 +1,10 @@
+using System.Net;
 using System.Text;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
-using TwitchEverywhere.Core.Types.RestApi;
 using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Videos;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
@@ -32,16 +32,35 @@ internal class TwitchConnection(
     }
 
     public async Task ConnectToRestClient() {
-        GetUsersResponse users = await m_restClient.GetUsers(
-            users: [ "pureooze" ] 
+        GetUsersResponse users = await m_restClient.GetUsersByLogin(
+            logins: [ "pureooze" ] 
         );
+        
+        if (users.StatusCode != HttpStatusCode.OK) {
+            Console.WriteLine( "Error in GetUsers request with status code: " + users.StatusCode );
+            return;
+        }
         
         foreach (UserEntry userEntry in users.ApiResponse.Data) {
             Console.WriteLine( userEntry );
             
-            GetVideosResponse response = await m_restClient.GetVideos( 
+            GetUsersResponse updatedUser = await m_restClient.UpdateUser(
+                description: "Did it work"
+            );
+            
+            if (updatedUser.StatusCode != HttpStatusCode.OK) {
+                Console.WriteLine( "Error in UpdateUser request with status code: " + updatedUser.StatusCode );
+                return;
+            }
+            
+            GetVideosResponse response = await m_restClient.GetVideosForUsersById( 
                 userId: userEntry.Id
             );
+            
+            if (response.StatusCode != HttpStatusCode.OK) {
+                Console.WriteLine( "Error in GetVideos request with status code: " + response.StatusCode );
+                return;
+            }
          
             foreach (VideoEntry videoEntry in response.ApiResponse.Data) {
                 Console.WriteLine( videoEntry );

@@ -11,8 +11,8 @@ public class VideosApiService(
     TwitchConnectionOptions option 
 ) : IVideosApiService {
 
-    async Task<GetVideosResponse> IVideosApiService.GetVideos(
-        HttpClient httpClient,
+    async Task<GetVideosResponse> IVideosApiService.GetVideosForUsersById(
+        IHttpClientWrapper httpClientWrapper,
         string userId
     ) {
         using HttpRequestMessage request = new (
@@ -28,8 +28,7 @@ public class VideosApiService(
             name: "Authorization", value: "Bearer " + option.AccessToken 
         );
         
-        using HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-        response.EnsureSuccessStatusCode();
+        using HttpResponseMessage response = await httpClientWrapper.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
         JsonSerializerOptions options = new() {
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
