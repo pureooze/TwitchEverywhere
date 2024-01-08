@@ -14,8 +14,8 @@ So for example before .NET 8, the library supported .NET 6 (LTS) and 7 but once 
 ## How To Use It
 Depending on what you need to do, you will have to use the appropriate library:
 
-| Library Name            | Description                                   | Twitch Reference                          |
-|-------------------------|-----------------------------------------------|-------------------------------------------|
-| `TwitchEverywhere.Irc`  | For connecting to a twitch chat using IRC     | https://dev.twitch.tv/docs/irc/           |
-| `TwitchEverywhere.Rest` | For making REST calls to the Twitch Helix API | https://dev.twitch.tv/docs/api/reference/ |
+| Library Name            | Description                                   | Nuget Package                                                    | Twitch Reference                          |
+|-------------------------|-----------------------------------------------|------------------------------------------------------------------|-------------------------------------------|
+| `TwitchEverywhere.Irc`  | For connecting to a twitch chat using IRC     | https://www.nuget.org/packages/VodOnDemand.TwitchEverywhere.Irc  | https://dev.twitch.tv/docs/irc/           |
+| `TwitchEverywhere.Rest` | For making REST calls to the Twitch Helix API | https://www.nuget.org/packages/VodOnDemand.TwitchEverywhere.Rest | https://dev.twitch.tv/docs/api/reference/ |
 
