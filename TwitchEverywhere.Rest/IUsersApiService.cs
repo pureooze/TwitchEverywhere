@@ -13,5 +13,15 @@ public interface IUsersApiService {
         string[] logins
     );
     
-    Task<GetUsersResponse> UpdateUser( IHttpClientWrapper httpClient, string description );
+    Task<GetUsersResponse> UpdateUser( 
+        IHttpClientWrapper httpClient, 
+        string description 
+    );
+    
+    Task<GetUserBlockListResponse> GetUserBlockList(
+        IHttpClientWrapper httpClient,
+        string broadcasterId,
+        int? first = 20,
+        string? after = null
+    );
 }

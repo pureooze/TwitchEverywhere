@@ -61,6 +61,25 @@ public class RestClient( TwitchConnectionOptions options ) {
     
     /// <summary>
     /// <para>
+    /// Updates the specified user’s <paramref name="description"/>. The user ID in the OAuth token identifies the user whose information you want to update.
+    /// To include the user’s verified email address, the user access token must also include the user:read:email scope.
+    /// </para>
+    /// <para><b>Required scope:</b> user:read:blocked_users</para>
+    /// </summary>
+    /// <param name="broadcasterId">The ID of the broadcaster whose list of blocked users you want to get.</param>
+    /// <param name="first">The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100. The default is 20.</param>
+    /// <param name="after">The cursor used to get the next page of results.</param>
+    /// <returns></returns>
+    public async Task<GetUserBlockListResponse> GetUserBlockList(
+        string broadcasterId,
+        int? first = 20,
+        string? after = null
+    ) {
+        return await m_restService.GetUserBlockList( broadcasterId, first, after );
+    }
+    
+    /// <summary>
+    /// <para>
     /// Gets information about one or more published videos by user ID.
     /// </para>
     /// </summary>
