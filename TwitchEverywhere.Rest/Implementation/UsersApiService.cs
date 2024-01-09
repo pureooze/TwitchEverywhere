@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types.RestApi.Users;
+using TwitchEverywhere.Core.Types.RestApi.Videos;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Rest.Implementation;
@@ -97,6 +98,53 @@ public class UsersApiService(
         
         return new GetUsersResponse(
             ApiResponse: serializedResponse ?? new GetUsersApiResponse( Array.Empty<UserEntry>() ),
+            StatusCode: response.StatusCode
+        );
+    }
+    
+    async Task<GetUserBlockListResponse> IUsersApiService.GetUserBlockList(
+        IHttpClientWrapper httpClientWrapper,
+        string broadcasterId,
+        int? first,
+        string? after
+    ) {
+        
+        string queryParams = $"?broadcaster_id={broadcasterId}";
+        
+        if( first != null ) {
+            queryParams += $"&first={first.Value}";
+        }
+        
+        if( after != null ) {
+            queryParams += $"&after={after}";
+        }
+        
+        using HttpRequestMessage request = new (
+            method: HttpMethod.Get,
+            requestUri: $"{Globals.HelixPrefix}/users/blocks{queryParams}"
+        );
+        
+        request.Headers.Add( 
+            name: "Client-ID", value: option.ClientId
+        );
+        
+        request.Headers.Add(
+            name: "Authorization", value: "Bearer " + option.AccessToken 
+        );
+        
+        using HttpResponseMessage response = await httpClientWrapper.SendAsync(
+            request, 
+            HttpCompletionOption.ResponseHeadersRead
+        );
+        
+        GetUserBlockListApiResponse? serializedResponse = await response.Content.ReadFromJsonAsync<GetUserBlockListApiResponse>();
+        
+        return new GetUserBlockListResponse(
+            ApiResponse: serializedResponse 
+                         ?? new GetUserBlockListApiResponse( 
+                             Data: Array.Empty<BlockListEntry>(), 
+                             Pagination: null 
+                            ),
             StatusCode: response.StatusCode
         );
     }

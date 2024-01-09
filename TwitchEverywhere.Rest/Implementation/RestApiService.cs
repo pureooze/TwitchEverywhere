@@ -35,6 +35,19 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
             description: description
         );
     }
+    
+    async Task<GetUserBlockListResponse> IRestApiService.GetUserBlockList(
+        string broadcasterId,
+        int? first,
+        string? after
+    ) {
+        return await m_usersApiService.GetUserBlockList(
+            httpClient: m_httpClientWrapper,
+            broadcasterId, 
+            first, 
+            after
+        );
+    }
 
     async Task<GetVideosResponse> IRestApiService.GetVideosForUsersById(
         string userId

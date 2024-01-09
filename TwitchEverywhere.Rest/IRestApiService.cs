@@ -18,4 +18,10 @@ public interface IRestApiService {
     Task<GetVideosResponse> GetVideosForUsersById(
         string userId
     );
+
+    Task<GetUserBlockListResponse> GetUserBlockList(
+        string broadcasterId,
+        int? first = 20,
+        string? after = null
+    );
 }
