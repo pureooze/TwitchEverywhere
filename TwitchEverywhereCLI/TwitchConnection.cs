@@ -33,7 +33,7 @@ internal class TwitchConnection(
 
     public async Task ConnectToRestClient() {
         GetUsersResponse users = await m_restClient.GetUsersByLogin(
-            logins: [ "vodondemandbot" ] 
+            logins: [ "pureooze" ] 
         );
         
         if (users.StatusCode != HttpStatusCode.OK) {
