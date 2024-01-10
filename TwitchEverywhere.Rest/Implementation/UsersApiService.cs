@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types.RestApi.Users;
@@ -147,5 +148,42 @@ public class UsersApiService(
                             ),
             StatusCode: response.StatusCode
         );
+    }
+    async Task<HttpStatusCode> IUsersApiService.BlockUser(
+        IHttpClientWrapper httpClientWrapper,
+        string targetUserId,
+        string? sourceContext,
+        string? reason
+    ) {
+        
+        string queryParams = $"?target_user_id={targetUserId}";
+        
+        if( sourceContext != null ) {
+            queryParams += $"&source_context={sourceContext}";
+        }
+        
+        if( reason != null ) {
+            queryParams += $"&reason={reason}";
+        }
+        
+        using HttpRequestMessage request = new (
+            method: HttpMethod.Put,
+            requestUri: $"{Globals.HelixPrefix}/users/blocks{queryParams}"
+        );
+        
+        request.Headers.Add( 
+            name: "Client-ID", value: option.ClientId
+        );
+        
+        request.Headers.Add(
+            name: "Authorization", value: "Bearer " + option.AccessToken 
+        );
+        
+        using HttpResponseMessage response = await httpClientWrapper.SendAsync(
+            request, 
+            HttpCompletionOption.ResponseHeadersRead
+        );
+        
+        return response.StatusCode;
     }
 }

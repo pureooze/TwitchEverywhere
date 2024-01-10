@@ -1,4 +1,6 @@
-﻿using TwitchEverywhere.Core;
+﻿using System.Net;
+using TwitchEverywhere.Core;
+using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Rest.Implementation;
 
@@ -75,7 +77,34 @@ public class RestClient( TwitchConnectionOptions options ) {
         int? first = 20,
         string? after = null
     ) {
+        if( first < 1 ) {
+            throw new ArgumentException("The minimum page size is 1.");
+        }
+        
+        if( first > 100 ) {
+            throw new ArgumentException("The maximum page size is 100.");
+        }
+        
         return await m_restService.GetUserBlockList( broadcasterId, first, after );
+    }
+    
+    /// <summary>
+    /// <para>
+    /// Updates the specified user’s <paramref name="description"/>. The user ID in the OAuth token identifies the user whose information you want to update.
+    /// To include the user’s verified email address, the user access token must also include the user:read:email scope.
+    /// </para>
+    /// <para><b>Required scope:</b> user:manage:blocked_users</para>
+    /// </summary>
+    /// <param name="targetUserId">The ID of the user to block.</param>
+    /// <param name="sourceContext">The location where the harassment took place that is causing the broadcaster to block the user.</param>
+    /// <param name="reason">The reason that the broadcaster is blocking the user.</param>
+    /// <returns></returns>
+    public async Task<HttpStatusCode> BlockUser(
+        string targetUserId,
+        SourceContext? sourceContext = null,
+        Reason? reason = null
+    ) {
+        return await m_restService.BlockUser( targetUserId, sourceContext, reason );
     }
     
     /// <summary>
