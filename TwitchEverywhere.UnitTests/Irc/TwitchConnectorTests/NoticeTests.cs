@@ -3,7 +3,6 @@ using Moq;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Irc.Implementation;
 
@@ -46,8 +45,8 @@ public class NoticeTests {
             {
                 Assert.That( message, Is.Not.Null );
                 Assert.That( message.MessageType, Is.EqualTo( MessageType.Notice ), "Incorrect message type set" );
-                Assert.That(lazyLoadedNoticeMsg.MsgId, Is.EqualTo(NoticeMsgIdType.AlreadyBanned), "MsgId was not equal to expected value");
-                Assert.That(lazyLoadedNoticeMsg.TargetUserId, Is.Null, "TargetUserId was not equal to expected value");
+                Assert.That(lazyLoadedNoticeMsg.MsgId, Is.EqualTo(NoticeMsgIdType.DeleteMessageSuccess), "MsgId was not equal to expected value");
+                Assert.That(lazyLoadedNoticeMsg.TargetUserId, Is.Empty, "TargetUserId was not equal to expected value");
             });
         }
 

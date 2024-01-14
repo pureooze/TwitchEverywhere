@@ -98,6 +98,7 @@ public class PrivMsg : IPrivMsg {
         m_userType = userType;
         m_vip = vip;
         m_text = text ?? string.Empty;
+        m_rawMessage = GetRawMessageString();
     }
 
     MessageType IMessage.MessageType => MessageType.PrivMsg;
@@ -111,7 +112,7 @@ public class PrivMsg : IPrivMsg {
             return m_rawMessage;
         }
     }
-
+    
     string IMessage.Channel {
         get {
             if ( string.IsNullOrEmpty( m_channel ) ) {
@@ -355,4 +356,116 @@ public class PrivMsg : IPrivMsg {
             return m_text;
         }
     }
+    
+    private string GetRawMessageString() {
+        string message = "@";
+        
+        if( m_badges != null && m_badges.Any() ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.BadgeInfo, () => string.Join( ",", m_badgeInfo.Select( b => $"{b.Name}/{b.Version}" ) ) );
+            message += SerializeProperty( MessagePluginUtils.Properties.Badges, () => string.Join( ",", m_badges.Select( b => $"{b.Name}/{b.Version}" ) ) );
+        }
+        
+        if( !string.IsNullOrEmpty( m_bits ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Bits, () => m_bits );
+        }
+        
+        if( !string.IsNullOrEmpty( m_color ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Color, () => m_color );
+        }
+        
+        if( !string.IsNullOrEmpty( m_displayName ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.DisplayName, () => m_displayName );
+        }
+        
+        message += SerializeProperty( MessagePluginUtils.Properties.Mod, () => m_mod != null && m_mod.Value ? "1" : "0" );
+        
+        if( m_emotes != null && m_emotes.Any() ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Emotes, () => {
+                var groupedEmotes = m_emotes
+                    .GroupBy( e => e.EmoteId )
+                    .Select(
+                        g => new {
+                            EmoteId = g.Key,
+                            Positions = string.Join( ",", g.Select( e => $"{e.Start}-{e.End}" ) )
+                        }
+                    );
+
+                return string.Join( "/", groupedEmotes.Select( e => $"{e.EmoteId}:{e.Positions}" ));
+            } );
+        }
+        
+        if( !string.IsNullOrEmpty( m_id ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Id, () => m_id );
+        }
+        
+        if( m_pinnedChatPaidAmount.HasValue ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidAmount, () => m_pinnedChatPaidAmount?.ToString() ?? string.Empty );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidCanonicalAmount, () => m_pinnedChatPaidAmount?.ToString() ?? string.Empty );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidCurrency, () => m_pinnedChatPaidCurrency );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidExponent, () => m_pinnedChatPaidExponent?.ToString() ?? string.Empty );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidIsSystemMessage, () => m_pinnedChatPaidIsSystemMessage != null && m_pinnedChatPaidIsSystemMessage.Value ? "1" : "0" );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidLevel, () => m_pinnedChatPaidLevel?.ToString().ToUpper() ?? string.Empty );
+        }
+
+        if( !string.IsNullOrEmpty( m_replyParentMsgId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentMsgId, () => m_replyParentMsgId );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyParentUserId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentUserId, () => m_replyParentUserId );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyParentUserLogin ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentUserLogin, () => m_replyParentUserLogin );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyParentDisplayName ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyParentDisplayName, () => m_replyParentDisplayName );
+        }
+        
+        if( !string.IsNullOrEmpty( m_replyThreadParentMsg ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.ReplyThreadParentMsg, () => m_replyThreadParentMsg );
+        }
+        
+        if( !string.IsNullOrEmpty( m_roomId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.RoomId, () => m_roomId );
+        }
+
+        message += SerializeProperty( MessagePluginUtils.Properties.Subscriber, () => m_subscriber != null && m_subscriber.Value ? "1" : "0" );
+
+        message += SerializeProperty( MessagePluginUtils.Properties.Turbo, () => m_turbo != null && m_turbo.Value ? "1" : "0" );
+        
+        if( !string.IsNullOrEmpty( m_userId ) ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.UserId, () => m_userId );
+        }
+
+        if( m_userType != null && m_userType != UserType.Normal ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.UserType, () => MessagePluginUtils.GetUserTypeText( m_userType.Value ) );
+        }
+
+        if( m_timestamp != null ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.MessageTimestamp, () => new DateTimeOffset( m_timestamp.Value ).ToUnixTimeMilliseconds().ToString() );
+        }
+
+        if( m_vip != null && m_vip.Value ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.Vip, () => "1");
+        }
+
+        message = message.Substring(0, message.Length - 1);
+
+        if( !string.IsNullOrEmpty( m_text ) ) {
+            message += $" :{m_channel}!{m_channel}@{m_channel}.tmi.twitch.tv {((IMessage)this).MessageType.ToString().ToUpper()} #{m_channel} :{m_text}";
+        }
+        
+        return message;
+    }
+
+    private string SerializeProperty(
+        MessagePluginUtils.Properties property,
+        Func<string> serializer
+    ) {
+
+        return string.Format( MessagePluginUtils.GetPropertyAsString( property ), serializer() );
+    }
+    
 }

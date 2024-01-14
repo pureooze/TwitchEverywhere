@@ -2,7 +2,6 @@ using System.Net;
 using Moq;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types.RestApi.Users;
-using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Rest;
 using TwitchEverywhere.Rest.Implementation;
 

@@ -114,12 +114,12 @@ internal class TwitchConnection(
                 break;
             case MessageType.ClearChat:
                 IClearChatMsg lazyLoadedClearChatMsgMsg = (IClearChatMsg) message;
-                ClearChatCallback( lazyLoadedClearChatMsgMsg );
+                // ClearChatCallback( lazyLoadedClearChatMsgMsg );
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearChatMsgMsg.Text}" );
                 break;
             case MessageType.ClearMsg:
                 IClearMsg lazyLoadedClearMsg = (LazyLoadedClearMsg) message;
-                ClearMsgCallback( lazyLoadedClearMsg );
+                // ClearMsgCallback( lazyLoadedClearMsg );
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearMsg.Login}, {lazyLoadedClearMsg.Timestamp}, {lazyLoadedClearMsg.RoomId}" );
                 break;
             case MessageType.GlobalUserState:
@@ -127,8 +127,8 @@ internal class TwitchConnection(
                 Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsg.UserId}, {lazyLoadedGlobalUserStateMsg.UserType}, {lazyLoadedGlobalUserStateMsg.DisplayName}" );
                 break;
             case MessageType.Notice:
-                INoticeMsg lazyLoadedNoticeMsg = (LazyLoadedNoticeMsg) message;
-                NoticeMsgCallback( lazyLoadedNoticeMsg );
+                INoticeMsg lazyLoadedNoticeMsg = (INoticeMsg) message;
+                // NoticeMsgCallback( lazyLoadedNoticeMsg );
                 Console.WriteLine( $"NoticeMsg: {{ TargetUserId: {lazyLoadedNoticeMsg.TargetUserId}, MsgId: {lazyLoadedNoticeMsg.MsgId} }}" );
                 Console.WriteLine( $"NoticeMsg: {lazyLoadedNoticeMsg.RawMessage}" );
                 break;
@@ -141,7 +141,7 @@ internal class TwitchConnection(
                 Console.WriteLine( $"UserNotice: {lazyLoadedUserNoticeMsg}" );
                 break;
             case MessageType.UserState:
-                IUserStateMsg lazyLoadedUserStateMsg = (LazyLoadedUserStateMsg) message;
+                IUserStateMsg lazyLoadedUserStateMsg = (IUserStateMsg) message;
                 Console.WriteLine( $"UserStateMsg: {lazyLoadedUserStateMsg.DisplayName}, {lazyLoadedUserStateMsg.UserType}, {lazyLoadedUserStateMsg.Badges}" );
                 break;
             case MessageType.Whisper:

@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
@@ -10,10 +12,10 @@ public class UserStateMsgSerializationTest {
 
     [Test]
     public void LazyLoadedUserStateMsgSerialization() {
-        const string channel = "channel";
         const string message =
             "@badge-info=;badges=staff/1;color=#0D4200;display-name=ronni;emote-sets=0,33,50,237,793,2126,3517,4578,5569,9400,10337,12239;mod=1;subscriber=1;turbo=1;user-type=staff :tmi.twitch.tv USERSTATE #dallas";
-        LazyLoadedUserStateMsg lazyLoadedClearChatMsg = new( channel: channel, message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        LazyLoadedUserStateMsg lazyLoadedClearChatMsg = new( rawMessage );
 
         Assert.That( lazyLoadedClearChatMsg.RawMessage, Is.EqualTo( message ) );
     }

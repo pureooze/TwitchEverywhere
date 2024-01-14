@@ -22,7 +22,7 @@ public class MessageProcessor : IMessageProcessor {
         // new RoomStateMsgPlugin(),
         // new WhisperMsgPlugin(),
         // new UserNoticePlugin(),
-        // new UserStateMsgPlugin(),
+        new UserStateMsgPlugin(),
         // new HostTargetMsgPlugin(),
         // new ReconnectMsgPlugin(),
             

@@ -4,7 +4,6 @@ using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Irc.Implementation;
 
