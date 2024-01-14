@@ -4,11 +4,10 @@ using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 namespace TwitchEverywhere.Core.Types.Messages.Implementation;
 
 public class JoinMsg : IJoinMsg {
-    private MessageType m_messageType;
     private string m_rawMessage;
     private string m_channel;
     private string m_user;
-    private IJoinMsg m_inner;
+    private readonly IJoinMsg m_inner;
 
     public JoinMsg(
         RawMessage message

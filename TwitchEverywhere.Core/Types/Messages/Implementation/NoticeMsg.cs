@@ -8,7 +8,6 @@ public class NoticeMsg : INoticeMsg {
     private string m_channel;
     private NoticeMsgIdType? m_msgId;
     private string m_targetUserId;
-    private string m_rawMessage1;
     private readonly LazyLoadedNoticeMsg m_inner;
 
     public NoticeMsg(
