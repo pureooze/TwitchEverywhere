@@ -1,6 +1,10 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.Serialization;
@@ -10,10 +14,11 @@ public class PrivMsgSerializationTest {
 
     [Test]
     public void LazyLoadedPrivMsgSerialization() {
-        const string channel = "channel";
         const string message =
             "@badge-info=;badges=turbo/1;color=#0D4200;display-name=ronni;emotes=25:0-4,12-16/1902:6-10;id=b34ccfc7-4977-403a-8a94-33c6bac34fb8;mod=0;room-id=1337;subscriber=0;tmi-sent-ts=1507246572675;turbo=1;user-id=1337;user-type=global_mod :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #channel :Kappa Keepo Kappa";
-        LazyLoadedPrivMsg lazyLoadedPrivMsg = new( channel: channel, message: message );
+        
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IPrivMsg lazyLoadedPrivMsg = new PrivMsg( rawMessage );
 
         Assert.That( lazyLoadedPrivMsg.RawMessage, Is.EqualTo( message ) );
     }
@@ -21,7 +26,7 @@ public class PrivMsgSerializationTest {
     [Test]
     public void NonSubscriber_ImmediateLoadedPrivMsg_SerializationToIRCMessage() {
 
-        ImmediateLoadedPrivMsg immediateLoadedPrivMsg = new(
+        IPrivMsg immediateLoadedPrivMsg = new PrivMsg(
             channel: "ronni",
             badges: new List<Badge>() {
                 new( "turbo", "1" )
@@ -55,7 +60,7 @@ public class PrivMsgSerializationTest {
     [Test]
     public void Cheer100Bits_ImmediateLoadedPrivMsg_SerializationToIRCMessage() {
 
-        ImmediateLoadedPrivMsg immediateLoadedPrivMsg = new(
+        IPrivMsg immediateLoadedPrivMsg = new PrivMsg(
             channel: "ronni",
             badges: new List<Badge>() {
                 new( "staff", "1" ),
@@ -84,7 +89,7 @@ public class PrivMsgSerializationTest {
     [Test]
     public void VipChatter_ImmediateLoadedPrivMsg_SerializationToIRCMessage() {
 
-        ImmediateLoadedPrivMsg immediateLoadedPrivMsg = new(
+        IPrivMsg immediateLoadedPrivMsg = new PrivMsg(
             channel: "ronni",
             badges: new List<Badge>() {
                 new( "vip", "1" ),
@@ -112,7 +117,7 @@ public class PrivMsgSerializationTest {
     [Test]
     public void HypeChat_ImmediateLoadedPrivMsg_SerializationToIRCMessage() {
 
-        ImmediateLoadedPrivMsg immediateLoadedPrivMsg = new(
+        IPrivMsg immediateLoadedPrivMsg = new PrivMsg(
             channel: "ronni",
             badges: new List<Badge>() {
                 new( "glhf-pledge", "1" )

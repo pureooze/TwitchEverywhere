@@ -1,4 +1,7 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
@@ -13,7 +16,8 @@ public class JoinMsgTests {
         string message,
         TestData expectedJoinMsgMessage
     ) {
-        IJoinMsg actualLazyLoadedJoinMsgMessage = new LazyLoadedJoinMsg( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IJoinMsg actualLazyLoadedJoinMsgMessage = new JoinMsg( rawMessage );
 
         Assert.That( actualLazyLoadedJoinMsgMessage.MessageType, Is.EqualTo( MessageType.Join ) );
 

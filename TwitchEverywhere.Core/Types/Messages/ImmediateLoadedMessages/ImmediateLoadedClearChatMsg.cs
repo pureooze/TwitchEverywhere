@@ -2,10 +2,10 @@ using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedClearChat : IClearChat {
+public class ImmediateLoadedClearChatMsg : IClearChatMsg {
     private const long PERMANANT_BAN_DURATION = -1;
     
-    public ImmediateLoadedClearChat(
+    public ImmediateLoadedClearChatMsg(
         string channel,
         string? targetUserName = null,
         long? banDuration = null,

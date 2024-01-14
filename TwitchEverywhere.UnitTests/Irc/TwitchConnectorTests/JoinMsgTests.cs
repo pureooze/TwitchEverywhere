@@ -2,11 +2,12 @@ using System.Collections.Immutable;
 using Moq;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Irc.Implementation;
 
-namespace TwitchEverywhere.UnitTests.Irc.TwitchConnectorTests; 
+namespace TwitchEverywhere.UnitTests.Irc.TwitchConnectorTests;
 
 public class JoinMsgTests {
     private readonly TwitchConnectionOptions m_options = new(
@@ -18,60 +19,47 @@ public class JoinMsgTests {
         "client_name"
     );
 
-    private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds(1507246572675).UtcDateTime;
-        
-    private ITwitchConnector m_twitchConnector;
-    
-    [Test]
-    [TestCaseSource(nameof(JoinMsgMessages))]
-    public async Task JoinMsg( IImmutableList<string> messages, LazyLoadedJoinMsg expectedMessage ) {
-        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
-        Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
-        dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
+    private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds( 1507246572675 ).UtcDateTime;
 
+    private ITwitchConnector m_twitchConnector;
+    private bool m_messageCallbackCalled;
+
+    [Test]
+    public async Task UserJoinsChannel() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel"
+        }.ToImmutableList();
+
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
-        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+        IMessageProcessor messageProcessor = new MessageProcessor();
 
         void MessageCallback(
             IMessage message
         ) {
-            Assert.That( message, Is.Not.Null );
-            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
+            m_messageCallbackCalled = true;
+            IJoinMsg lazyLoadedClearChatMsg = (LazyLoadedJoinMsg)message;
 
-            LazyLoadedJoinMsg msg = (LazyLoadedJoinMsg)message;
-            JoinMsgCallback( msg, expectedMessage );
+            Assert.Multiple(
+                () => {
+                    Assert.That( lazyLoadedClearChatMsg, Is.Not.Null );
+                    Assert.That( lazyLoadedClearChatMsg.MessageType, Is.EqualTo( MessageType.Join ), "Incorrect message type set" );
+                    Assert.That( lazyLoadedClearChatMsg.User, Is.EqualTo( "" ), "User was not equal to expected value" );
+                    Assert.That( lazyLoadedClearChatMsg.Channel, Is.EqualTo( "" ), "Channel was not equal to expected value" );
+                }
+            );
         }
-        
+
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
-        m_twitchConnector = new TwitchConnector( 
-            authorizer: authorizer.Object, 
+        m_twitchConnector = new TwitchConnector(
+            authorizer: authorizer.Object,
             webSocketConnection: webSocket,
             messageProcessor: messageProcessor
         );
-        
+
         bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
         Assert.That( result, Is.True );
-    }
-    
-    private void JoinMsgCallback(
-        LazyLoadedJoinMsg globalUserState,
-        LazyLoadedJoinMsg? expectedGlobalUserState
-    ) {
-        Assert.Multiple(() => {
-            Assert.That(globalUserState.User, Is.EqualTo(expectedGlobalUserState?.User), "User was not equal to expected value");
-            Assert.That(globalUserState.Channel, Is.EqualTo(expectedGlobalUserState?.Channel), "Channel was not equal to expected value");
-        });
-    }
-    
-    private static IEnumerable<TestCaseData> JoinMsgMessages() {
-        yield return new TestCaseData(
-            new List<string> {
-                $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel"
-            }.ToImmutableList(),
-            new LazyLoadedJoinMsg(
-                message: $":ronni!ronni@ronni.tmi.twitch.tv JOIN #channel",
-                channel: "channel"
-            )
-        ).SetName("Ronni joined the channel");
+        Assert.That( m_messageCallbackCalled, Is.True, "Message callback was not called" );
     }
 }

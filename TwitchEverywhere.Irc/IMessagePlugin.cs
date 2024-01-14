@@ -1,15 +1,16 @@
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 
 namespace TwitchEverywhere.Irc; 
 
 public interface IMessagePlugin {
-    bool CanHandle(
-        string response,
-        string channel
-    );
     
+    bool CanHandle(
+        ReadOnlyMemory<byte> response,
+        MessageType messageType
+    );
+
     IMessage GetMessageData(
-        string response,
-        string channel
+        RawMessage response
     );
 }

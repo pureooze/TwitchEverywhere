@@ -31,7 +31,7 @@ public class LazyLoadedReconnectMsgTests {
         dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages: messages );
-        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+        IMessageProcessor messageProcessor = new MessageProcessor();
 
         void MessageCallback(
             IMessage message

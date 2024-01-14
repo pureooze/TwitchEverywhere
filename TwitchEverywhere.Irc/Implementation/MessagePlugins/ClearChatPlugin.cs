@@ -1,4 +1,6 @@
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
@@ -6,19 +8,15 @@ namespace TwitchEverywhere.Irc.Implementation.MessagePlugins;
 public class ClearChatPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        string response,
-        string channel
+        ReadOnlyMemory<byte> response,
+        MessageType messageType
     ) {
-        return response.Contains( $" CLEARCHAT #{channel}" );
+        return messageType == MessageType.ClearChat;
     }
 
     IMessage IMessagePlugin.GetMessageData(
-        string response,
-        string channel
+        RawMessage response
     ) {
-        return new LazyLoadedClearChat(
-            channel: channel,
-            message: response
-        );
+        return new ClearChatMsg( response );
     }
 }

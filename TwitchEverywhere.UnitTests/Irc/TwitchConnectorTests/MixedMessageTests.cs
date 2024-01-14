@@ -29,7 +29,7 @@ public class MixedMessageTests {
         dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages: messages );
-        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+        IMessageProcessor messageProcessor = new MessageProcessor();
 
         int index = 0;
         

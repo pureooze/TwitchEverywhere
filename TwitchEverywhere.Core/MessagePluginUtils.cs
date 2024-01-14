@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using System.Text;
 using System.Text.RegularExpressions;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 
 namespace TwitchEverywhere.Core;
 
@@ -477,4 +479,18 @@ public static partial class MessagePluginUtils {
         { Properties.UserType, "user-type={0};" },
         { Properties.Vip, "vip={0};" }
     };
+    
+    public static string GetTagsFromMessage( RawMessage message ) {
+
+        if( !message.TagsRange.HasValue ) {
+            return string.Empty;
+        }
+
+        return Encoding.UTF8.GetString(
+            message.Data.Span[
+                message.TagsRange.Value.Start
+                    ..message.TagsRange.Value.End
+            ]
+        );
+    }
 }

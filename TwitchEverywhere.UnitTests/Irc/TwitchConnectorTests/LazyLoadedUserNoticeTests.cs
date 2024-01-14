@@ -31,7 +31,7 @@ public class LazyLoadedUserNoticeTests {
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
-        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+        IMessageProcessor messageProcessor = new MessageProcessor();
 
         void MessageCallback(
             IMessage message

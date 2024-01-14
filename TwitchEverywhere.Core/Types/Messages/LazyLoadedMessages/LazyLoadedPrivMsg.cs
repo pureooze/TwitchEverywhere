@@ -1,95 +1,202 @@
 using System.Collections.Immutable;
+using System.Text;
 using System.Text.RegularExpressions;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
-namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages; 
+namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
-public class LazyLoadedPrivMsg(
-    string channel,
-    string message,
-    TimeSpan? sinceStartOfStream = null
-) : IPrivMsg {
+internal class LazyLoadedPrivMsg : IPrivMsg {
+
+    private readonly string m_message;
+    private readonly RawMessage m_response;
+    private string m_tags;
+
+    public LazyLoadedPrivMsg(
+        RawMessage response
+    ) {
+        m_response = response;
+        m_message = Encoding.UTF8.GetString( response.Data.Span );
+        Channel = "";
+    }
 
     public MessageType MessageType => MessageType.PrivMsg;
 
-    public string RawMessage => message;
-    
-    public string Channel { get; } = channel;
+    public string RawMessage => m_message;
+
+    public string Channel { get; }
 
     IImmutableList<Badge> IPrivMsg.Badges {
         get {
-            string badges = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.BadgesPattern() );
+            InitializeTags();
+            
+            string badges = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.BadgesPattern() );
             return MessagePluginUtils.GetBadges( badges );
         }
     }
-    
+
     IImmutableList<Badge> IPrivMsg.BadgeInfo {
         get {
-            string badges = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.BadgeInfoPattern() );
+            InitializeTags();
+            
+            string badges = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.BadgeInfoPattern() );
             return MessagePluginUtils.GetBadges( badges );
         }
     }
 
-    string IPrivMsg.Bits => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.BitsPattern() );
+    string IPrivMsg.Bits {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.BitsPattern() );
+        }
+    }
 
-    string IPrivMsg.Color => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ColorPattern() );
+    string IPrivMsg.Color {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ColorPattern() );
+        }
+    }
 
-    string IPrivMsg.DisplayName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.DisplayNamePattern() );
+    string IPrivMsg.DisplayName {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.DisplayNamePattern() );
+        }
+    }
 
     IImmutableList<Emote>? IPrivMsg.Emotes {
         get {
-            string emotesText = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.EmotesPattern() );
+            InitializeTags();
+            
+            string emotesText = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.EmotesPattern() );
             return MessagePluginUtils.GetEmotesFromText( emotesText );
         }
     }
 
-    string IPrivMsg.Id => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.IdPattern() );
+    string IPrivMsg.Id {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.IdPattern() );
+        }
+    }
 
-    bool IPrivMsg.Mod => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.ModPattern() );
+    bool IPrivMsg.Mod {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueIsPresentOrBoolean( m_tags, MessagePluginUtils.ModPattern() );
+        }
+    }
 
     long? IPrivMsg.PinnedChatPaidAmount {
         get {
-            string pinnedChatPaidAmount = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.PinnedChatPaidAmountPattern() );
+            InitializeTags();
+            
+            string pinnedChatPaidAmount = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.PinnedChatPaidAmountPattern() );
             return string.IsNullOrEmpty( pinnedChatPaidAmount ) ? null : long.Parse( pinnedChatPaidAmount );
         }
     }
 
-    string IPrivMsg.PinnedChatPaidCurrency => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.PinnedChatPaidCurrencyPattern() );
+    string IPrivMsg.PinnedChatPaidCurrency {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.PinnedChatPaidCurrencyPattern() );
+        }
+    }
 
     long? IPrivMsg.PinnedChatPaidExponent {
         get {
-            string pinnedChatPaidExponent = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.PinnedChatPaidExponentPattern() );
+            InitializeTags();
+            
+            string pinnedChatPaidExponent = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.PinnedChatPaidExponentPattern() );
             return string.IsNullOrEmpty( pinnedChatPaidExponent ) ? null : int.Parse( pinnedChatPaidExponent );
         }
     }
 
     PinnedChatPaidLevel? IPrivMsg.PinnedChatPaidLevel {
         get {
-            string pinnedChatPaidLevelText = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.PinnedChatPaidLevelPattern() );
+            InitializeTags();
+            
+            string pinnedChatPaidLevelText = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.PinnedChatPaidLevelPattern() );
             return MessagePluginUtils.GetPinnedChatPaidLevelType( pinnedChatPaidLevelText );
         }
     }
 
-    bool IPrivMsg.PinnedChatPaidIsSystemMessage => !string.IsNullOrEmpty( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.PinnedChatPaidIsSystemMessagePattern() ) );
+    bool IPrivMsg.PinnedChatPaidIsSystemMessage {
+        get {
+            InitializeTags();
+            
+            return !string.IsNullOrEmpty( MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.PinnedChatPaidIsSystemMessagePattern() ) );
+        }
+    }
 
-    string IPrivMsg.ReplyParentMsgId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ReplyParentMsgIdPattern() );
+    string IPrivMsg.ReplyParentMsgId {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ReplyParentMsgIdPattern() );
+        }
+    }
 
-    string IPrivMsg.ReplyParentUserId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ReplyParentUserIdPattern() );
+    string IPrivMsg.ReplyParentUserId {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ReplyParentUserIdPattern() );
+        }
+    }
 
-    string IPrivMsg.ReplyParentUserLogin => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ReplyParentUserLoginPattern() );
+    string IPrivMsg.ReplyParentUserLogin {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ReplyParentUserLoginPattern() );
+        }
+    }
 
-    string IPrivMsg.ReplyParentDisplayName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ReplyParentDisplayNamePattern() );
+    string IPrivMsg.ReplyParentDisplayName {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ReplyParentDisplayNamePattern() );
+        }
+    }
 
-    string IPrivMsg.ReplyThreadParentMsg => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ReplyThreadParentMsgPattern() );
+    string IPrivMsg.ReplyThreadParentMsg {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ReplyThreadParentMsgPattern() );
+        }
+    }
 
-    string IPrivMsg.RoomId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.RoomIdPattern() );
+    string IPrivMsg.RoomId {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.RoomIdPattern() );
+        }
+    }
 
-    bool IPrivMsg.Subscriber => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.SubscriberPattern() );
+    bool IPrivMsg.Subscriber {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueIsPresentOrBoolean( m_tags, MessagePluginUtils.SubscriberPattern() );
+        }
+    }
 
     DateTime? IPrivMsg.Timestamp {
         get {
+            InitializeTags();
+            
             long rawTimestamp = Convert.ToInt64(
-                MessagePluginUtils.MessageTimestampPattern().Match( message ).Value
+                MessagePluginUtils.MessageTimestampPattern().Match( m_tags ).Value
                     .Split( "=" )[1]
                     .TrimEnd( ';' )
             );
@@ -98,15 +205,64 @@ public class LazyLoadedPrivMsg(
         }
     }
 
-    bool IPrivMsg.Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.TurboPattern() );
+    bool IPrivMsg.Turbo {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueIsPresentOrBoolean( m_tags, MessagePluginUtils.TurboPattern() );
+        }
+    }
 
-    string IPrivMsg.UserId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserIdPattern() );
+    string IPrivMsg.UserId {
+        get {
+            InitializeTags();
+            
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.UserIdPattern() );
+        }
+    }
 
-    UserType IPrivMsg.UserType => MessagePluginUtils.GetUserType( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserTypePattern() ) );
+    UserType IPrivMsg.UserType {
+        get {
+            InitializeTags();
 
-    bool IPrivMsg.Vip => !string.IsNullOrEmpty( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.VipPattern() ) );
+            return MessagePluginUtils.GetUserType( 
+                MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.UserTypePattern() ) 
+            );
+        }
+    }
 
-    TimeSpan SinceStartOfStream { get; } = sinceStartOfStream ?? TimeSpan.Zero;
+    bool IPrivMsg.Vip {
+        get {
+            InitializeTags();
 
-    string IPrivMsg.Text => MessagePluginUtils.GetLastSplitValuesFromResponse( message, new Regex($"PRIVMSG #{Channel} :") ).Trim('\n');
+            return !string.IsNullOrEmpty(
+                MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.VipPattern() )
+            );
+        }
+    }
+
+    private void InitializeTags() {
+
+        if( !string.IsNullOrEmpty( m_tags ) ) {
+            return;
+        }
+
+        m_tags = MessagePluginUtils.GetTagsFromMessage( m_response );
+    }
+
+    string IPrivMsg.Text {
+        get {
+
+            if( !m_response.MessageContentRange.HasValue ) {
+                return "";
+            }
+
+            return Encoding.UTF8.GetString(
+                m_response.Data.Span[
+                    m_response.MessageContentRange.Value.Start
+                        ..m_response.MessageContentRange.Value.End
+                ]
+            ).TrimEnd();
+        }
+    }
 }

@@ -1,5 +1,8 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.UnitTests.Irc.MessageTypeTests; 
 
@@ -8,18 +11,18 @@ public class ClearChatMsgTests {
 
     [Test]
     [TestCaseSource(nameof(ClearChatMsgMessages))]
-    public void ClearChatMsg( string message, TestData expectedClearChatMessage )
-    {
-        LazyLoadedClearChat actualLazyLoadedClearChatMessage = new( channel: "channel", message: message );
+    public void ClearChatMsg( string message, TestData expectedClearChatMessage ) {
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IClearChatMsg actualLazyLoadedClearChatMsgMessage = new ClearChatMsg( rawMessage );
         
-        Assert.That(actualLazyLoadedClearChatMessage.MessageType, Is.EqualTo( MessageType.ClearChat ));
+        Assert.That(actualLazyLoadedClearChatMsgMessage.MessageType, Is.EqualTo( MessageType.ClearChat ));
         
         Assert.Multiple(() => {
-            Assert.That(actualLazyLoadedClearChatMessage.Duration, Is.EqualTo(expectedClearChatMessage.Duration), "Duration was not equal to expected value");
-            Assert.That(actualLazyLoadedClearChatMessage.RoomId, Is.EqualTo(expectedClearChatMessage.RoomId), "RoomId was not equal to expected value");
-            Assert.That(actualLazyLoadedClearChatMessage.TargetUserId, Is.EqualTo(expectedClearChatMessage.UserId), "UserId was not equal to expected value");
-            Assert.That(actualLazyLoadedClearChatMessage.Timestamp, Is.EqualTo(expectedClearChatMessage.Timestamp), "Timestamp was not equal to expected value");
-            Assert.That(actualLazyLoadedClearChatMessage.Text, Is.EqualTo(expectedClearChatMessage.Text), "Text was not equal to expected value");
+            Assert.That(actualLazyLoadedClearChatMsgMessage.Duration, Is.EqualTo(expectedClearChatMessage.Duration), "Duration was not equal to expected value");
+            Assert.That(actualLazyLoadedClearChatMsgMessage.RoomId, Is.EqualTo(expectedClearChatMessage.RoomId), "RoomId was not equal to expected value");
+            Assert.That(actualLazyLoadedClearChatMsgMessage.TargetUserId, Is.EqualTo(expectedClearChatMessage.UserId), "UserId was not equal to expected value");
+            Assert.That(actualLazyLoadedClearChatMsgMessage.Timestamp, Is.EqualTo(expectedClearChatMessage.Timestamp), "Timestamp was not equal to expected value");
+            Assert.That(actualLazyLoadedClearChatMsgMessage.Text, Is.EqualTo(expectedClearChatMessage.Text), "Text was not equal to expected value");
         });
     }
 

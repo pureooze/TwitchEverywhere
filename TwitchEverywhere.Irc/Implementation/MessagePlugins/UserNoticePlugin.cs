@@ -1,4 +1,5 @@
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
@@ -6,12 +7,12 @@ namespace TwitchEverywhere.Irc.Implementation.MessagePlugins;
 public class UserNoticePlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        string response,
-        string channel
+        ReadOnlyMemory<byte> response,
+        MessageType messageType
     ) {
-        return response.Contains( $" USERNOTICE #{channel}" );
+        throw new NotImplementedException();
     }
-    IMessage IMessagePlugin.GetMessageData(
+    public IMessage GetMessageData(
         string response,
         string channel
     ) {
@@ -19,5 +20,10 @@ public class UserNoticePlugin : IMessagePlugin {
             channel: channel,
             message: response 
         );
+    }
+    IMessage IMessagePlugin.GetMessageData(
+        RawMessage response
+    ) {
+        throw new NotImplementedException();
     }
 }

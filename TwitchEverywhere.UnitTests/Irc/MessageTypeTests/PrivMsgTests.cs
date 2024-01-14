@@ -1,5 +1,8 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
@@ -10,9 +13,10 @@ public class PrivMsgTests {
 
     [Test]
     [TestCaseSource(nameof(PrivMsgMessages))]
-    public void PrivMsg( string message, TestData expectedPrivMessage )
-    {
-        IPrivMsg actualLazyLoadedPrivMessage = new LazyLoadedPrivMsg( channel: "channel", message: message, TimeSpan.Zero );
+    public void PrivMsg( string message, TestData expectedPrivMessage ) {
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        
+        IPrivMsg actualLazyLoadedPrivMessage = new PrivMsg( rawMessage );
         MessageType actualType = actualLazyLoadedPrivMessage.MessageType;
         
         Assert.That(actualType, Is.EqualTo( MessageType.PrivMsg ));
@@ -122,7 +126,7 @@ public class PrivMsgTests {
         ).SetName("Message from Staff with cheer");
         
         yield return new TestCaseData(
-            "@badge-info=;badges=glhf-pledge/1;color=;emotes=;first-msg=0;flags=;id=f6fb34f8-562f-4b4d-b628-32113d0ef4b0;mod=0;pinned-chat-paid-amount=200;pinned-chat-paid-canonical-amount=200;pinned-chat-paid-currency=USD;pinned-chat-paid-exponent=2;pinned-chat-paid-is-system-message=0;pinned-chat-paid-level=ONE;returning-chatter=0;room-id=12345678;subscriber=0;tmi-sent-ts=1687471984306;turbo=0;user-id=12345678;user-type=\n",
+            "@badge-info=;badges=glhf-pledge/1;color=;emotes=;first-msg=0;flags=;id=f6fb34f8-562f-4b4d-b628-32113d0ef4b0;mod=0;pinned-chat-paid-amount=200;pinned-chat-paid-canonical-amount=200;pinned-chat-paid-currency=USD;pinned-chat-paid-exponent=2;pinned-chat-paid-is-system-message=0;pinned-chat-paid-level=ONE;returning-chatter=0;room-id=12345678;subscriber=0;tmi-sent-ts=1687471984306;turbo=0;user-id=12345678;user-type= :ronni!ronni@ronni.tmi.twitch.tv PRIVMSG #ronni :cheer100",
             new TestData( 
                 badges: new List<Badge> {
                     new( "glhf-pledge", "1" )
@@ -140,7 +144,7 @@ public class PrivMsgTests {
                 replyThreadParentMsg: "",
                 roomId: "12345678",
                 userId: "12345678",
-                text: "",
+                text: "cheer100",
                 pinnedChatPaidAmount: 200,
                 pinnedChatPaidExponent: 2,
                 pinnedChatPaidLevel: PinnedChatPaidLevel.One,

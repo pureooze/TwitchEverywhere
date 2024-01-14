@@ -1,6 +1,6 @@
 namespace TwitchEverywhere.Core.Types.Messages.Interfaces;
 
-public interface IClearChat : IMessage {
+public interface IClearChatMsg : IMessage {
     long? Duration { get; }
     string RoomId { get; }
     string TargetUserId { get; }
