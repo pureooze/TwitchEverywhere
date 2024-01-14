@@ -7,7 +7,6 @@ namespace TwitchEverywhere.Irc.Implementation.MessagePlugins;
 public class UserStateMsgPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        ReadOnlyMemory<byte> response,
         MessageType messageType
     ) {
         throw new NotImplementedException();

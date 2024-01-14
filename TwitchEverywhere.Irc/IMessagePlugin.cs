@@ -6,7 +6,6 @@ namespace TwitchEverywhere.Irc;
 public interface IMessagePlugin {
     
     bool CanHandle(
-        ReadOnlyMemory<byte> response,
         MessageType messageType
     );
 

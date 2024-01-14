@@ -102,9 +102,25 @@ public class PrivMsg : IPrivMsg {
 
     MessageType IMessage.MessageType => MessageType.PrivMsg;
 
-    string IMessage.RawMessage => m_rawMessage;
+    string IMessage.RawMessage {
+        get {
+            if ( string.IsNullOrEmpty( m_rawMessage ) ) {
+                m_rawMessage = m_inner.RawMessage;
+            }
 
-    string IMessage.Channel => m_channel;
+            return m_rawMessage;
+        }
+    }
+
+    string IMessage.Channel {
+        get {
+            if ( string.IsNullOrEmpty( m_channel ) ) {
+                m_channel = m_inner.Channel;
+            }
+
+            return m_channel;
+        }
+    }
 
     IImmutableList<Badge> IPrivMsg.Badges {
         get {

@@ -22,9 +22,23 @@ public class ClearChatMsg : IClearChatMsg {
 
     MessageType IMessage.MessageType => MessageType.ClearChat;
 
-    string IMessage.RawMessage => m_rawMessage;
+    string IMessage.RawMessage {
+        get {
+            if( string.IsNullOrEmpty( m_rawMessage ) ) {
+                m_rawMessage = m_inner.RawMessage;
+            }
+            return m_rawMessage;
+        }
+    }
 
-    string IMessage.Channel => m_channel;
+    string IMessage.Channel {
+        get {
+            if( string.IsNullOrEmpty( m_channel ) ) {
+                m_channel = m_inner.Channel;
+            }
+            return m_channel;
+        }
+    }
 
     long? IClearChatMsg.Duration {
         get {

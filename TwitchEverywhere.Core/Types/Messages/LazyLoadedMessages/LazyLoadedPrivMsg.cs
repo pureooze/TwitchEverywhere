@@ -5,25 +5,15 @@ using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
-internal class LazyLoadedPrivMsg : IPrivMsg {
+internal class LazyLoadedPrivMsg( RawMessage response ) : IPrivMsg {
 
-    private readonly string m_message;
-    private readonly RawMessage m_response;
     private string m_tags;
-
-    public LazyLoadedPrivMsg(
-        RawMessage response
-    ) {
-        m_response = response;
-        m_message = Encoding.UTF8.GetString( response.Data.Span );
-        Channel = "";
-    }
 
     public MessageType MessageType => MessageType.PrivMsg;
 
-    public string RawMessage => m_message;
+    public string RawMessage => Encoding.UTF8.GetString( response.Data.Span );
 
-    public string Channel { get; }
+    public string Channel => "";
 
     IImmutableList<Badge> IPrivMsg.Badges {
         get {
@@ -247,20 +237,20 @@ internal class LazyLoadedPrivMsg : IPrivMsg {
             return;
         }
 
-        m_tags = MessagePluginUtils.GetTagsFromMessage( m_response );
+        m_tags = MessagePluginUtils.GetTagsFromMessage( response );
     }
 
     string IPrivMsg.Text {
         get {
 
-            if( !m_response.MessageContentRange.HasValue ) {
+            if( !response.MessageContentRange.HasValue ) {
                 return "";
             }
 
             return Encoding.UTF8.GetString(
-                m_response.Data.Span[
-                    m_response.MessageContentRange.Value.Start
-                        ..m_response.MessageContentRange.Value.End
+                response.Data.Span[
+                    response.MessageContentRange.Value.Start
+                        ..response.MessageContentRange.Value.End
                 ]
             ).TrimEnd();
         }

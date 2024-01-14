@@ -7,7 +7,6 @@ namespace TwitchEverywhere.Irc.Implementation.MessagePlugins;
 public class UserNoticePlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        ReadOnlyMemory<byte> response,
         MessageType messageType
     ) {
         throw new NotImplementedException();

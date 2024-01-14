@@ -7,7 +7,6 @@ namespace TwitchEverywhere.Irc.Implementation.MessagePlugins;
 public class HostTargetMsgPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        ReadOnlyMemory<byte> response,
         MessageType messageType
     ) {
         throw new NotImplementedException();

@@ -11,13 +11,13 @@ public class MessageProcessor : IMessageProcessor {
         // new PartMsgPlugin(),
         // new CapReqPlugin(),
         // new JoinCountMsgPlugin(),
-        // new JoinEndMsgPlugin(),
+        new JoinEndMsgPlugin(),
             
         // IRC Commands
         new PrivMsgPlugin(),
         new ClearChatPlugin(),
         // new ClearMsgPlugin(),
-        // new NoticeMsgPlugin(),
+        new NoticeMsgPlugin(),
         // new GlobalUserStatePlugin(),
         // new RoomStateMsgPlugin(),
         // new WhisperMsgPlugin(),
@@ -27,7 +27,7 @@ public class MessageProcessor : IMessageProcessor {
         // new ReconnectMsgPlugin(),
             
         // Nothing worked, just give the raw message
-        // new UnknownMsgPlugin()
+        new UnknownMsgPlugin()
     };
 
     public void ProcessMessage(
@@ -36,7 +36,7 @@ public class MessageProcessor : IMessageProcessor {
         Action<IMessage> callback
     ) {
         foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
-            if( !messagePlugin.CanHandle( response.Data, response.Type ) ) {
+            if( !messagePlugin.CanHandle( response.Type ) ) {
                 continue;
             }
 

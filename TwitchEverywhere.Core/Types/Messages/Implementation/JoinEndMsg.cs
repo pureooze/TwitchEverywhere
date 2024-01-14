@@ -3,20 +3,19 @@ using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Core.Types.Messages.Implementation;
 
-public class JoinMsg : IJoinMsg {
+public class JoinEndMsg : IJoinEndMsg {
     private MessageType m_messageType;
     private string m_rawMessage;
     private string m_channel;
-    private string m_user;
-    private IJoinMsg m_inner;
+    private readonly IJoinEndMsg m_inner;
 
-    public JoinMsg(
+    public JoinEndMsg(
         RawMessage message
     ) {
-        m_inner = new LazyLoadedJoinMsg( message );
+        m_inner = new LazyLoadedJoinEndMsg( message );
     }
     
-    MessageType IMessage.MessageType => MessageType.Join;
+    MessageType IMessage.MessageType => MessageType.JoinEnd;
 
     string IMessage.RawMessage {
         get {
@@ -34,17 +33,5 @@ public class JoinMsg : IJoinMsg {
             }
             return m_channel;
         }
-    
     }
-
-    string IJoinMsg.User {
-        get {
-            if( string.IsNullOrEmpty( m_user ) ) {
-                m_user = m_inner.User;
-            }
-            
-            return m_user;
-        }
-    }
-    
 }

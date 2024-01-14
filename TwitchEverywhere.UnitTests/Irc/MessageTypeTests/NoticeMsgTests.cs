@@ -1,4 +1,6 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
@@ -13,7 +15,8 @@ public class NoticeMsgTests {
         string message,
         TestData expectedNoticeMsgMessage
     ) {
-        INoticeMsg actualImmediateLoadedNoticeMsgMessage = new LazyLoadedNoticeMsg( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        INoticeMsg actualImmediateLoadedNoticeMsgMessage = new LazyLoadedNoticeMsg( rawMessage );
 
         Assert.That( actualImmediateLoadedNoticeMsgMessage.MessageType, Is.EqualTo( MessageType.Notice ) );
 

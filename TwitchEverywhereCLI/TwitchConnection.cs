@@ -97,9 +97,10 @@ internal class TwitchConnection(
     ) {
         switch( message.MessageType ) {
             case MessageType.PrivMsg:
-                IPrivMsg lazyLoadedPrivMsg = (PrivMsg) message;
-                PrivMessageCallback( lazyLoadedPrivMsg );
-                Console.WriteLine( $"PrivMsg: {lazyLoadedPrivMsg.DisplayName}, {lazyLoadedPrivMsg.Text}" );
+                IPrivMsg lazyLoadedPrivMsg = (IPrivMsg) message;
+                Console.WriteLine(lazyLoadedPrivMsg);
+                // PrivMessageCallback( lazyLoadedPrivMsg );
+                // Console.WriteLine( $"PrivMsg: {lazyLoadedPrivMsg.DisplayName}, {lazyLoadedPrivMsg.Text}" );
 
                 // PrivMsg reply = new(
                 //     channel: "pureooze",
@@ -112,7 +113,7 @@ internal class TwitchConnection(
                 // Console.WriteLine( sendMessage ? $"Sent message SUCCEEDED!" : $"Sent message FAILED!" );
                 break;
             case MessageType.ClearChat:
-                IClearChatMsg lazyLoadedClearChatMsgMsg = (LazyLoadedClearChatMsg) message;
+                IClearChatMsg lazyLoadedClearChatMsgMsg = (IClearChatMsg) message;
                 ClearChatCallback( lazyLoadedClearChatMsgMsg );
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearChatMsgMsg.Text}" );
                 break;
@@ -148,7 +149,7 @@ internal class TwitchConnection(
                 Console.WriteLine( $"WhisperMsg: {lazyLoadedWhisperMsg}" );
                 break;
             case MessageType.Join:
-                IJoinMsg lazyLoadedJoinMsg = (LazyLoadedJoinMsg) message;
+                IJoinMsg lazyLoadedJoinMsg = (IJoinMsg) message;
                 Console.WriteLine( $"{lazyLoadedJoinMsg.User} joining {lazyLoadedJoinMsg.Channel}" );
                 break;
             case MessageType.Part:
@@ -156,7 +157,7 @@ internal class TwitchConnection(
                 Console.WriteLine( $"{lazyLoadedPartMsg.User} leaving {lazyLoadedPartMsg.Channel}" );
                 break;
             case MessageType.Unknown:
-                IUnknownMessage lazyLoadedUnknownMsg = (LazyLoadedUnknownMessage) message;
+                IUnknownMessage lazyLoadedUnknownMsg = (IUnknownMessage) message;
                 Console.WriteLine( $"UnknownMessage: {lazyLoadedUnknownMsg}" );
                 break;
             case MessageType.HostTarget:
