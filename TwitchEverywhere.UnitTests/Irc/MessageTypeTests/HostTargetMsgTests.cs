@@ -1,4 +1,6 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
@@ -13,11 +15,11 @@ public class HostTargetMsgTests {
         string message,
         TestData expectedHostTargetMessage
     ) {
-        IHostTargetMsg actualHostTargetMsgMessage = new LazyLoadedHostTargetMsg( channel: "channel", message: message );
-
-        Assert.That( actualHostTargetMsgMessage.MessageType, Is.EqualTo( MessageType.HostTarget ) );
-
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IHostTargetMsg actualHostTargetMsgMessage = new LazyLoadedHostTargetMsg( rawMessage );
+        
         Assert.Multiple(() => {
+            Assert.That( actualHostTargetMsgMessage.MessageType, Is.EqualTo( MessageType.HostTarget ) );
             Assert.That(actualHostTargetMsgMessage.HostingChannel, Is.EqualTo(expectedHostTargetMessage.HostingChannel), "HostingChannel was not equal to expected value");
             Assert.That(actualHostTargetMsgMessage.IsHostingChannel, Is.EqualTo(expectedHostTargetMessage.IsHostingChannel), "IsHostingChannel was not equal to expected value");
             Assert.That(actualHostTargetMsgMessage.NumberOfViewers, Is.EqualTo(expectedHostTargetMessage.NumberOfViewers), "NumberOfViewers was not equal to expected value");
@@ -29,8 +31,8 @@ public class HostTargetMsgTests {
         yield return new TestCaseData(
             ":tmi.twitch.tv HOSTTARGET #channel :xyz 10",
             new TestData(
-                hostingChannel: "channel",
-                channel: "xyz",
+                hostingChannel: "xyz",
+                channel: "channel",
                 numberOfViewers: 10,
                 isHostingChannel: true
             )
@@ -39,8 +41,8 @@ public class HostTargetMsgTests {
         yield return new TestCaseData(
             ":tmi.twitch.tv HOSTTARGET #channel :- 10",
             new TestData(
-                hostingChannel: "channel",
-                channel: "-",
+                hostingChannel: "-",
+                channel: "channel",
                 numberOfViewers: 10,
                 isHostingChannel: false
             )

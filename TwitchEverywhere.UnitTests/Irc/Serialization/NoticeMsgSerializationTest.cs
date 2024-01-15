@@ -1,4 +1,6 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
@@ -12,7 +14,8 @@ public class NoticeMsgSerializationTest {
         const string channel = "channel";
         const string message =
             "@room-id=12345678;target-user-id=87654321;tmi-sent-ts=1642715756806 :tmi.twitch.tv CLEARCHAT #dallas :ronni";
-        LazyLoadedNoticeMsg lazyLoadedClearChatMsg = new( channel: channel, message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        LazyLoadedNoticeMsg lazyLoadedClearChatMsg = new( rawMessage );
 
         Assert.That( lazyLoadedClearChatMsg.RawMessage, Is.EqualTo( message ) );
     }

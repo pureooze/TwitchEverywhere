@@ -1,4 +1,6 @@
+using System.Net;
 using TwitchEverywhere.Core;
+using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Rest.Implementation;
@@ -43,9 +45,21 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
     ) {
         return await m_usersApiService.GetUserBlockList(
             httpClient: m_httpClientWrapper,
-            broadcasterId, 
-            first, 
-            after
+            broadcasterId: broadcasterId, 
+            first: first, 
+            after: after
+        );
+    }
+    async Task<HttpStatusCode> IRestApiService.BlockUser(
+        string targetUserId,
+        SourceContext? sourceContext,
+        Reason? reason
+    ) {
+        return await m_usersApiService.BlockUser(
+            httpClient: m_httpClientWrapper,
+            targetUserId, 
+            sourceContext.ToString()?.ToLower(), 
+            reason.ToString()?.ToLower()
         );
     }
 

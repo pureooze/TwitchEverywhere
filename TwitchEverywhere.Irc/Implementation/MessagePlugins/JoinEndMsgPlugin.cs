@@ -1,24 +1,20 @@
 using TwitchEverywhere.Core.Types;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
 
 public class JoinEndMsgPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        string response,
-        string channel
+        MessageType messageType
     ) {
-        return response.Contains( $"tmi.twitch.tv 366" );
+        return messageType == MessageType.JoinEnd;
     }
 
     IMessage IMessagePlugin.GetMessageData(
-        string response,
-        string channel
+        RawMessage response
     ) {
-        return new LazyLoadedJoinEndMsg(
-            channel,
-            response
-        );
+        return new JoinEndMsg( response );
     }
 }

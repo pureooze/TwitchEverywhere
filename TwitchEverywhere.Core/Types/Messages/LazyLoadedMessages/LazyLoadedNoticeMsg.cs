@@ -1,20 +1,39 @@
+using System.Text;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages; 
 
-public class LazyLoadedNoticeMsg(
-    string channel,
-    string message
-) : INoticeMsg {
+public class LazyLoadedNoticeMsg( RawMessage response ) : INoticeMsg {
+    private string m_tags;
 
     public MessageType MessageType => MessageType.Notice;
     
-    public string RawMessage => message;
-    public string Channel { get; } = channel;
+    public string RawMessage { get; } = Encoding.UTF8.GetString( response.Data.Span );
 
-    public NoticeMsgIdType MsgId => GetNoticeMsgIdType( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgIdPattern() ) );
+    public string Channel => "";
 
-    public string TargetUserId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.TargetUserIdPattern() );
+    public NoticeMsgIdType MsgId {
+        get {
+            InitializeTags();
+            return GetNoticeMsgIdType(MessagePluginUtils.GetValueFromResponse(m_tags, MessagePluginUtils.MsgIdPattern()));
+        }
+    }
+
+    public string TargetUserId {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse(m_tags, MessagePluginUtils.TargetUserIdPattern());
+        }
+    }
+    
+    private void InitializeTags() {
+
+        if( !string.IsNullOrEmpty( m_tags ) ) {
+            return;
+        }
+
+        m_tags = MessagePluginUtils.GetTagsFromMessage( response );
+    }
     
     private static NoticeMsgIdType GetNoticeMsgIdType(
         string targetMessageId

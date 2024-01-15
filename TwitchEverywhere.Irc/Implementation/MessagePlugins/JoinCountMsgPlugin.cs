@@ -1,24 +1,20 @@
 using TwitchEverywhere.Core.Types;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
 
 public class JoinCountMsgPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        string response,
-        string channel
+        MessageType messageType
     ) {
-        return response.Contains( $"tmi.twitch.tv 353" );
+        return messageType == MessageType.JoinCount;
     }
 
+ 
     IMessage IMessagePlugin.GetMessageData(
-        string response,
-        string channel
+        RawMessage response
     ) {
-        return new LazyLoadedJoinCountMsg(
-            channel,
-            response
-        );
+        throw new NotImplementedException();
     }
 }

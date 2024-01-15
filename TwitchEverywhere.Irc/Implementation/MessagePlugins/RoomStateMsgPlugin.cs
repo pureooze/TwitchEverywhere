@@ -1,4 +1,5 @@
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
@@ -6,13 +7,12 @@ namespace TwitchEverywhere.Irc.Implementation.MessagePlugins;
 public class RoomStateMsgPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        string response,
-        string channel
+        MessageType messageType
     ) {
-        return response.Contains( $" ROOMSTATE #{channel}" );
+        throw new NotImplementedException();
     }
-    
-    IMessage IMessagePlugin.GetMessageData(
+
+    public IMessage GetMessageData(
         string response,
         string channel
     ) {
@@ -20,5 +20,10 @@ public class RoomStateMsgPlugin : IMessagePlugin {
             channel: channel,
             message: response
         );
+    }
+    IMessage IMessagePlugin.GetMessageData(
+        RawMessage response
+    ) {
+        throw new NotImplementedException();
     }
 }

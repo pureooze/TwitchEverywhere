@@ -1,3 +1,5 @@
+using System.Net;
+using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Rest;
@@ -21,7 +23,13 @@ public interface IRestApiService {
 
     Task<GetUserBlockListResponse> GetUserBlockList(
         string broadcasterId,
-        int? first = 20,
-        string? after = null
+        int? first,
+        string? after
+    );
+    
+    Task<HttpStatusCode> BlockUser(
+        string targetUserId,
+        SourceContext? sourceContext,
+        Reason? reason
     );
 }

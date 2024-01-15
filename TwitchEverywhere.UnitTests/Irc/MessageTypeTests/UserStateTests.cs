@@ -1,5 +1,8 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.MessageTypeTests;
@@ -13,7 +16,8 @@ public class UserStateTests {
         string message,
         TestData expectedUserStateMessage
     ) {
-        LazyLoadedUserStateMsg actualLazyLoadedUserStateMsgMessage = new( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IUserStateMsg actualLazyLoadedUserStateMsgMessage = new LazyLoadedUserStateMsg( rawMessage );
 
         Assert.That( actualLazyLoadedUserStateMsgMessage.MessageType, Is.EqualTo( MessageType.UserState ) );
         

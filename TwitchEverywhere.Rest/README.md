@@ -70,10 +70,12 @@ Note that currently there are no benchmarks for `TwitchEverywhere.Rest` but they
 ### Twitch Helix API
 
 #### Users
-| Endpoint    | Supported | API Link                                              |
-|-------------|-----------|-------------------------------------------------------|
-| Get Users   | ✅         | https://dev.twitch.tv/docs/api/reference/#get-users   |
-| Update User | ✅         | https://dev.twitch.tv/docs/api/reference/#update-user |
+| Endpoint            | Supported | API Link                                                      |
+|---------------------|-----------|---------------------------------------------------------------|
+| Get Users           | ✅         | https://dev.twitch.tv/docs/api/reference/#get-users           |
+| Update User         | ✅         | https://dev.twitch.tv/docs/api/reference/#update-user         |
+| Get User Block List | ✅         | https://dev.twitch.tv/docs/api/reference/#get-user-block-list |
+| Block User          | ✅         | https://dev.twitch.tv/docs/api/reference/#block-user          |
 
 #### Videos
 | Endpoint    | Supported | API Link                                              |

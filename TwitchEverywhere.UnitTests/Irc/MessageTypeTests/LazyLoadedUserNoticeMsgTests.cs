@@ -1,11 +1,13 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.MessageTypeTests;
 
 [TestFixture]
-public class LazyLoadedUserNoticeTests {
+public class LazyLoadedUserNoticeMsgTests {
 
     [Test]
     [TestCaseSource( nameof(UserNoticeMessages) )]
@@ -13,46 +15,47 @@ public class LazyLoadedUserNoticeTests {
         string message,
         TestData expectedUserNoticeMessage
     ) {
-        LazyLoadedUserNotice actualLazyLoadedUserNoticeMessage = new( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        LazyLoadedUserNoticeMsg actualLazyLoadedUserNoticeMsgMessage = new( rawMessage );
 
-        Assert.That( actualLazyLoadedUserNoticeMessage.MessageType, Is.EqualTo( MessageType.UserNotice ) );
+        Assert.That( actualLazyLoadedUserNoticeMsgMessage.MessageType, Is.EqualTo( MessageType.UserNotice ) );
         
         Assert.Multiple(() => {
-            Assert.That(actualLazyLoadedUserNoticeMessage.BadgeInfo, Is.EqualTo(expectedUserNoticeMessage.BadgeInfo), "BadgeInfo was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Badges, Is.EqualTo(expectedUserNoticeMessage.Badges), "Badges was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Color, Is.EqualTo(expectedUserNoticeMessage.Color), "Color was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.DisplayName, Is.EqualTo(expectedUserNoticeMessage.DisplayName), "DisplayName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Emotes, Is.EqualTo(expectedUserNoticeMessage.Emotes), "Emotes was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Id, Is.EqualTo(expectedUserNoticeMessage.Id), "Id was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Login, Is.EqualTo(expectedUserNoticeMessage.Login), "Login was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Mod, Is.EqualTo(expectedUserNoticeMessage.Mod), "Mod was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgId, Is.EqualTo(expectedUserNoticeMessage.MsgId), "MsgId was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.RoomId, Is.EqualTo(expectedUserNoticeMessage.RoomId), "RoomId was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Subscriber, Is.EqualTo(expectedUserNoticeMessage.Subscriber), "Subscriber was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.SystemMsg, Is.EqualTo(expectedUserNoticeMessage.SystemMsg), "SystemMsg was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Timestamp, Is.EqualTo(expectedUserNoticeMessage.Timestamp), "Timestamp was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.Turbo, Is.EqualTo(expectedUserNoticeMessage.Turbo), "Turbo was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.UserId, Is.EqualTo(expectedUserNoticeMessage.UserId), "UserId was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.UserType, Is.EqualTo(expectedUserNoticeMessage.UserType), "UserType was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamCumulativeMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamCumulativeMonths), "MsgParamCumulativeMonths was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamDisplayName, Is.EqualTo(expectedUserNoticeMessage.MsgParamDisplayName), "MsgParamDisplayName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamLogin, Is.EqualTo(expectedUserNoticeMessage.MsgParamLogin), "MsgParamLogin was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamMonths), "MsgParamMonths was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamPromoGiftTotal, Is.EqualTo(expectedUserNoticeMessage.MsgParamPromoGiftTotal), "MsgParamPromoGiftTotal was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamPromoName, Is.EqualTo(expectedUserNoticeMessage.MsgParamPromoName), "MsgParamPromoName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamRecipientDisplayName, Is.EqualTo(expectedUserNoticeMessage.MsgParamRecipientDisplayName), "MsgParamRecipientDisplayName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamRecipientId, Is.EqualTo(expectedUserNoticeMessage.MsgParamRecipientId), "MsgParamRecipientId was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamRecipientUserName, Is.EqualTo(expectedUserNoticeMessage.MsgParamRecipientUserName), "MsgParamRecipientUserName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamSenderLogin, Is.EqualTo(expectedUserNoticeMessage.MsgParamSenderLogin), "MsgParamSenderLogin was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamSenderName, Is.EqualTo(expectedUserNoticeMessage.MsgParamSenderName), "MsgParamSenderName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamShouldShareStreak, Is.EqualTo(expectedUserNoticeMessage.MsgParamShouldShareStreak), "MsgParamShouldShareStreak was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamStreakMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamStreakMonths), "MsgParamStreakMonths was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamSubPlan, Is.EqualTo(expectedUserNoticeMessage.MsgParamSubPlan), "MsgParamSubPlan was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamSubPlanName, Is.EqualTo(expectedUserNoticeMessage.MsgParamSubPlanName), "MsgParamSubPlanName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamViewerCount, Is.EqualTo(expectedUserNoticeMessage.MsgParamViewerCount), "MsgParamViewerCount was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamRitualName, Is.EqualTo(expectedUserNoticeMessage.MsgParamRitualName), "MsgParamRitualName was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamThreshold, Is.EqualTo(expectedUserNoticeMessage.MsgParamThreshold), "MsgParamThreshold was not equal to expected value");
-            Assert.That(actualLazyLoadedUserNoticeMessage.MsgParamGiftMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamGiftMonths), "MsgParamGiftMonths was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.BadgeInfo, Is.EqualTo(expectedUserNoticeMessage.BadgeInfo), "BadgeInfo was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Badges, Is.EqualTo(expectedUserNoticeMessage.Badges), "Badges was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Color, Is.EqualTo(expectedUserNoticeMessage.Color), "Color was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.DisplayName, Is.EqualTo(expectedUserNoticeMessage.DisplayName), "DisplayName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Emotes, Is.EqualTo(expectedUserNoticeMessage.Emotes), "Emotes was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Id, Is.EqualTo(expectedUserNoticeMessage.Id), "Id was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Login, Is.EqualTo(expectedUserNoticeMessage.Login), "Login was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Mod, Is.EqualTo(expectedUserNoticeMessage.Mod), "Mod was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgId, Is.EqualTo(expectedUserNoticeMessage.MsgId), "MsgId was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.RoomId, Is.EqualTo(expectedUserNoticeMessage.RoomId), "RoomId was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Subscriber, Is.EqualTo(expectedUserNoticeMessage.Subscriber), "Subscriber was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.SystemMsg, Is.EqualTo(expectedUserNoticeMessage.SystemMsg), "SystemMsg was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Timestamp, Is.EqualTo(expectedUserNoticeMessage.Timestamp), "Timestamp was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.Turbo, Is.EqualTo(expectedUserNoticeMessage.Turbo), "Turbo was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.UserId, Is.EqualTo(expectedUserNoticeMessage.UserId), "UserId was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.UserType, Is.EqualTo(expectedUserNoticeMessage.UserType), "UserType was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamCumulativeMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamCumulativeMonths), "MsgParamCumulativeMonths was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamDisplayName, Is.EqualTo(expectedUserNoticeMessage.MsgParamDisplayName), "MsgParamDisplayName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamLogin, Is.EqualTo(expectedUserNoticeMessage.MsgParamLogin), "MsgParamLogin was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamMonths), "MsgParamMonths was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamPromoGiftTotal, Is.EqualTo(expectedUserNoticeMessage.MsgParamPromoGiftTotal), "MsgParamPromoGiftTotal was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamPromoName, Is.EqualTo(expectedUserNoticeMessage.MsgParamPromoName), "MsgParamPromoName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamRecipientDisplayName, Is.EqualTo(expectedUserNoticeMessage.MsgParamRecipientDisplayName), "MsgParamRecipientDisplayName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamRecipientId, Is.EqualTo(expectedUserNoticeMessage.MsgParamRecipientId), "MsgParamRecipientId was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamRecipientUserName, Is.EqualTo(expectedUserNoticeMessage.MsgParamRecipientUserName), "MsgParamRecipientUserName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamSenderLogin, Is.EqualTo(expectedUserNoticeMessage.MsgParamSenderLogin), "MsgParamSenderLogin was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamSenderName, Is.EqualTo(expectedUserNoticeMessage.MsgParamSenderName), "MsgParamSenderName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamShouldShareStreak, Is.EqualTo(expectedUserNoticeMessage.MsgParamShouldShareStreak), "MsgParamShouldShareStreak was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamStreakMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamStreakMonths), "MsgParamStreakMonths was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamSubPlan, Is.EqualTo(expectedUserNoticeMessage.MsgParamSubPlan), "MsgParamSubPlan was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamSubPlanName, Is.EqualTo(expectedUserNoticeMessage.MsgParamSubPlanName), "MsgParamSubPlanName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamViewerCount, Is.EqualTo(expectedUserNoticeMessage.MsgParamViewerCount), "MsgParamViewerCount was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamRitualName, Is.EqualTo(expectedUserNoticeMessage.MsgParamRitualName), "MsgParamRitualName was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamThreshold, Is.EqualTo(expectedUserNoticeMessage.MsgParamThreshold), "MsgParamThreshold was not equal to expected value");
+            Assert.That(actualLazyLoadedUserNoticeMsgMessage.MsgParamGiftMonths, Is.EqualTo(expectedUserNoticeMessage.MsgParamGiftMonths), "MsgParamGiftMonths was not equal to expected value");
         });
     }
 

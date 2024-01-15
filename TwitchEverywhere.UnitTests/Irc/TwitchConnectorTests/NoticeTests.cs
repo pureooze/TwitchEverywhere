@@ -3,7 +3,6 @@ using Moq;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Irc.Implementation;
 
@@ -20,30 +19,37 @@ public class NoticeTests {
         "client_name"
     );
 
-    private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds(1507246572675).UtcDateTime;
-        
+    private bool m_messageCallbackCalled;
     private ITwitchConnector m_twitchConnector;
 
     [Test]
-    [TestCaseSource(nameof(NoticeMessages))]
-    public async Task Notice( IImmutableList<string> messages, INoticeMsg expectedMessage ) {
+    public async Task MessageDeleteSuccessNoUserId() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
+        }.ToImmutableList();
+        
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
-        Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
-        dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
-        IMessageProcessor messageProcessor = new MessageProcessor( dateTimeService: dateTimeService.Object );
+        IMessageProcessor messageProcessor = new MessageProcessor();
         
         void MessageCallback(
             IMessage message
-        ) {
-            Assert.That( message, Is.Not.Null );
-            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
-
-            INoticeMsg msg = (LazyLoadedNoticeMsg)message;
-            NoticeMessageCallback( msg, expectedMessage );
+        )
+        {
+            m_messageCallbackCalled = true;
+            INoticeMsg lazyLoadedNoticeMsg = (INoticeMsg)message;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That( message, Is.Not.Null );
+                Assert.That( message.MessageType, Is.EqualTo( MessageType.Notice ), "Incorrect message type set" );
+                Assert.That(lazyLoadedNoticeMsg.MsgId, Is.EqualTo(NoticeMsgIdType.DeleteMessageSuccess), "MsgId was not equal to expected value");
+                Assert.That(lazyLoadedNoticeMsg.TargetUserId, Is.Empty, "TargetUserId was not equal to expected value");
+            });
         }
-        
+
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer.Object, 
@@ -52,37 +58,51 @@ public class NoticeTests {
         );
         
         bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
-        Assert.That( result, Is.True );
+        Assert.Multiple(() => {
+            Assert.That(actual: result, expression: Is.True);
+            Assert.That(m_messageCallbackCalled, Is.True, "Message callback was not called");
+        });
     }
     
-    private void NoticeMessageCallback(
-        INoticeMsg immediateLoadedNoticeMsg,
-        INoticeMsg expectedNoticeMessage
-    ) {
-        Assert.That( immediateLoadedNoticeMsg.MsgId, Is.EqualTo( expectedNoticeMessage.MsgId ), "MsgId was not equal to expected value");
-        Assert.That( immediateLoadedNoticeMsg.TargetUserId, Is.EqualTo( expectedNoticeMessage?.TargetUserId ), "TargetUserId was not equal to expected value");
-        Assert.That( immediateLoadedNoticeMsg.MessageType, Is.EqualTo( expectedNoticeMessage?.MessageType ), "MessageType was not equal to expected value");
-    }
-    
-    private static IEnumerable<TestCaseData> NoticeMessages() {
-        yield return new TestCaseData(
-            new List<string> {
-                $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
-            }.ToImmutableList(),
-            new LazyLoadedNoticeMsg(
-                channel: "channel", 
-                message: $"@msg-id=delete_message_success :tmi.twitch.tv NOTICE #channel :The message from foo is now deleted."
-            )
-        ).SetName("Message Delete Success, No User ID");
+    [Test]
+    public async Task WhisperRestrictedWithUserId() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
+        }.ToImmutableList();
         
-        yield return new TestCaseData(
-            new List<string> {
-                $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
-            }.ToImmutableList(),
-            new LazyLoadedNoticeMsg(
-                channel: "channel", 
-                message: $"@msg-id=whisper_restricted;target-user-id=12345678 :tmi.twitch.tv NOTICE #channel :Your settings prevent you from sending this whisper."
-            )
-        ).SetName("Whisper Restricted, With User ID");
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+
+        IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
+        IMessageProcessor messageProcessor = new MessageProcessor();
+        
+        void MessageCallback(
+            IMessage message
+        )
+        {
+            m_messageCallbackCalled = true;
+            INoticeMsg lazyLoadedNoticeMsg = (INoticeMsg)message;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That( message, Is.Not.Null );
+                Assert.That( message.MessageType, Is.EqualTo( MessageType.Notice ), "Incorrect message type set" );
+                Assert.That(lazyLoadedNoticeMsg.MsgId, Is.EqualTo(NoticeMsgIdType.WhisperRestricted), "MsgId was not equal to expected value");
+                Assert.That(lazyLoadedNoticeMsg.TargetUserId, Is.EqualTo("12345678"), "TargetUserId was not equal to expected value");
+            });
+        }
+
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
+        Assert.Multiple(() => {
+            Assert.That(actual: result, expression: Is.True);
+            Assert.That(m_messageCallbackCalled, Is.True, "Message callback was not called");
+        });
     }
 }

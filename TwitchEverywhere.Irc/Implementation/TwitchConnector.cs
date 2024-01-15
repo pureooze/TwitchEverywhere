@@ -2,6 +2,7 @@
 using System.Text;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Irc.Implementation;
@@ -151,26 +152,47 @@ internal sealed class TwitchConnector(
                 cancellationToken: CancellationToken.None
             );
         } else {
-            string twitchResponse = Encoding.ASCII.GetString( 
-                bytes: buffer, 
-                index: 0, 
-                count: result.Count 
-            );
-
-            string[] responses = twitchResponse.Trim().Split( "\r\n" );
-            foreach (string response in responses) {
-                // keep alive, let twitch know we are still listening
-                if( response.Contains( "PING :tmi.twitch.tv" ) ) {
-                    await SendMessage( ws, "PONG :tmi.twitch.tv" );
-                } else {
-                    messageProcessor.ProcessMessage(
-                        response: response,
-                        channel: m_options.Channel, 
-                        callback: callback
-                    );
-                }
-            }
+            
+            Parse( data: buffer, callback: callback );
+            // string twitchResponse = Encoding.ASCII.GetString( 
+            //     bytes: buffer, 
+            //     index: 0, 
+            //     count: result.Count 
+            // );
+            //
+            // string[] responses = twitchResponse.Trim().Split( "\r\n" );
+            // foreach (string response in responses) {
+            //     // keep alive, let twitch know we are still listening
+            //     if( response.Contains( "PING :tmi.twitch.tv" ) ) {
+            //         await SendMessage( ws, "PONG :tmi.twitch.tv" );
+            //     } else {
+            //         messageProcessor.ProcessMessage(
+            //             response: response,
+            //             channel: m_options.Channel, 
+            //             callback: callback
+            //         );
+            //     }
+            // }
         }
+    }
+    
+    private async Task Parse(ReadOnlyMemory<byte> data, Action<IMessage> callback) {
+        RawMessage message = new(data);
+        
+        if( message.Type == MessageType.Ping ) {
+            await SendMessage( webSocketConnection, "PONG :tmi.twitch.tv" );
+        } else {
+            messageProcessor.ProcessMessage(
+                response: message,
+                channel: m_options.Channel, 
+                callback: callback
+            );
+        }
+        
+        
+        // if (message.HasMoreMessages) {
+        //     Parse(data[message.NextMessageStartIndex..], callback);
+        // }
     }
 
     private async static Task SendMessage(
@@ -184,6 +206,5 @@ internal sealed class TwitchConnector(
             cancellationToken: CancellationToken.None
         );
     }
-    
     
 }

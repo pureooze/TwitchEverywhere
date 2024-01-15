@@ -1,24 +1,20 @@
 using TwitchEverywhere.Core.Types;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
 
 public class CapReqPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        string response,
-        string channel
+        MessageType messageType
     ) {
-        return response.Contains( $":tmi.twitch.tv CAP * ACK" );
+        return messageType == MessageType.CapReq;
     }
 
     IMessage IMessagePlugin.GetMessageData(
-        string response,
-        string channel
+        RawMessage response
     ) {
-        return new LazyLoadedCapReq(
-            channel,
-            response
-        );
+        return new CapReq( response );
     }
 }

@@ -1,4 +1,6 @@
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
@@ -6,19 +8,14 @@ namespace TwitchEverywhere.Irc.Implementation.MessagePlugins;
 public class UserStateMsgPlugin : IMessagePlugin {
 
     bool IMessagePlugin.CanHandle(
-        string response,
-        string channel
+        MessageType messageType
     ) {
-        return response.Contains( $" USERSTATE #{channel}" );
+        return messageType == MessageType.UserState;
     }
 
     IMessage IMessagePlugin.GetMessageData(
-        string response,
-        string channel
+        RawMessage response
     ) {
-        return new LazyLoadedUserStateMsg(
-            channel: channel,
-            message: response 
-        );
+        return new UserStateMsg( response );
     }
 }

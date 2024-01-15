@@ -1,39 +1,48 @@
 using System.Collections.Immutable;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
+using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
+namespace TwitchEverywhere.Core.Types.Messages.Implementation;
 
-namespace TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
-
-public class ImmediateLoadedPrivMsg : IPrivMsg {
-    private readonly string m_channel;
-    private IImmutableList<Badge> m_badges;
-    private IImmutableList<Badge> m_badgeInfo;
+public class PrivMsg : IPrivMsg {
+    private readonly IPrivMsg m_inner;
+    
+    private string m_rawMessage;
+    private string m_channel;
+    private IImmutableList<Badge>? m_badges;
+    private IImmutableList<Badge>? m_badgeInfo;
     private string m_bits;
     private string m_color;
     private string m_displayName;
     private IImmutableList<Emote>? m_emotes;
     private string m_id;
-    private bool m_mod;
+    private bool? m_mod;
     private long? m_pinnedChatPaidAmount;
     private string m_pinnedChatPaidCurrency;
     private long? m_pinnedChatPaidExponent;
     private PinnedChatPaidLevel? m_pinnedChatPaidLevel;
-    private bool m_pinnedChatPaidIsSystemMessage;
+    private bool? m_pinnedChatPaidIsSystemMessage;
     private string m_replyParentMsgId;
     private string m_replyParentUserId;
     private string m_replyParentUserLogin;
     private string m_replyParentDisplayName;
     private string m_replyThreadParentMsg;
     private string m_roomId;
-    private bool m_subscriber;
+    private bool? m_subscriber;
     private DateTime? m_timestamp;
-    private bool m_turbo;
+    private bool? m_turbo;
     private string m_userId;
-    private UserType m_userType;
-    private bool m_vip;
-    private string m_text;
+    private UserType? m_userType;
+    private bool? m_vip;
+    private string m_text = string.Empty;
 
-    public ImmediateLoadedPrivMsg(
+    public PrivMsg(
+        RawMessage message
+    ) {
+        m_inner = new LazyLoadedPrivMsg( message );
+    }
+    
+    public PrivMsg(
         string channel,
         IImmutableList<Badge>? badges = null,
         IImmutableList<Badge>? badgeInfo = null,
@@ -89,70 +98,269 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
         m_userType = userType;
         m_vip = vip;
         m_text = text ?? string.Empty;
+        m_rawMessage = GetRawMessageString();
     }
 
-    public MessageType MessageType => MessageType.PrivMsg;
+    MessageType IMessage.MessageType => MessageType.PrivMsg;
 
-    public string RawMessage => GetRawMessageString();
+    string IMessage.RawMessage {
+        get {
+            if ( string.IsNullOrEmpty( m_rawMessage ) ) {
+                m_rawMessage = m_inner.RawMessage;
+            }
+
+            return m_rawMessage;
+        }
+    }
     
-    public string Channel => m_channel;
+    string IMessage.Channel {
+        get {
+            if ( string.IsNullOrEmpty( m_channel ) ) {
+                m_channel = m_inner.Channel;
+            }
 
-    IImmutableList<Badge> IPrivMsg.Badges => m_badges;
+            return m_channel;
+        }
+    }
 
-    IImmutableList<Badge> IPrivMsg.BadgeInfo => m_badgeInfo;
+    IImmutableList<Badge> IPrivMsg.Badges {
+        get {
+            m_badges ??= m_inner.Badges;
 
-    string IPrivMsg.Bits => m_bits;
+            return m_badges;
+        }
+    }
 
-    string IPrivMsg.Color => m_color;
+    IImmutableList<Badge> IPrivMsg.BadgeInfo {
+        get {
+            m_badgeInfo ??= m_inner.BadgeInfo;
 
-    string IPrivMsg.DisplayName => m_displayName;
+            return m_badgeInfo;
+        }
+    }
 
-    IImmutableList<Emote>? IPrivMsg.Emotes => m_emotes;
+    string IPrivMsg.Bits {
+        get {
+            if ( string.IsNullOrEmpty( m_bits ) ) {
+                m_bits = m_inner.Bits;
+            }
 
-    string IPrivMsg.Id => m_id;
+            return m_bits;
+        }
+    }
 
-    bool IPrivMsg.Mod => m_mod;
+    string IPrivMsg.Color {
+        get {
+            if ( string.IsNullOrEmpty( m_color ) ) {
+                m_color = m_inner.Color;
+            }
 
-    long? IPrivMsg.PinnedChatPaidAmount => m_pinnedChatPaidAmount;
+            return m_color;
+        }
+    }
 
-    string IPrivMsg.PinnedChatPaidCurrency => m_pinnedChatPaidCurrency;
+    string IPrivMsg.DisplayName {
+        get {
+            if ( string.IsNullOrEmpty( m_displayName ) ) {
+                m_displayName = m_inner.DisplayName;
+            }
 
-    long? IPrivMsg.PinnedChatPaidExponent => m_pinnedChatPaidExponent;
+            return m_displayName;
+        }
+    }
 
-    PinnedChatPaidLevel? IPrivMsg.PinnedChatPaidLevel => m_pinnedChatPaidLevel;
+    IImmutableList<Emote>? IPrivMsg.Emotes {
+        get {
+            m_emotes ??= m_inner.Emotes;
 
-    bool IPrivMsg.PinnedChatPaidIsSystemMessage => m_pinnedChatPaidIsSystemMessage;
+            return m_emotes;
+        }
+    }
 
-    string IPrivMsg.ReplyParentMsgId => m_replyParentMsgId;
+    string IPrivMsg.Id {
+        get {
+            if ( string.IsNullOrEmpty( m_id ) ) {
+                m_id = m_inner.Id;
+            }
 
-    string IPrivMsg.ReplyParentUserId => m_replyParentUserId;
+            return m_id;
+        }
+    }
 
-    string IPrivMsg.ReplyParentUserLogin => m_replyParentUserLogin;
+    bool IPrivMsg.Mod {
+        get {
+            m_mod ??= m_inner.Mod;
 
-    string IPrivMsg.ReplyParentDisplayName => m_replyParentDisplayName;
+            return m_mod.Value;
+        }
+    }
 
-    string IPrivMsg.ReplyThreadParentMsg => m_replyThreadParentMsg;
+    long? IPrivMsg.PinnedChatPaidAmount {
+        get {
+            m_pinnedChatPaidAmount ??= m_inner.PinnedChatPaidAmount;
 
-    string IPrivMsg.RoomId => m_roomId;
+            return m_pinnedChatPaidAmount;
+        }
+    }
 
-    bool IPrivMsg.Subscriber => m_subscriber;
+    string IPrivMsg.PinnedChatPaidCurrency {
+        get {
+            if ( string.IsNullOrEmpty( m_pinnedChatPaidCurrency ) ) {
+                m_pinnedChatPaidCurrency = m_inner.PinnedChatPaidCurrency;
+            }
 
-    DateTime? IPrivMsg.Timestamp => m_timestamp;
+            return m_pinnedChatPaidCurrency;
+        }
+    }
 
-    bool IPrivMsg.Turbo => m_turbo;
+    long? IPrivMsg.PinnedChatPaidExponent {
+        get {
+            m_pinnedChatPaidExponent ??= m_inner.PinnedChatPaidExponent;
 
-    string IPrivMsg.UserId => m_userId;
+            return m_pinnedChatPaidExponent;
+        }
+    }
 
-    UserType IPrivMsg.UserType => m_userType;
+    PinnedChatPaidLevel? IPrivMsg.PinnedChatPaidLevel {
+        get {
+            m_pinnedChatPaidLevel ??= m_inner.PinnedChatPaidLevel;
 
-    bool IPrivMsg.Vip => m_vip;
+            return m_pinnedChatPaidLevel;
+        }
+    }
 
-    string IPrivMsg.Text => m_text;
+    bool IPrivMsg.PinnedChatPaidIsSystemMessage {
+        get {
+            m_pinnedChatPaidIsSystemMessage ??= m_inner.PinnedChatPaidIsSystemMessage;
 
+            return m_pinnedChatPaidIsSystemMessage.Value;
+        }
+    }
+
+    string IPrivMsg.ReplyParentMsgId {
+        get {
+            if ( string.IsNullOrEmpty( m_replyParentMsgId ) ) {
+                m_replyParentMsgId = m_inner.ReplyParentMsgId;
+            }
+
+            return m_replyParentMsgId;
+        }
+    }
+
+    string IPrivMsg.ReplyParentUserId {
+        get {
+            if ( string.IsNullOrEmpty( m_replyParentUserId ) ) {
+                m_replyParentUserId = m_inner.ReplyParentUserId;
+            }
+
+            return m_replyParentUserId;
+        }
+    }
+
+    string IPrivMsg.ReplyParentUserLogin {
+        get {
+            if ( string.IsNullOrEmpty( m_replyParentUserLogin ) ) {
+                m_replyParentUserLogin = m_inner.ReplyParentUserLogin;
+            }
+
+            return m_replyParentUserLogin;
+        }
+    }
+
+    string IPrivMsg.ReplyParentDisplayName {
+        get {
+            if ( string.IsNullOrEmpty( m_replyParentDisplayName ) ) {
+                m_replyParentDisplayName = m_inner.ReplyParentDisplayName;
+            }
+
+            return m_replyParentDisplayName;
+        }
+    }
+
+    string IPrivMsg.ReplyThreadParentMsg {
+        get {
+            if ( string.IsNullOrEmpty( m_replyThreadParentMsg ) ) {
+                m_replyThreadParentMsg = m_inner.ReplyThreadParentMsg;
+            }
+
+            return m_replyThreadParentMsg;
+        }
+    }
+
+    string IPrivMsg.RoomId {
+        get {
+            if ( string.IsNullOrEmpty( m_roomId ) ) {
+                m_roomId = m_inner.RoomId;
+            }
+
+            return m_roomId;
+        }
+    }
+
+    bool IPrivMsg.Subscriber {
+        get {
+            m_subscriber ??= m_inner.Subscriber;
+
+            return m_subscriber.Value;
+        }
+    }
+
+    DateTime? IPrivMsg.Timestamp {
+        get {
+            m_timestamp ??= m_inner.Timestamp;
+
+            return m_timestamp;
+        }
+    }
+
+    bool IPrivMsg.Turbo {
+        get {
+            m_turbo ??= m_inner.Turbo;
+
+            return m_turbo.Value;
+        }
+    }
+
+    string IPrivMsg.UserId {
+        get {
+            if ( string.IsNullOrEmpty( m_userId ) ) {
+                m_userId = m_inner.UserId;
+            }
+
+            return m_userId;
+        }
+    }
+
+    UserType IPrivMsg.UserType {
+        get {
+            m_userType ??= m_inner.UserType;
+
+            return m_userType.Value;
+        }
+    }
+
+    bool IPrivMsg.Vip {
+        get {
+            m_vip ??= m_inner.Vip;
+
+            return m_vip.Value;
+        }
+    }
+
+    string IPrivMsg.Text {
+        get {
+            if ( string.IsNullOrEmpty( m_text ) ) {
+                m_text = m_inner.Text;
+            }
+
+            return m_text;
+        }
+    }
+    
     private string GetRawMessageString() {
         string message = "@";
         
-        if( m_badges.Any() ) {
+        if( m_badges != null && m_badges.Any() ) {
             message += SerializeProperty( MessagePluginUtils.Properties.BadgeInfo, () => string.Join( ",", m_badgeInfo.Select( b => $"{b.Name}/{b.Version}" ) ) );
             message += SerializeProperty( MessagePluginUtils.Properties.Badges, () => string.Join( ",", m_badges.Select( b => $"{b.Name}/{b.Version}" ) ) );
         }
@@ -169,7 +377,7 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
             message += SerializeProperty( MessagePluginUtils.Properties.DisplayName, () => m_displayName );
         }
         
-        message += SerializeProperty( MessagePluginUtils.Properties.Mod, () => m_mod ? "1" : "0" );
+        message += SerializeProperty( MessagePluginUtils.Properties.Mod, () => m_mod != null && m_mod.Value ? "1" : "0" );
         
         if( m_emotes != null && m_emotes.Any() ) {
             message += SerializeProperty( MessagePluginUtils.Properties.Emotes, () => {
@@ -195,7 +403,7 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
             message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidCanonicalAmount, () => m_pinnedChatPaidAmount?.ToString() ?? string.Empty );
             message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidCurrency, () => m_pinnedChatPaidCurrency );
             message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidExponent, () => m_pinnedChatPaidExponent?.ToString() ?? string.Empty );
-            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidIsSystemMessage, () => m_pinnedChatPaidIsSystemMessage ? "1" : "0" );
+            message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidIsSystemMessage, () => m_pinnedChatPaidIsSystemMessage != null && m_pinnedChatPaidIsSystemMessage.Value ? "1" : "0" );
             message += SerializeProperty( MessagePluginUtils.Properties.PinnedChatPaidLevel, () => m_pinnedChatPaidLevel?.ToString().ToUpper() ?? string.Empty );
         }
 
@@ -223,30 +431,30 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
             message += SerializeProperty( MessagePluginUtils.Properties.RoomId, () => m_roomId );
         }
 
-        message += SerializeProperty( MessagePluginUtils.Properties.Subscriber, () => m_subscriber ? "1" : "0" );
+        message += SerializeProperty( MessagePluginUtils.Properties.Subscriber, () => m_subscriber != null && m_subscriber.Value ? "1" : "0" );
 
-        message += SerializeProperty( MessagePluginUtils.Properties.Turbo, () => m_turbo ? "1" : "0" );
+        message += SerializeProperty( MessagePluginUtils.Properties.Turbo, () => m_turbo != null && m_turbo.Value ? "1" : "0" );
         
         if( !string.IsNullOrEmpty( m_userId ) ) {
             message += SerializeProperty( MessagePluginUtils.Properties.UserId, () => m_userId );
         }
 
-        if( m_userType != UserType.Normal ) {
-            message += SerializeProperty( MessagePluginUtils.Properties.UserType, () => MessagePluginUtils.GetUserTypeText( m_userType ) );
+        if( m_userType != null && m_userType != UserType.Normal ) {
+            message += SerializeProperty( MessagePluginUtils.Properties.UserType, () => MessagePluginUtils.GetUserTypeText( m_userType.Value ) );
         }
 
         if( m_timestamp != null ) {
             message += SerializeProperty( MessagePluginUtils.Properties.MessageTimestamp, () => new DateTimeOffset( m_timestamp.Value ).ToUnixTimeMilliseconds().ToString() );
         }
 
-        if( m_vip ) {
+        if( m_vip != null && m_vip.Value ) {
             message += SerializeProperty( MessagePluginUtils.Properties.Vip, () => "1");
         }
 
         message = message.Substring(0, message.Length - 1);
 
         if( !string.IsNullOrEmpty( m_text ) ) {
-            message += $" :{m_channel}!{m_channel}@{m_channel}.tmi.twitch.tv {MessageType.ToString().ToUpper()} #{m_channel} :{m_text}";
+            message += $" :{m_channel}!{m_channel}@{m_channel}.tmi.twitch.tv {((IMessage)this).MessageType.ToString().ToUpper()} #{m_channel} :{m_text}";
         }
         
         return message;
@@ -259,4 +467,5 @@ public class ImmediateLoadedPrivMsg : IPrivMsg {
 
         return string.Format( MessagePluginUtils.GetPropertyAsString( property ), serializer() );
     }
+    
 }

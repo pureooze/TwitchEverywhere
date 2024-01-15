@@ -17,5 +17,6 @@ public enum MessageType {
     CapReq,
     JoinCount,
     JoinEnd,
+    Ping,
     Unknown
 }

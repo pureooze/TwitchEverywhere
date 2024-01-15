@@ -1,4 +1,7 @@
+using System.Text;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.Serialization;
@@ -11,15 +14,17 @@ public class ClearChatSerializationTest {
         const string channel = "channel";
         const string message =
             "@room-id=12345678;target-user-id=87654321;tmi-sent-ts=1642715756806 :tmi.twitch.tv CLEARCHAT #dallas :ronni";
-        LazyLoadedClearChat lazyLoadedClearChatMsg = new( channel: channel, message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        
+        IClearChatMsg lazyLoadedClearChatMsgMsg = new LazyLoadedClearChatMsg( rawMessage );
 
-        Assert.That( lazyLoadedClearChatMsg.RawMessage, Is.EqualTo( message ) );
+        Assert.That( lazyLoadedClearChatMsgMsg.RawMessage, Is.EqualTo( message ) );
     }
 
     [Test]
     public void UserPermanentBanned_ImmediateLoadedClearChat_SerializationToIRCMessage() {
 
-        ImmediateLoadedClearChat immediateLoadedClearChatMsg = new(
+        ImmediateLoadedClearChatMsg immediateLoadedClearChatMsgMsg = new(
             channel: "dallas",
             roomId: "12345678",
             targetUserId: "87654321",
@@ -28,7 +33,7 @@ public class ClearChatSerializationTest {
         );
 
         Assert.That(
-            immediateLoadedClearChatMsg.RawMessage,
+            immediateLoadedClearChatMsgMsg.RawMessage,
             Is.EqualTo(
                 "@room-id=12345678;target-user-id=87654321;tmi-sent-ts=1642715756806 :tmi.twitch.tv CLEARCHAT #dallas :ronni"
             )
@@ -38,14 +43,14 @@ public class ClearChatSerializationTest {
     [Test]
     public void RemoveAllMessages_ImmediateLoadedClearChat_SerializationToIRCMessage() {
 
-        ImmediateLoadedClearChat immediateLoadedClearChatMsg = new(
+        ImmediateLoadedClearChatMsg immediateLoadedClearChatMsgMsg = new(
             channel: "dallas",
             roomId: "12345678",
             timestamp: new DateTime( 2022, 1, 20, 21, 55, 56, 806, DateTimeKind.Utc )
         );
 
         Assert.That(
-            immediateLoadedClearChatMsg.RawMessage,
+            immediateLoadedClearChatMsgMsg.RawMessage,
             Is.EqualTo(
                 "@room-id=12345678;tmi-sent-ts=1642715756806 :tmi.twitch.tv CLEARCHAT #dallas"
             )
@@ -55,7 +60,7 @@ public class ClearChatSerializationTest {
     [Test]
     public void PutUserInTimeoutAndDeletedAllOfTheirMessages_ImmediateLoadedClearChat_SerializationToIRCMessage() {
 
-        ImmediateLoadedClearChat immediateLoadedClearChatMsg = new(
+        ImmediateLoadedClearChatMsg immediateLoadedClearChatMsgMsg = new(
             channel: "dallas",
             banDuration: 350,
             roomId: "12345678",
@@ -65,7 +70,7 @@ public class ClearChatSerializationTest {
         );
 
         Assert.That(
-            immediateLoadedClearChatMsg.RawMessage,
+            immediateLoadedClearChatMsgMsg.RawMessage,
             Is.EqualTo(
                 "@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1642715756806 :tmi.twitch.tv CLEARCHAT #dallas :ronni"
             )

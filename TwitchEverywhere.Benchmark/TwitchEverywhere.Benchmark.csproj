@@ -14,6 +14,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="data.txt" CopyToOutputDirectory="Always" />
+    </ItemGroup>
+    
+    <ItemGroup>
       <ProjectReference Include="..\TwitchEverywhere.Irc\TwitchEverywhere.Irc.csproj" />
     </ItemGroup>
 
