@@ -46,12 +46,7 @@ public class LazyLoadedClearMsg(RawMessage response) : IClearMsg {
         }
     }
 
-    string IClearMsg.Text {
-        get {
-            InitializeTags();
-            return MessagePluginUtils.GetLastSplitValuesFromResponse(m_tags, new Regex($"CLEARMSG #{Channel} :")).Trim('\n');
-        }
-    }
+    string IClearMsg.Text => MessagePluginUtils.GetTextFromMessage( response );
 
     private void InitializeTags() {
 

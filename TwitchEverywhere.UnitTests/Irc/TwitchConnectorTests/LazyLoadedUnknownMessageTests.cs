@@ -25,7 +25,7 @@ public class LazyLoadedUnknownMessageTests {
     
     [Test]
     [TestCaseSource(nameof(UnknownMessageMessages))]
-    public async Task ClearChat( IImmutableList<string> messages, LazyLoadedUnknownMessage expectedMessage ) {
+    public async Task UnknownMessage( IImmutableList<string> messages, LazyLoadedUnknownMessage expectedMessage ) {
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
         Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
         dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
@@ -76,12 +76,12 @@ public class LazyLoadedUnknownMessageTests {
         
         yield return new TestCaseData(
             new List<string> {
-                $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
+                $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv NEWCOMMAND"
             }.ToImmutableList(),
             new LazyLoadedUnknownMessage(
                 channel: "channel", 
-                message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
+                message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv NEWCOMMAND"
             )
-        ).SetName("Ignore messages missing channel when its required");
+        ).SetName("Ignore unknown commands");
     }
 }

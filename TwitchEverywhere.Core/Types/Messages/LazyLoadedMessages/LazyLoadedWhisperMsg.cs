@@ -1,52 +1,114 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
-namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages; 
+namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
-public class LazyLoadedWhisperMsg(
-    string channel,
-    string message
-) : IWhisperMsg {
+public class LazyLoadedWhisperMsg( RawMessage response ) : IWhisperMsg {
+
+    private string m_tags;
 
     public MessageType MessageType => MessageType.Whisper;
-    
-    public string RawMessage => message;
-    
-    public string Channel { get; } = channel;
+
+    public string RawMessage => Encoding.UTF8.GetString( response.Data.Span );
+
+    public string Channel => MessagePluginUtils.GetChannelFromMessage( response );
 
     public IImmutableList<Badge> Badges {
         get {
-            string badges = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.BadgesPattern() );
+            InitializeTags();
+            string badges = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.BadgesPattern() );
             return GetBadges( badges );
         }
     }
-    
-    public string Color => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ColorPattern() );
-    
-    public string DisplayName => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.DisplayNamePattern() );
-    
+
+    public string Color {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ColorPattern() );
+        }
+    }
+
+    public string DisplayName {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.DisplayNamePattern() );
+        }
+    }
+
     public IImmutableList<Emote>? Emotes {
         get {
-            string emotesText = MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.EmotesPattern() );
+            InitializeTags();
+            string emotesText = MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.EmotesPattern() );
             return GetEmotesFromText( emotesText );
         }
     }
-    
-    public string MsgId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MessageIdPattern() );
-    
-    public string ThreadId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ThreadIdPattern() );
-    
-    public bool Turbo => MessagePluginUtils.GetValueIsPresentOrBoolean( message, MessagePluginUtils.TurboPattern() );
-    
-    public string UserId => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserIdPattern() );
 
-    public UserType UserType => GetUserType( MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.UserTypePattern() ) );
+    public string MsgId {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.MessageIdPattern() );
+        }
+    }
 
-    public string FromUser => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.FromUserPattern() );
-    
-    public string ToUser => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.ToUserPattern() );
-    
-    public string Text => MessagePluginUtils.GetValueFromResponse( message, MessagePluginUtils.MsgTextPattern() );
+    public string ThreadId {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.ThreadIdPattern() );
+        }
+    }
+
+    public bool Turbo {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueIsPresentOrBoolean( m_tags, MessagePluginUtils.TurboPattern() );
+        }
+    }
+
+    public string UserId {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.UserIdPattern() );
+        }
+    }
+
+    public UserType UserType {
+        get {
+            InitializeTags();
+            return GetUserType( MessagePluginUtils.GetValueFromResponse( m_tags, MessagePluginUtils.UserTypePattern() ) );
+        }
+    }
+
+    public string FromUser {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( RawMessage, MessagePluginUtils.FromUserPattern() );
+        }
+    }
+
+    public string ToUser {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( RawMessage, MessagePluginUtils.ToUserPattern() );
+        }
+    }
+
+    public string Text {
+        get {
+            InitializeTags();
+            return MessagePluginUtils.GetValueFromResponse( RawMessage, MessagePluginUtils.MsgTextPattern() );
+        }
+    }
+
+    private void InitializeTags() {
+
+        if( !string.IsNullOrEmpty( m_tags ) ) {
+            return;
+        }
+
+        m_tags = MessagePluginUtils.GetTagsFromMessage( response );
+    }
+
     private static UserType GetUserType(
         string userTypeText
     ) {
@@ -58,7 +120,7 @@ public class LazyLoadedWhisperMsg(
             _ => UserType.Normal
         };
     }
-    
+
     private static IImmutableList<Emote>? GetEmotesFromText(
         string emotesText
     ) {
@@ -76,21 +138,21 @@ public class LazyLoadedWhisperMsg(
 
             foreach (string locationGroup in separatedEmoteLocationGroup) {
                 string[] separatedEmoteLocation = locationGroup.Split( "-" );
-                
+
                 emotes.Add(
-                    new Emote( 
-                        separatedEmote[0], 
-                        int.Parse( separatedEmoteLocation[0] ), 
+                    new Emote(
+                        separatedEmote[0],
+                        int.Parse( separatedEmoteLocation[0] ),
                         int.Parse( separatedEmoteLocation[1] )
                     )
                 );
             }
         }
-        
-        
+
+
         return emotes.ToImmutableList();
     }
-    
+
     private static IImmutableList<Badge> GetBadges(
         string badges
     ) {

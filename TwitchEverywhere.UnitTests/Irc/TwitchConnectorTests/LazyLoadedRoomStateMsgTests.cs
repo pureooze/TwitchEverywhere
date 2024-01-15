@@ -51,12 +51,12 @@ public class LazyLoadedRoomStateMsgTests {
                 () => {
                     Assert.That( lazyLoadedRoomStateMsg, Is.Not.Null );
                     Assert.That( lazyLoadedRoomStateMsg.MessageType, Is.EqualTo( MessageType.RoomState ), "Incorrect message type set" );
-                    Assert.That( lazyLoadedRoomStateMsg.EmoteOnly, Is.EqualTo( true ), "EmoteOnly was not equal to expected value" );
-                    Assert.That( lazyLoadedRoomStateMsg.FollowersOnly, Is.EqualTo( 1 ), "FollowersOnly was not equal to expected value" );
-                    Assert.That( lazyLoadedRoomStateMsg.R9K, Is.EqualTo( true ), "R9K was not equal to expected value" );
-                    Assert.That( lazyLoadedRoomStateMsg.Slow, Is.EqualTo( 1 ), "Slow was not equal to expected value" );
+                    Assert.That( lazyLoadedRoomStateMsg.EmoteOnly, Is.EqualTo( false ), "EmoteOnly was not equal to expected value" );
+                    Assert.That( lazyLoadedRoomStateMsg.FollowersOnly, Is.EqualTo( 0 ), "FollowersOnly was not equal to expected value" );
+                    Assert.That( lazyLoadedRoomStateMsg.R9K, Is.EqualTo( false ), "R9K was not equal to expected value" );
+                    Assert.That( lazyLoadedRoomStateMsg.Slow, Is.EqualTo( 0 ), "Slow was not equal to expected value" );
                     Assert.That( lazyLoadedRoomStateMsg.RoomId, Is.EqualTo( "" ), "RoomId was not equal to expected value" );
-                    Assert.That( lazyLoadedRoomStateMsg.SubsOnly, Is.EqualTo( true ), "SubsOnly was not equal to expected value" );
+                    Assert.That( lazyLoadedRoomStateMsg.SubsOnly, Is.EqualTo( false ), "SubsOnly was not equal to expected value" );
                 }
             );
         }
@@ -69,6 +69,11 @@ public class LazyLoadedRoomStateMsgTests {
         );
 
         bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
-        Assert.That( result, Is.True );
+        Assert.Multiple(
+            () => {
+                Assert.That( result, Is.True );
+                Assert.That( m_messageCallbackCalled, Is.True );
+            }
+        );
     }
 }
