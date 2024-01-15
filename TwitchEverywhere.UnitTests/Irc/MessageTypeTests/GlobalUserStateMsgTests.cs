@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.MessageTypeTests;
@@ -13,20 +15,21 @@ public class GlobalUserStateMsgTests {
         string message,
         TestData expectedGlobalUserStateMessage
     ) {
-        LazyLoadedGlobalUserState actualLazyLoadedGlobalUserStateMessage = new( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        LazyLoadedGlobalUserStateMsg actualLazyLoadedGlobalUserStateMsgMessage = new( rawMessage );
 
-        Assert.That( actualLazyLoadedGlobalUserStateMessage.MessageType, Is.EqualTo( MessageType.GlobalUserState ) );
+        Assert.That( actualLazyLoadedGlobalUserStateMsgMessage.MessageType, Is.EqualTo( MessageType.GlobalUserState ) );
 
         Assert.Multiple(() => {
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.UserId, Is.EqualTo(expectedGlobalUserStateMessage.UserId), "UserId was not equal to expected value");
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.Badges, Is.EqualTo(expectedGlobalUserStateMessage.Badges), "Badges was not equal to expected value");
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.BadgeInfo, Is.EqualTo(expectedGlobalUserStateMessage.BadgeInfo), "BadgeInfo was not equal to expected value");
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.Color, Is.EqualTo(expectedGlobalUserStateMessage.Color), "Color was not equal to expected value");
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.DisplayName, Is.EqualTo(expectedGlobalUserStateMessage.DisplayName), "DisplayName was not equal to expected value");
-            CollectionAssert.AreEqual(actualLazyLoadedGlobalUserStateMessage.EmoteSets, expectedGlobalUserStateMessage.EmoteSets, "EmoteSets was not equal to expected value");
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.Turbo, Is.EqualTo(expectedGlobalUserStateMessage.Turbo), "Turbo was not equal to expected value");
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.UserId, Is.EqualTo(expectedGlobalUserStateMessage.UserId), "UserId was not equal to expected value");
-            Assert.That(actualLazyLoadedGlobalUserStateMessage.UserType, Is.EqualTo(expectedGlobalUserStateMessage.UserType), "UserType was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.UserId, Is.EqualTo(expectedGlobalUserStateMessage.UserId), "UserId was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.Badges, Is.EqualTo(expectedGlobalUserStateMessage.Badges), "Badges was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.BadgeInfo, Is.EqualTo(expectedGlobalUserStateMessage.BadgeInfo), "BadgeInfo was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.Color, Is.EqualTo(expectedGlobalUserStateMessage.Color), "Color was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.DisplayName, Is.EqualTo(expectedGlobalUserStateMessage.DisplayName), "DisplayName was not equal to expected value");
+            CollectionAssert.AreEqual(actualLazyLoadedGlobalUserStateMsgMessage.EmoteSets, expectedGlobalUserStateMessage.EmoteSets, "EmoteSets was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.Turbo, Is.EqualTo(expectedGlobalUserStateMessage.Turbo), "Turbo was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.UserId, Is.EqualTo(expectedGlobalUserStateMessage.UserId), "UserId was not equal to expected value");
+            Assert.That(actualLazyLoadedGlobalUserStateMsgMessage.UserType, Is.EqualTo(expectedGlobalUserStateMessage.UserType), "UserType was not equal to expected value");
         });
     }
 

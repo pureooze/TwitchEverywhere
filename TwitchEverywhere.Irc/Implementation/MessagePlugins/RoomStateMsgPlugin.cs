@@ -9,18 +9,9 @@ public class RoomStateMsgPlugin : IMessagePlugin {
     bool IMessagePlugin.CanHandle(
         MessageType messageType
     ) {
-        throw new NotImplementedException();
+        return messageType == MessageType.RoomState;
     }
 
-    public IMessage GetMessageData(
-        string response,
-        string channel
-    ) {
-        return new LazyLoadedRoomStateMsg(
-            channel: channel,
-            message: response
-        );
-    }
     IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {

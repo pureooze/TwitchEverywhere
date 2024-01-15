@@ -8,9 +8,9 @@ public class MessageProcessor : IMessageProcessor {
     private readonly IEnumerable<IMessagePlugin> m_messagePlugins = new IMessagePlugin[] {
         // Membership
         new JoinMsgPlugin(),
-        // new PartMsgPlugin(),
+        new PartMsgPlugin(),
         new CapReqPlugin(),
-        // new JoinCountMsgPlugin(),
+        new JoinCountMsgPlugin(),
         new JoinEndMsgPlugin(),
             
         // IRC Commands
@@ -18,13 +18,13 @@ public class MessageProcessor : IMessageProcessor {
         new ClearChatPlugin(),
         new ClearMsgPlugin(),
         new NoticeMsgPlugin(),
-        // new GlobalUserStatePlugin(),
-        // new RoomStateMsgPlugin(),
-        // new WhisperMsgPlugin(),
+        new GlobalUserStatePlugin(),
+        new RoomStateMsgPlugin(),
+        new WhisperMsgPlugin(),
         new UserNoticePlugin(),
         new UserStateMsgPlugin(),
         new HostTargetMsgPlugin(),
-        // new ReconnectMsgPlugin(),
+        new ReconnectMsgPlugin(),
             
         // Nothing worked, just give the raw message
         new UnknownMsgPlugin()

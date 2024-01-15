@@ -9,15 +9,9 @@ public class ReconnectMsgPlugin : IMessagePlugin {
     bool IMessagePlugin.CanHandle(
         MessageType messageType
     ) {
-        throw new NotImplementedException();
+        return messageType == MessageType.Reconnect;
     }
-
-    public IMessage GetMessageData(
-        string response,
-        string channel
-    ) {
-        return new LazyLoadedReconnectMsg( channel );
-    }
+    
     IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {

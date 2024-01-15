@@ -13,7 +13,7 @@ internal class LazyLoadedPrivMsg( RawMessage response ) : IPrivMsg {
 
     public string RawMessage => Encoding.UTF8.GetString( response.Data.Span );
 
-    public string Channel => "";
+    public string Channel => MessagePluginUtils.GetChannelFromMessage( response );
 
     IImmutableList<Badge> IPrivMsg.Badges {
         get {

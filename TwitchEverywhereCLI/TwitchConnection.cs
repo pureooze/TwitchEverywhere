@@ -123,8 +123,8 @@ internal class TwitchConnection(
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearMsg.Login}, {lazyLoadedClearMsg.Timestamp}, {lazyLoadedClearMsg.RoomId}" );
                 break;
             case MessageType.GlobalUserState:
-                IGlobalUserState lazyLoadedGlobalUserStateMsg = (IGlobalUserState) message;
-                Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsg.UserId}, {lazyLoadedGlobalUserStateMsg.UserType}, {lazyLoadedGlobalUserStateMsg.DisplayName}" );
+                IGlobalUserStateMsg lazyLoadedGlobalUserStateMsgMsg = (IGlobalUserStateMsg) message;
+                Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsgMsg.UserId}, {lazyLoadedGlobalUserStateMsgMsg.UserType}, {lazyLoadedGlobalUserStateMsgMsg.DisplayName}" );
                 break;
             case MessageType.Notice:
                 INoticeMsg lazyLoadedNoticeMsg = (INoticeMsg) message;

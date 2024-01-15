@@ -9,17 +9,9 @@ public class WhisperMsgPlugin : IMessagePlugin {
     bool IMessagePlugin.CanHandle(
         MessageType messageType
     ) {
-        throw new NotImplementedException();
+        return messageType == MessageType.Whisper;
     }
-    public IMessage GetMessageData(
-        string response,
-        string channel
-    ) {
-        return new LazyLoadedWhisperMsg(
-            channel: channel,
-            message: response 
-        );
-    }
+ 
     IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
