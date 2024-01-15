@@ -493,4 +493,18 @@ public static partial class MessagePluginUtils {
             ]
         );
     }
+    
+    public static string GetChannelFromMessage( RawMessage message ) {
+
+        if( !message.ChannelRange.HasValue ) {
+            return string.Empty;
+        }
+
+        return Encoding.UTF8.GetString(
+            message.Data.Span[
+                message.ChannelRange.Value.Start
+                    ..message.ChannelRange.Value.End
+            ]
+        );
+    }
 }

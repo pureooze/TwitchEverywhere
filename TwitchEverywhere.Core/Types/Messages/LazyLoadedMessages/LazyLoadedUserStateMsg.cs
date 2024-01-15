@@ -11,42 +11,42 @@ public class LazyLoadedUserStateMsg(
     private readonly string m_message = Encoding.UTF8.GetString( response.Data.Span );
     private readonly string m_channel = "";
     private string m_tags;
-    
-    public MessageType MessageType => MessageType.UserState;
-    
-    public string RawMessage => m_message;
-    
-    public string Channel => m_channel;
 
-    public IImmutableList<Badge> BadgeInfo {
+    MessageType IMessage.MessageType => MessageType.UserState;
+
+    string IMessage.RawMessage => m_message;
+
+    string IMessage.Channel => m_channel;
+
+    IImmutableList<Badge> IUserStateMsg.BadgeInfo {
         get {
             InitializeTags();
             return GetBadges(MessagePluginUtils.GetValueFromResponse(m_tags, MessagePluginUtils.BadgeInfoPattern()));
         }
     }
-    
-    public IImmutableList<Badge> Badges {
+
+    IImmutableList<Badge> IUserStateMsg.Badges {
         get {
             InitializeTags();
             return GetBadges(MessagePluginUtils.GetValueFromResponse(m_tags, MessagePluginUtils.BadgesPattern()));
         }
     }
-    
-    public string Color {
+
+    string IUserStateMsg.Color {
         get {
             InitializeTags();
             return MessagePluginUtils.GetValueFromResponse(m_tags, MessagePluginUtils.ColorPattern());
         }
     }
-    
-    public string DisplayName {
+
+    string IUserStateMsg.DisplayName {
         get {
             InitializeTags();
             return MessagePluginUtils.GetValueFromResponse(m_tags, MessagePluginUtils.DisplayNamePattern());
         }
     }
-    
-    public IImmutableList<string> EmoteSets {
+
+    IImmutableList<string> IUserStateMsg.EmoteSets {
         get {
             InitializeTags();
             return GetEmoteSetsFromText(
@@ -54,36 +54,36 @@ public class LazyLoadedUserStateMsg(
             );
         }
     }
-    
-    public string Id {
+
+    string IUserStateMsg.Id {
         get {
             InitializeTags();
             return MessagePluginUtils.GetValueFromResponse(m_tags, MessagePluginUtils.IdPattern());
         }
     }
-    
-    public bool Mod {
+
+    bool IUserStateMsg.Mod {
         get {
             InitializeTags();
             return MessagePluginUtils.GetValueIsPresentOrBoolean(m_tags, MessagePluginUtils.ModPattern());
         }
     }
-    
-    public bool Subscriber {
+
+    bool IUserStateMsg.Subscriber {
         get {
             InitializeTags();
             return MessagePluginUtils.GetValueIsPresentOrBoolean(m_tags, MessagePluginUtils.SubscriberPattern());
         }
     }
-    
-    public bool Turbo {
+
+    bool IUserStateMsg.Turbo {
         get {
             InitializeTags();
             return MessagePluginUtils.GetValueIsPresentOrBoolean(m_tags, MessagePluginUtils.TurboPattern());
         }
     }
-    
-    public UserType UserType {
+
+    UserType IUserStateMsg.UserType {
         get {
             InitializeTags();
             return GetUserType(

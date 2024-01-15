@@ -118,12 +118,12 @@ internal class TwitchConnection(
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearChatMsgMsg.Text}" );
                 break;
             case MessageType.ClearMsg:
-                IClearMsg lazyLoadedClearMsg = (LazyLoadedClearMsg) message;
+                IClearMsg lazyLoadedClearMsg = (IClearMsg) message;
                 // ClearMsgCallback( lazyLoadedClearMsg );
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearMsg.Login}, {lazyLoadedClearMsg.Timestamp}, {lazyLoadedClearMsg.RoomId}" );
                 break;
             case MessageType.GlobalUserState:
-                IGlobalUserState lazyLoadedGlobalUserStateMsg = (LazyLoadedGlobalUserState) message;
+                IGlobalUserState lazyLoadedGlobalUserStateMsg = (IGlobalUserState) message;
                 Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsg.UserId}, {lazyLoadedGlobalUserStateMsg.UserType}, {lazyLoadedGlobalUserStateMsg.DisplayName}" );
                 break;
             case MessageType.Notice:
@@ -133,19 +133,19 @@ internal class TwitchConnection(
                 Console.WriteLine( $"NoticeMsg: {lazyLoadedNoticeMsg.RawMessage}" );
                 break;
             case MessageType.RoomState:
-                IRoomStateMsg lazyLoadedRoomStateMsg = (LazyLoadedRoomStateMsg) message;
+                IRoomStateMsg lazyLoadedRoomStateMsg = (IRoomStateMsg) message;
                 Console.WriteLine( $"RoomStateMsg: {lazyLoadedRoomStateMsg.RoomId}, {lazyLoadedRoomStateMsg.R9K}, {lazyLoadedRoomStateMsg.Slow}" );
                 break;
             case MessageType.UserNotice:
-                IUserNotice lazyLoadedUserNoticeMsg = (LazyLoadedUserNotice) message;
-                Console.WriteLine( $"UserNotice: {lazyLoadedUserNoticeMsg}" );
+                IUserNoticeMsg lazyLoadedUserNoticeMsgMsg = (IUserNoticeMsg) message;
+                Console.WriteLine( $"UserNotice: {lazyLoadedUserNoticeMsgMsg}" );
                 break;
             case MessageType.UserState:
                 IUserStateMsg lazyLoadedUserStateMsg = (IUserStateMsg) message;
                 Console.WriteLine( $"UserStateMsg: {lazyLoadedUserStateMsg.DisplayName}, {lazyLoadedUserStateMsg.UserType}, {lazyLoadedUserStateMsg.Badges}" );
                 break;
             case MessageType.Whisper:
-                IWhisperMsg lazyLoadedWhisperMsg = (LazyLoadedWhisperMsg) message;
+                IWhisperMsg lazyLoadedWhisperMsg = (IWhisperMsg) message;
                 Console.WriteLine( $"WhisperMsg: {lazyLoadedWhisperMsg}" );
                 break;
             case MessageType.Join:
@@ -153,7 +153,7 @@ internal class TwitchConnection(
                 Console.WriteLine( $"{lazyLoadedJoinMsg.User} joining {lazyLoadedJoinMsg.Channel}" );
                 break;
             case MessageType.Part:
-                IPartMsg lazyLoadedPartMsg = (LazyLoadedPartMsg) message;
+                IPartMsg lazyLoadedPartMsg = (IPartMsg) message;
                 Console.WriteLine( $"{lazyLoadedPartMsg.User} leaving {lazyLoadedPartMsg.Channel}" );
                 break;
             case MessageType.Unknown:
@@ -161,19 +161,19 @@ internal class TwitchConnection(
                 Console.WriteLine( $"UnknownMessage: {lazyLoadedUnknownMsg}" );
                 break;
             case MessageType.HostTarget:
-                IHostTargetMsg hostTargetMsg = (LazyLoadedHostTargetMsg) message;
+                IHostTargetMsg hostTargetMsg = (IHostTargetMsg) message;
                 Console.WriteLine( $"HostTargetMsg: {hostTargetMsg.HostingChannel}, {hostTargetMsg.NumberOfViewers}" );
                 break;
             case MessageType.Reconnect:
-                IReconnectMsg lazyLoadedReconnectMsg = (LazyLoadedReconnectMsg) message;
+                IReconnectMsg lazyLoadedReconnectMsg = (IReconnectMsg) message;
                 Console.WriteLine( $"ReconnectMsg: {lazyLoadedReconnectMsg}" );
                 break;
             case MessageType.CapReq:
-                ICapReq lazyLoadedCapReqMsg = (LazyLoadedCapReq) message;
+                ICapReq lazyLoadedCapReqMsg = (ICapReq) message;
                 Console.WriteLine( $"CapReq: {lazyLoadedCapReqMsg.RawMessage}" );
                 break;
             case MessageType.JoinCount:
-                IJoinCountMsg lazyLoadedJoinCountMsg = (LazyLoadedJoinCountMsg) message;
+                IJoinCountMsg lazyLoadedJoinCountMsg = (IJoinCountMsg) message;
                 Console.WriteLine( $"JoinCount: {lazyLoadedJoinCountMsg.RawMessage}" );
                 break;
             case MessageType.JoinEnd:

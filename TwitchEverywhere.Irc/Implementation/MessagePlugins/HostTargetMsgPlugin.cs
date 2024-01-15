@@ -1,5 +1,6 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
@@ -9,21 +10,12 @@ public class HostTargetMsgPlugin : IMessagePlugin {
     bool IMessagePlugin.CanHandle(
         MessageType messageType
     ) {
-        throw new NotImplementedException();
+        return messageType == MessageType.HostTarget;
     }
-
-    public IMessage GetMessageData(
-        string response,
-        string channel
-    ) {
-        return new LazyLoadedHostTargetMsg( 
-            message: response, 
-            channel: channel 
-        );
-    }
+    
     IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        throw new NotImplementedException();
+        return new HostTargetMsg( response );
     }
 }

@@ -22,6 +22,11 @@ public class LazyLoadedClearChatMsgTests {
     private ITwitchConnector m_twitchConnector;
     private bool m_messageCallbackCalled;
 
+    [SetUp]
+    public void Setup() {
+        m_messageCallbackCalled = false;
+    }
+    
     [Test]
     public async Task PermanentBan() {
         // Arrange

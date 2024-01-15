@@ -3,7 +3,7 @@ using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedUserNoticeMsg : IUserNotice {
+public class ImmediateLoadedUserNoticeMsgMsg : IUserNoticeMsg {
     private readonly IImmutableList<Badge> m_badgeInfo;
     private readonly IImmutableList<Badge> m_badges;
     private readonly string m_color;
@@ -40,7 +40,7 @@ public class ImmediateLoadedUserNoticeMsg : IUserNotice {
     private readonly string m_msgParamThreshold;
     private readonly int? m_msgParamGiftMonths;
 
-    public ImmediateLoadedUserNoticeMsg(
+    public ImmediateLoadedUserNoticeMsgMsg(
         string channel,
         IImmutableList<Badge> badgeInfo,
         IImmutableList<Badge> badges,
@@ -121,73 +121,73 @@ public class ImmediateLoadedUserNoticeMsg : IUserNotice {
     
     public string Channel { get; }
 
-    IImmutableList<Badge> IUserNotice.BadgeInfo => m_badgeInfo;
+    IImmutableList<Badge> IUserNoticeMsg.BadgeInfo => m_badgeInfo;
 
-    IImmutableList<Badge> IUserNotice.Badges => m_badges;
+    IImmutableList<Badge> IUserNoticeMsg.Badges => m_badges;
 
-    string IUserNotice.Color => m_color;
+    string IUserNoticeMsg.Color => m_color;
 
-    string IUserNotice.DisplayName => m_displayName;
+    string IUserNoticeMsg.DisplayName => m_displayName;
 
-    IImmutableList<Emote> IUserNotice.Emotes => m_emotes;
+    IImmutableList<Emote> IUserNoticeMsg.Emotes => m_emotes;
 
-    string IUserNotice.Id => m_id;
+    string IUserNoticeMsg.Id => m_id;
 
-    string IUserNotice.Login => m_login;
+    string IUserNoticeMsg.Login => m_login;
 
-    bool IUserNotice.Mod => m_mod;
+    bool IUserNoticeMsg.Mod => m_mod;
 
-    MsgIdType IUserNotice.MsgId => m_msgId;
+    MsgIdType IUserNoticeMsg.MsgId => m_msgId;
 
-    string IUserNotice.RoomId => m_roomId;
+    string IUserNoticeMsg.RoomId => m_roomId;
 
-    bool IUserNotice.Subscriber => m_subscriber;
+    bool IUserNoticeMsg.Subscriber => m_subscriber;
 
-    string IUserNotice.SystemMsg => m_systemMsg;
+    string IUserNoticeMsg.SystemMsg => m_systemMsg;
 
-    DateTime IUserNotice.Timestamp => m_timestamp;
+    DateTime IUserNoticeMsg.Timestamp => m_timestamp;
 
-    bool IUserNotice.Turbo => m_turbo;
+    bool IUserNoticeMsg.Turbo => m_turbo;
 
-    string IUserNotice.UserId => m_userId;
+    string IUserNoticeMsg.UserId => m_userId;
 
-    UserType IUserNotice.UserType => m_userType;
+    UserType IUserNoticeMsg.UserType => m_userType;
 
-    int? IUserNotice.MsgParamCumulativeMonths => m_msgParamCumulativeMonths;
+    int? IUserNoticeMsg.MsgParamCumulativeMonths => m_msgParamCumulativeMonths;
 
-    string IUserNotice.MsgParamDisplayName => m_msgParamDisplayName;
+    string IUserNoticeMsg.MsgParamDisplayName => m_msgParamDisplayName;
 
-    string IUserNotice.MsgParamLogin => m_msgParamLogin;
+    string IUserNoticeMsg.MsgParamLogin => m_msgParamLogin;
 
-    int? IUserNotice.MsgParamMonths => m_msgParamMonths;
+    int? IUserNoticeMsg.MsgParamMonths => m_msgParamMonths;
 
-    int? IUserNotice.MsgParamPromoGiftTotal => m_msgParamPromoGiftTotal;
+    int? IUserNoticeMsg.MsgParamPromoGiftTotal => m_msgParamPromoGiftTotal;
 
-    string IUserNotice.MsgParamPromoName => m_msgParamPromoName;
+    string IUserNoticeMsg.MsgParamPromoName => m_msgParamPromoName;
 
-    string IUserNotice.MsgParamRecipientDisplayName => m_msgParamRecipientDisplayName;
+    string IUserNoticeMsg.MsgParamRecipientDisplayName => m_msgParamRecipientDisplayName;
 
-    string IUserNotice.MsgParamRecipientId => m_msgParamRecipientId;
+    string IUserNoticeMsg.MsgParamRecipientId => m_msgParamRecipientId;
 
-    string IUserNotice.MsgParamRecipientUserName => m_msgParamRecipientUserName;
+    string IUserNoticeMsg.MsgParamRecipientUserName => m_msgParamRecipientUserName;
 
-    string IUserNotice.MsgParamSenderLogin => m_msgParamSenderLogin;
+    string IUserNoticeMsg.MsgParamSenderLogin => m_msgParamSenderLogin;
 
-    string IUserNotice.MsgParamSenderName => m_msgParamSenderName;
+    string IUserNoticeMsg.MsgParamSenderName => m_msgParamSenderName;
 
-    bool? IUserNotice.MsgParamShouldShareStreak => m_msgParamShouldShareStreak;
+    bool? IUserNoticeMsg.MsgParamShouldShareStreak => m_msgParamShouldShareStreak;
 
-    int? IUserNotice.MsgParamStreakMonths => m_msgParamStreakMonths;
+    int? IUserNoticeMsg.MsgParamStreakMonths => m_msgParamStreakMonths;
 
-    MsgSubPlanType IUserNotice.MsgParamSubPlan => m_msgParamSubPlan;
+    MsgSubPlanType IUserNoticeMsg.MsgParamSubPlan => m_msgParamSubPlan;
 
-    string IUserNotice.MsgParamSubPlanName => m_msgParamSubPlanName;
+    string IUserNoticeMsg.MsgParamSubPlanName => m_msgParamSubPlanName;
 
-    int? IUserNotice.MsgParamViewerCount => m_msgParamViewerCount;
+    int? IUserNoticeMsg.MsgParamViewerCount => m_msgParamViewerCount;
 
-    string IUserNotice.MsgParamRitualName => m_msgParamRitualName;
+    string IUserNoticeMsg.MsgParamRitualName => m_msgParamRitualName;
 
-    string IUserNotice.MsgParamThreshold => m_msgParamThreshold;
+    string IUserNoticeMsg.MsgParamThreshold => m_msgParamThreshold;
 
-    int? IUserNotice.MsgParamGiftMonths => m_msgParamGiftMonths;
+    int? IUserNoticeMsg.MsgParamGiftMonths => m_msgParamGiftMonths;
 }

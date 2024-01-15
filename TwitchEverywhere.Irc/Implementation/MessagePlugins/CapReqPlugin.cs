@@ -1,5 +1,6 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
 
@@ -8,12 +9,12 @@ public class CapReqPlugin : IMessagePlugin {
     bool IMessagePlugin.CanHandle(
         MessageType messageType
     ) {
-        throw new NotImplementedException();
+        return messageType == MessageType.CapReq;
     }
 
     IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        throw new NotImplementedException();
+        return new CapReq( response );
     }
 }

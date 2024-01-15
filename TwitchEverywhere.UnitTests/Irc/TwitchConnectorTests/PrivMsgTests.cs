@@ -23,6 +23,11 @@ public class PrivMsgTests {
     private bool m_messageCallbackCalled;
     private ITwitchConnector m_twitchConnector;
 
+    [SetUp]
+    public void Setup() {
+        m_messageCallbackCalled = false;
+    }
+    
     [Test]
     [TestCaseSource(sourceName: nameof(PrivMsgMessages))]
     public async Task PrivMsg( IImmutableList<string> messages )

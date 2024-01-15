@@ -23,6 +23,11 @@ public class LazyLoadedUserStateMsgTests {
     private bool m_messageCallbackCalled;
     private ITwitchConnector m_twitchConnector;
 
+    [SetUp]
+    public void Setup() {
+        m_messageCallbackCalled = false;
+    }
+    
     [Test]
     public async Task JoiningAChannel() {
         // Arrange

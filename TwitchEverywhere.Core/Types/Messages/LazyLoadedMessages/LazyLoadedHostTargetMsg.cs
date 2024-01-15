@@ -1,21 +1,40 @@
+using System.Text;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
-namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages {
-    public class LazyLoadedHostTargetMsg(
-        string message,
-        string channel
-    ) : IHostTargetMsg {
+namespace TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
-        public MessageType MessageType => MessageType.HostTarget;
-        
-        public string RawMessage => message;
+public class LazyLoadedHostTargetMsg( RawMessage response ) : IHostTargetMsg {
 
-        public string HostingChannel { get; } = channel;
+    private string m_tags;
 
-        public string Channel => MessagePluginUtils.HostTargetPattern().Match( message ).Groups[1].Value;
+    MessageType IMessage.MessageType => MessageType.HostTarget;
 
-        public int NumberOfViewers => int.Parse( MessagePluginUtils.HostViewerCountPattern().Match( message ).Value );
+    string IMessage.RawMessage => Encoding.UTF8.GetString( response.Data.Span );
 
-        public bool IsHostingChannel => !String.Equals( Channel, "-" );
+    string IHostTargetMsg.HostingChannel => MessagePluginUtils.HostTargetPattern().Match(((IMessage)this).RawMessage).Groups[1].Value;
+
+    string IMessage.Channel => MessagePluginUtils.GetChannelFromMessage( response );
+
+    int IHostTargetMsg.NumberOfViewers {
+        get {
+            InitializeTags();
+            return int.Parse(MessagePluginUtils.HostViewerCountPattern().Match(((IMessage)this).RawMessage).Value);
+        }
+    }
+
+    bool IHostTargetMsg.IsHostingChannel {
+        get {
+            InitializeTags();
+            return !string.Equals(((IHostTargetMsg) this).HostingChannel, "-");
+        }
+    }
+    
+    private void InitializeTags() {
+
+        if( !string.IsNullOrEmpty( m_tags ) ) {
+            return;
+        }
+
+        m_tags = MessagePluginUtils.GetTagsFromMessage( response );
     }
 }

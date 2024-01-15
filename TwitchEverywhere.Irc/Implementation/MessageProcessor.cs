@@ -9,21 +9,21 @@ public class MessageProcessor : IMessageProcessor {
         // Membership
         new JoinMsgPlugin(),
         // new PartMsgPlugin(),
-        // new CapReqPlugin(),
+        new CapReqPlugin(),
         // new JoinCountMsgPlugin(),
         new JoinEndMsgPlugin(),
             
         // IRC Commands
         new PrivMsgPlugin(),
         new ClearChatPlugin(),
-        // new ClearMsgPlugin(),
+        new ClearMsgPlugin(),
         new NoticeMsgPlugin(),
         // new GlobalUserStatePlugin(),
         // new RoomStateMsgPlugin(),
         // new WhisperMsgPlugin(),
-        // new UserNoticePlugin(),
+        new UserNoticePlugin(),
         new UserStateMsgPlugin(),
-        // new HostTargetMsgPlugin(),
+        new HostTargetMsgPlugin(),
         // new ReconnectMsgPlugin(),
             
         // Nothing worked, just give the raw message
