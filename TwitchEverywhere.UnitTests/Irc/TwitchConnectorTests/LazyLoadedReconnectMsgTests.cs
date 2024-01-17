@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Moq;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Irc.Implementation;
@@ -18,26 +19,31 @@ public class LazyLoadedReconnectMsgTests {
         "client_secret",
         "client_name"
     );
-
-    private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds(1507246572675).UtcDateTime;
-        
+    
+    private bool m_messageCallbackCalled;
     private ITwitchConnector m_twitchConnector;
 
     [Test]
-    [TestCaseSource(sourceName: nameof(ReconnectMsgMessages))]
-    public async Task ReconnectMsg( IImmutableList<string> messages, LazyLoadedReconnectMsg expectedMessage ) {
+    public async Task ReconnectMessage() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $":tmi.twitch.tv RECONNECT"
+        }.ToImmutableList();
+        
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
-        Mock<IDateTimeService> dateTimeService = new( behavior: MockBehavior.Strict );
-        dateTimeService.Setup( expression: dts => dts.GetStartTime() ).Returns( value: m_startTime );
-
+        
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages: messages );
         IMessageProcessor messageProcessor = new MessageProcessor();
 
         void MessageCallback(
             IMessage message
         ) {
+            m_messageCallbackCalled = true;
+            
+            IReconnectMsg lazyLoadedRoomStateMsg = (IReconnectMsg)message;
+            
             Assert.That( message, Is.Not.Null );
-            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
+            Assert.That( message.MessageType, Is.EqualTo( MessageType.Reconnect ), "Incorrect message type set" );
         }
         
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
@@ -48,15 +54,11 @@ public class LazyLoadedReconnectMsgTests {
         );
         
         bool result = await m_twitchConnector.TryConnect( options: m_options, messageCallback: MessageCallback );
-        Assert.That( actual: result, expression: Is.True );
-    }
-    
-    private static IEnumerable<TestCaseData> ReconnectMsgMessages() {
-        yield return new TestCaseData(
-            new List<string> {
-                $":tmi.twitch.tv RECONNECT"
-            }.ToImmutableList(),
-            new LazyLoadedReconnectMsg( channel: "channel" )
-        ).SetName("Reconnect message");
+        Assert.Multiple(
+            () => {
+                Assert.That( result, Is.True );
+                Assert.That( m_messageCallbackCalled, Is.True );
+            }
+        );
     }
 }

@@ -2,10 +2,10 @@ using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedUnknownMessage : IUnknownMessage {
+public class ImmediateLoadedUnknownMsg : IUnknownMsg {
     private readonly string m_message;
 
-    public ImmediateLoadedUnknownMessage(
+    public ImmediateLoadedUnknownMsg(
         string channel,
         string message
     ) {

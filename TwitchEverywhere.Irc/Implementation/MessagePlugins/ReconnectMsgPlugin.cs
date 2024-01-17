@@ -1,5 +1,6 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
@@ -15,6 +16,6 @@ public class ReconnectMsgPlugin : IMessagePlugin {
     IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        throw new NotImplementedException();
+        return new ReconnectMsg( response );
     }
 }
