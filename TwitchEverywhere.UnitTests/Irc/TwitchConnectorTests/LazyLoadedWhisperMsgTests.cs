@@ -2,11 +2,12 @@ using System.Collections.Immutable;
 using Moq;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Irc.Implementation;
 
-namespace TwitchEverywhere.UnitTests.Irc.TwitchConnectorTests; 
+namespace TwitchEverywhere.UnitTests.Irc.TwitchConnectorTests;
 
 [TestFixture]
 public class LazyLoadedWhisperMsgTests {
@@ -19,16 +20,22 @@ public class LazyLoadedWhisperMsgTests {
         "client_name"
     );
 
-    private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds(1507246572675).UtcDateTime;
-        
     private ITwitchConnector m_twitchConnector;
+    private bool m_messageCallbackCalled;
+
+    [SetUp]
+    public void Setup() {
+        m_messageCallbackCalled = false;
+    }
 
     [Test]
-    [TestCaseSource(nameof(WhisperMsgMessages))]
-    public async Task WhisperMsg( IImmutableList<string> messages, LazyLoadedWhisperMsg expectedMessage ) {
+    public async Task WhisperFromAUser() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $"@badges=staff/1,bits-charity/1;color=#8A2BE2;display-name=PetsgomOO;emotes=;message-id=306;thread-id=12345678_87654321;turbo=0;user-id=87654321;user-type=staff :petsgomoo!petsgomoo@petsgomoo.tmi.twitch.tv WHISPER foo :hello"
+        }.ToImmutableList();
+
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
-        Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
-        dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
         IMessageProcessor messageProcessor = new MessageProcessor();
@@ -36,50 +43,45 @@ public class LazyLoadedWhisperMsgTests {
         void MessageCallback(
             IMessage message
         ) {
-            Assert.That( message, Is.Not.Null );
-            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
+            m_messageCallbackCalled = true;
+            IWhisperMsg lazyLoadedWhisperMsg = (IWhisperMsg)message;
 
-            LazyLoadedWhisperMsg msg = (LazyLoadedWhisperMsg)message;
-            WhisperMsgMessageCallback( msg, expectedMessage );
+            IImmutableList<Badge> expectedBadges = new List<Badge> {
+                new( "staff", "1" ),
+                new( "bits-charity", "1" )
+            }.ToImmutableList();
+
+            Assert.Multiple(
+                () => {
+                    Assert.That( lazyLoadedWhisperMsg, Is.Not.Null );
+                    Assert.That( lazyLoadedWhisperMsg.MessageType, Is.EqualTo( MessageType.Whisper ), "Incorrect message type set" );
+                    Assert.That( lazyLoadedWhisperMsg.Badges, Is.EqualTo( expectedBadges ), "Badges was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.Color, Is.EqualTo( "#8A2BE2" ), "Color was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.DisplayName, Is.EqualTo( "PetsgomOO" ), "DisplayName was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.MsgId, Is.EqualTo( "306" ), "Id was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.ThreadId, Is.EqualTo( "12345678_87654321" ), "ThreadId was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.Turbo, Is.EqualTo( false ), "Turbo was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.UserType, Is.EqualTo( UserType.Staff ), "UserType was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.Emotes, Is.Null, "Emotes was not equal to expected value" );
+                    Assert.That( lazyLoadedWhisperMsg.UserId, Is.EqualTo( "87654321" ), "UserId was not equal to expected value" );
+                }
+            );
         }
-        
+
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
-        m_twitchConnector = new TwitchConnector( 
-            authorizer: authorizer.Object, 
+        m_twitchConnector = new TwitchConnector(
+            authorizer: authorizer.Object,
             webSocketConnection: webSocket,
             messageProcessor: messageProcessor
         );
-        
-        bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
-        Assert.That( result, Is.True );
-    }
-    
-    private void WhisperMsgMessageCallback(
-        LazyLoadedWhisperMsg lazyLoadedWhisperMsg,
-        LazyLoadedWhisperMsg? expectedWhisperMsgMessage
-    ) {
-        Assert.Multiple(() => {
-            Assert.That(lazyLoadedWhisperMsg.Badges, Is.EqualTo(expectedWhisperMsgMessage?.Badges), "Badges was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.Color, Is.EqualTo(expectedWhisperMsgMessage?.Color), "Color was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.DisplayName, Is.EqualTo(expectedWhisperMsgMessage?.DisplayName), "DisplayName was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.MsgId, Is.EqualTo(expectedWhisperMsgMessage?.MsgId), "Id was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.ThreadId, Is.EqualTo(expectedWhisperMsgMessage?.ThreadId), "ThreadId was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.Turbo, Is.EqualTo(expectedWhisperMsgMessage?.Turbo), "Turbo was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.UserType, Is.EqualTo(expectedWhisperMsgMessage?.UserType), "UserType was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.Emotes, Is.EqualTo(expectedWhisperMsgMessage?.Emotes), "Emotes was not equal to expected value");
-            Assert.That(lazyLoadedWhisperMsg.UserId, Is.EqualTo(expectedWhisperMsgMessage?.UserId), "UserId was not equal to expected value");
-        });
-    }
 
-    private static IEnumerable<TestCaseData> WhisperMsgMessages() {
-        yield return new TestCaseData(
-            new List<string> {
-                $"@badges=staff/1,bits-charity/1;color=#8A2BE2;display-name=PetsgomOO;emotes=;message-id=306;thread-id=12345678_87654321;turbo=0;user-id=87654321;user-type=staff :petsgomoo!petsgomoo@petsgomoo.tmi.twitch.tv WHISPER foo :hello"
-            }.ToImmutableList(),
-            new LazyLoadedWhisperMsg(
-                channel: "channel", 
-                message: $"@badges=staff/1,bits-charity/1;color=#8A2BE2;display-name=PetsgomOO;emotes=;message-id=306;thread-id=12345678_87654321;turbo=0;user-id=87654321;user-type=staff :petsgomoo!petsgomoo@petsgomoo.tmi.twitch.tv WHISPER foo :hello"
-            )
-        ).SetName("Whisper from a user");
+        bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
+        Assert.Multiple(
+            () => {
+                Assert.That( result, Is.True );
+                Assert.That( m_messageCallbackCalled, Is.True );
+            }
+        );
+
     }
 }

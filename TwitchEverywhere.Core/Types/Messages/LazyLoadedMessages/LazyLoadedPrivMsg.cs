@@ -13,7 +13,7 @@ internal class LazyLoadedPrivMsg( RawMessage response ) : IPrivMsg {
 
     public string RawMessage => Encoding.UTF8.GetString( response.Data.Span );
 
-    public string Channel => "";
+    public string Channel => MessagePluginUtils.GetChannelFromMessage( response );
 
     IImmutableList<Badge> IPrivMsg.Badges {
         get {
@@ -240,19 +240,5 @@ internal class LazyLoadedPrivMsg( RawMessage response ) : IPrivMsg {
         m_tags = MessagePluginUtils.GetTagsFromMessage( response );
     }
 
-    string IPrivMsg.Text {
-        get {
-
-            if( !response.MessageContentRange.HasValue ) {
-                return "";
-            }
-
-            return Encoding.UTF8.GetString(
-                response.Data.Span[
-                    response.MessageContentRange.Value.Start
-                        ..response.MessageContentRange.Value.End
-                ]
-            ).TrimEnd();
-        }
-    }
+    string IPrivMsg.Text => MessagePluginUtils.GetTextFromMessage( response );
 }

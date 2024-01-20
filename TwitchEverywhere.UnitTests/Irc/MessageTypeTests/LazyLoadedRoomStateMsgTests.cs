@@ -1,4 +1,6 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.MessageTypeTests;
@@ -12,7 +14,8 @@ public class LazyLoadedRoomStateMsgTests {
         string message,
         TestData expectedRoomStateMsgMessage
     ) {
-        LazyLoadedRoomStateMsg actualLazyLoadedRoomStateMsgMessage = new( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        LazyLoadedRoomStateMsg actualLazyLoadedRoomStateMsgMessage = new( rawMessage );
 
         Assert.That( actualLazyLoadedRoomStateMsgMessage.MessageType, Is.EqualTo( MessageType.RoomState ) );
 

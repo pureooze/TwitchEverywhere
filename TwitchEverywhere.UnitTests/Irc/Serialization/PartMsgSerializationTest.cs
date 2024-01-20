@@ -1,4 +1,7 @@
+using System.Text;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.Serialization;
@@ -8,10 +11,10 @@ public class PartMsgSerializationTest {
 
     [Test]
     public void LazyLoadedPartMsgSerialization() {
-        const string channel = "channel";
         const string message =
             ":ronni!ronni@ronni.tmi.twitch.tv PART #dallas";
-        LazyLoadedPartMsg lazyLoadedPartMsg = new( channel: channel, message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IPartMsg lazyLoadedPartMsg = new LazyLoadedPartMsg( rawMessage );
 
         Assert.That( lazyLoadedPartMsg.RawMessage, Is.EqualTo( message ) );
     }

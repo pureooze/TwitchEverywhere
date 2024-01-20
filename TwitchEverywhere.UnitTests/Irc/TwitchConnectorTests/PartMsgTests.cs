@@ -7,7 +7,7 @@ using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 using TwitchEverywhere.Irc;
 using TwitchEverywhere.Irc.Implementation;
 
-namespace TwitchEverywhere.UnitTests.Irc.TwitchConnectorTests; 
+namespace TwitchEverywhere.UnitTests.Irc.TwitchConnectorTests;
 
 public class PartMsgTests {
     private readonly TwitchConnectionOptions m_options = new(
@@ -19,16 +19,22 @@ public class PartMsgTests {
         "client_name"
     );
 
-    private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds(1507246572675).UtcDateTime;
-        
+    private bool m_messageCallbackCalled;
     private ITwitchConnector m_twitchConnector;
-    
+
+    [SetUp]
+    public void Setup() {
+        m_messageCallbackCalled = false;
+    }
+
     [Test]
-    [TestCaseSource(nameof(PartMsgMessages))]
-    public async Task PartMsg( IImmutableList<string> messages, IPartMsg expectedMessage ) {
+    public async Task UserLeftTheChannel() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $":ronni!ronni@ronni.tmi.twitch.tv PART #channel"
+        }.ToImmutableList();
+        
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
-        Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
-        dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
         IMessageProcessor messageProcessor = new MessageProcessor();
@@ -36,43 +42,32 @@ public class PartMsgTests {
         void MessageCallback(
             IMessage message
         ) {
-            Assert.That( message, Is.Not.Null );
-            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
+            m_messageCallbackCalled = true;
+            IPartMsg lazyLoadedPartMsg = (IPartMsg)message;
 
-            LazyLoadedPartMsg msg = (LazyLoadedPartMsg)message;
-            PartMsgCallback( msg, expectedMessage );
+            Assert.Multiple(
+                () => {
+                    Assert.That( lazyLoadedPartMsg, Is.Not.Null );
+                    Assert.That( lazyLoadedPartMsg.MessageType, Is.EqualTo( MessageType.Part ), "Incorrect message type set" );
+                    Assert.That( lazyLoadedPartMsg.User, Is.EqualTo( "ronni" ), "User was not equal to expected value" );
+                    Assert.That( lazyLoadedPartMsg.Channel, Is.EqualTo( "channel" ), "Channel was not equal to expected value" );
+                }
+            );
         }
-        
+
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
-        m_twitchConnector = new TwitchConnector( 
-            authorizer: authorizer.Object, 
+        m_twitchConnector = new TwitchConnector(
+            authorizer: authorizer.Object,
             webSocketConnection: webSocket,
             messageProcessor: messageProcessor
         );
-        
+
         bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
-        Assert.That( result, Is.True );
-    }
-    
-    private void PartMsgCallback(
-        IPartMsg lazyLoadedPartMsg,
-        IPartMsg expectedPartMsg
-    ) {
-        Assert.Multiple(() => {
-            Assert.That(lazyLoadedPartMsg.User, Is.EqualTo(expectedPartMsg?.User), "User was not equal to expected value");
-            Assert.That(lazyLoadedPartMsg.Channel, Is.EqualTo(expectedPartMsg?.Channel), "Channel was not equal to expected value");
-        });
-    }
-    
-    private static IEnumerable<TestCaseData> PartMsgMessages() {
-        yield return new TestCaseData(
-            new List<string> {
-                $":ronni!ronni@ronni.tmi.twitch.tv PART #channel"
-            }.ToImmutableList(),
-            new LazyLoadedPartMsg(
-                message: $":ronni!ronni@ronni.tmi.twitch.tv PART #channel",
-                channel: "channel"
-            )
-        ).SetName("Ronni left the channel");
+        Assert.Multiple(
+            () => {
+                Assert.That( result, Is.True );
+                Assert.That( m_messageCallbackCalled, Is.True );
+            }
+        );
     }
 }

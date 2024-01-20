@@ -4,7 +4,7 @@ using TwitchEverywhere.Core.Types.Messages.Interfaces;
 
 namespace TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 
-public class ImmediateLoadedGlobalUserState : IGlobalUserState {
+public class ImmediateLoadedGlobalUserStateMsg : IGlobalUserStateMsg {
     
     private readonly IImmutableList<Badge> m_badges;
     private readonly IImmutableList<Badge> m_badgeInfo;
@@ -16,7 +16,7 @@ public class ImmediateLoadedGlobalUserState : IGlobalUserState {
     private readonly UserType m_userType;
     private readonly string m_channel;
 
-    public ImmediateLoadedGlobalUserState(
+    public ImmediateLoadedGlobalUserStateMsg(
         string channel,
         IImmutableList<Badge>? badges = null,
         IImmutableList<Badge>? badgeInfo = null,
@@ -44,21 +44,21 @@ public class ImmediateLoadedGlobalUserState : IGlobalUserState {
     
     public string Channel => m_channel;
 
-    IImmutableList<Badge> IGlobalUserState.Badges => m_badges;
+    IImmutableList<Badge> IGlobalUserStateMsg.Badges => m_badges;
 
-    IImmutableList<Badge> IGlobalUserState.BadgeInfo => m_badgeInfo;
+    IImmutableList<Badge> IGlobalUserStateMsg.BadgeInfo => m_badgeInfo;
 
-    string IGlobalUserState.Color => m_color;
+    string IGlobalUserStateMsg.Color => m_color;
 
-    string IGlobalUserState.DisplayName => m_displayName;
+    string IGlobalUserStateMsg.DisplayName => m_displayName;
 
-    IImmutableList<string> IGlobalUserState.EmoteSets => m_emoteSets;
+    IImmutableList<string> IGlobalUserStateMsg.EmoteSets => m_emoteSets;
 
-    bool IGlobalUserState.Turbo => m_turbo;
+    bool IGlobalUserStateMsg.Turbo => m_turbo;
 
-    string IGlobalUserState.UserId => m_userId;
+    string IGlobalUserStateMsg.UserId => m_userId;
 
-    UserType IGlobalUserState.UserType => m_userType;
+    UserType IGlobalUserStateMsg.UserType => m_userType;
     
     private string GetRawMessage() {
         string message = "@";

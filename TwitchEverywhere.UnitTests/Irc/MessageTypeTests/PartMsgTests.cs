@@ -1,4 +1,6 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
@@ -13,7 +15,8 @@ public class PartMsgTests {
         string message,
         TestData expectedPartMsgMessage
     ) {
-        IPartMsg actualLazyLoadedPartMsgMessage = new LazyLoadedPartMsg( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IPartMsg actualLazyLoadedPartMsgMessage = new LazyLoadedPartMsg( rawMessage );
 
         Assert.That( actualLazyLoadedPartMsgMessage.MessageType, Is.EqualTo( MessageType.Part ) );
 

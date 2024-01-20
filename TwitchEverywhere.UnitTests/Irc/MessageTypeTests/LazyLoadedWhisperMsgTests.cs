@@ -1,5 +1,8 @@
 using System.Collections.Immutable;
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.MessageTypeTests;
@@ -13,7 +16,8 @@ public class LazyLoadedWhisperMsgTests {
         string message,
         TestData expectedWhisperMsgMessage
     ) {
-        LazyLoadedWhisperMsg actualLazyLoadedWhisperMsgMessage = new( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IWhisperMsg actualLazyLoadedWhisperMsgMessage = new LazyLoadedWhisperMsg( rawMessage );
 
         Assert.That( actualLazyLoadedWhisperMsgMessage.MessageType, Is.EqualTo( MessageType.Whisper ) );
         
@@ -29,6 +33,7 @@ public class LazyLoadedWhisperMsgTests {
             Assert.That(actualLazyLoadedWhisperMsgMessage.UserId, Is.EqualTo(expectedWhisperMsgMessage?.UserId), "UserId was not equal to expected value");
             Assert.That(actualLazyLoadedWhisperMsgMessage.FromUser, Is.EqualTo(expectedWhisperMsgMessage?.FromUser), "FromUser was not equal to expected value");
             Assert.That(actualLazyLoadedWhisperMsgMessage.ToUser, Is.EqualTo(expectedWhisperMsgMessage?.ToUser), "ToUser was not equal to expected value");
+            Assert.That(actualLazyLoadedWhisperMsgMessage.Text, Is.EqualTo(expectedWhisperMsgMessage?.Text), "Text was not equal to expected value");
         });
     }
 
@@ -48,8 +53,9 @@ public class LazyLoadedWhisperMsgTests {
                 turbo: false,
                 userId: "87654321",
                 userType: UserType.Staff,
-                fromUser: "petsgomoo",
-                toUser: "foo"
+                fromUser: "foo",
+                toUser: "petsgomoo",
+                text: "hello"
             )
         ).SetName( "Whisper from a user" );
         
@@ -72,8 +78,9 @@ public class LazyLoadedWhisperMsgTests {
                 turbo: false,
                 userId: "87654321",
                 userType: UserType.Staff,
-                fromUser: "petsgomoo",
-                toUser: "foo"
+                fromUser: "foo",
+                toUser: "petsgomoo",
+                text: "hello"
             )
         ).SetName( "Whisper with emotes" );
     }
@@ -90,7 +97,8 @@ public class LazyLoadedWhisperMsgTests {
         public UserType UserType { get; }
         public string FromUser { get; }
         public string ToUser { get; }
-
+        public string Text { get; }
+        
         public TestData(
             IImmutableList<Badge> badges,
             string color,
@@ -102,7 +110,8 @@ public class LazyLoadedWhisperMsgTests {
             string userId,
             UserType userType,
             string fromUser,
-            string toUser
+            string toUser,
+            string text
         ) {
             Badges = badges;
             Color = color;
@@ -115,7 +124,7 @@ public class LazyLoadedWhisperMsgTests {
             UserType = userType;
             FromUser = fromUser;
             ToUser = toUser;
-
+            Text = text;
         }
     }
 

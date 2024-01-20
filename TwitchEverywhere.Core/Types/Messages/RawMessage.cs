@@ -85,12 +85,19 @@ public class RawMessage {
                 } else {
                     int channelStart = commandEnd + 2;
                     int channelEnd = dataSpan[channelStart..].IndexOfAny( space, carriageReturn ) + channelStart;
-                    if( channelEnd - channelStart == -1 ) {
+                    int nullChannelEndIndex = dataSpan[channelStart..].IndexOf( nullCharacter ) + channelStart;
+                    if( nullChannelEndIndex - channelStart == -1 && channelEnd == nullChannelEndIndex ) {
                         ChannelRange = channelStart..dataSpan.Length;
                         return;
                     }
-
+                    
+                    if ( channelEnd - channelStart == -1 ) {
+                        ChannelRange = channelStart..nullChannelEndIndex;
+                        return;
+                    }
+                    
                     ChannelRange = channelStart..channelEnd;
+
                     if( dataSpan[channelEnd] == carriageReturn ) {
                         // HasMoreMessages = true;
                         NextMessageStartIndex = channelEnd + 2;

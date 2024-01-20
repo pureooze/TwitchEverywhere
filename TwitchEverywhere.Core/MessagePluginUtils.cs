@@ -38,7 +38,7 @@ public static partial class MessagePluginUtils {
     [GeneratedRegex("followers-only=([^ ;]*)", RegexOptions.NonBacktracking)]
     public static partial Regex FollowersOnlyPattern();
 
-    [GeneratedRegex(@" :(.+?)!", RegexOptions.NonBacktracking)]
+    [GeneratedRegex(@"WHISPER\s(.*?) :[^:]*$", RegexOptions.NonBacktracking)]
     public static partial Regex FromUserPattern();
 
     [GeneratedRegex(@":([a-zA-Z-]+)(?=\s\d+)")]
@@ -182,7 +182,7 @@ public static partial class MessagePluginUtils {
     [GeneratedRegex("thread-id=([^ ;]*)", RegexOptions.NonBacktracking)]
     public static partial Regex ThreadIdPattern();
 
-    [GeneratedRegex(@"WHISPER\s(.*?) :[^:]*$", RegexOptions.NonBacktracking)]
+    [GeneratedRegex(@" :(.+?)!", RegexOptions.NonBacktracking)]
     public static partial Regex ToUserPattern();
 
     [GeneratedRegex("turbo=([^ ;]*)", RegexOptions.NonBacktracking)]
@@ -506,5 +506,19 @@ public static partial class MessagePluginUtils {
                     ..message.ChannelRange.Value.End
             ]
         );
+    }
+    
+    public static string GetTextFromMessage( RawMessage message ) {
+
+        if( !message.MessageContentRange.HasValue ) {
+            return string.Empty;
+        }
+
+        return Encoding.UTF8.GetString(
+            message.Data.Span[
+                message.MessageContentRange.Value.Start
+                    ..message.MessageContentRange.Value.End
+            ]
+        ).TrimEnd();
     }
 }

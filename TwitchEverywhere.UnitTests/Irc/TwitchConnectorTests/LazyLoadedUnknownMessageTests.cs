@@ -18,17 +18,23 @@ public class LazyLoadedUnknownMessageTests {
         "client_secret",
         "client_name"
     );
-
-    private readonly DateTime m_startTime = DateTimeOffset.FromUnixTimeMilliseconds(1507246572675).UtcDateTime;
-        
+    
+    private bool m_messageCallbackCalled;
     private ITwitchConnector m_twitchConnector;
     
+    [SetUp]
+    public void Setup() {
+        m_messageCallbackCalled = false;
+    }
+    
     [Test]
-    [TestCaseSource(nameof(UnknownMessageMessages))]
-    public async Task ClearChat( IImmutableList<string> messages, LazyLoadedUnknownMessage expectedMessage ) {
+    public async Task IgnoreMessagesWithInvalidFormat() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $"foo bar baz"
+        }.ToImmutableList();
+        
         Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
-        Mock<IDateTimeService> dateTimeService = new( MockBehavior.Strict );
-        dateTimeService.Setup( dts => dts.GetStartTime() ).Returns( m_startTime );
 
         IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
         IMessageProcessor messageProcessor = new MessageProcessor();
@@ -36,11 +42,13 @@ public class LazyLoadedUnknownMessageTests {
         void MessageCallback(
             IMessage message
         ) {
-            Assert.That( message, Is.Not.Null );
-            Assert.That( message.MessageType, Is.EqualTo( expectedMessage.MessageType ), "Incorrect message type set" );
-
-            LazyLoadedUnknownMessage msg = (LazyLoadedUnknownMessage)message;
-            UnknownMessageCallback( msg, expectedMessage );
+            m_messageCallbackCalled = true;
+            IUnknownMsg unknownMsg = (IUnknownMsg)message;
+            
+            Assert.Multiple(() => {
+                Assert.That( unknownMsg, Is.Not.Null );
+                Assert.That( unknownMsg.MessageType, Is.EqualTo( unknownMsg.MessageType ), "Incorrect message type set" );
+            });
         }
         
         authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
@@ -54,34 +62,38 @@ public class LazyLoadedUnknownMessageTests {
         Assert.That( result, Is.True );
     }
     
-    private void UnknownMessageCallback(
-        IUnknownMessage globalUserState,
-        IUnknownMessage? expectedGlobalUserState
-    ) {
-        Assert.Multiple(() => {
-            Assert.That(globalUserState.MessageType, Is.EqualTo(expectedGlobalUserState?.MessageType), "MessageType was not equal to expected value");
-        });
-    }
-    
-    private static IEnumerable<TestCaseData> UnknownMessageMessages() {
-        yield return new TestCaseData(
-            new List<string> {
-                $"foo bar baz"
-            }.ToImmutableList(),
-            new LazyLoadedUnknownMessage(
-                channel: "channel", 
-                message: $"foo bar baz"
-            )
-        ).SetName("Ignore messages with invalid format");
+    [Test]
+    public async Task IgnoreUnknownCommands() {
+        // Arrange
+        IImmutableList<string> messages = new List<string> {
+            $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv NEWCOMMAND"
+        }.ToImmutableList();
         
-        yield return new TestCaseData(
-            new List<string> {
-                $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
-            }.ToImmutableList(),
-            new LazyLoadedUnknownMessage(
-                channel: "channel", 
-                message: $"@emote-only=0;followers-only=0;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE"
-            )
-        ).SetName("Ignore messages missing channel when its required");
+        Mock<IAuthorizer> authorizer = new( behavior: MockBehavior.Strict );
+
+        IWebSocketConnection webSocket = new TestWebSocketConnection( messages );
+        IMessageProcessor messageProcessor = new MessageProcessor();
+
+        void MessageCallback(
+            IMessage message
+        ) {
+            m_messageCallbackCalled = true;
+            IUnknownMsg unknownMsg = (IUnknownMsg)message;
+            
+            Assert.Multiple(() => {
+                Assert.That( unknownMsg, Is.Not.Null );
+                Assert.That( unknownMsg.MessageType, Is.EqualTo( unknownMsg.MessageType ), "Incorrect message type set" );
+            });
+        }
+        
+        authorizer.Setup( expression: a => a.GetToken() ).ReturnsAsync( value: "token" );
+        m_twitchConnector = new TwitchConnector( 
+            authorizer: authorizer.Object, 
+            webSocketConnection: webSocket,
+            messageProcessor: messageProcessor
+        );
+        
+        bool result = await m_twitchConnector.TryConnect( m_options, MessageCallback );
+        Assert.That( result, Is.True );
     }
 }

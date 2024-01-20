@@ -50,8 +50,9 @@ public class LazyLoadedClearChatMsg(
         }
     }
 
-    public string Text {
+    string IClearChatMsg.Text {
         get {
+
             if( !response.MessageContentRange.HasValue ) {
                 return "";
             }

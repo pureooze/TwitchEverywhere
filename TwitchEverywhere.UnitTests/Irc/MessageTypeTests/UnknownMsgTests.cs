@@ -1,4 +1,8 @@
+using System.Text;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.UnitTests.Irc.MessageTypeTests;
@@ -12,9 +16,10 @@ public class LazyLoadedUnknownMessageTests {
         string message,
         TestData expectedUnknownMessage
     ) {
-        LazyLoadedUnknownMessage actualLazyLoadedUnknownMessage = new( channel: "channel", message: message );
+        RawMessage rawMessage = new( Encoding.UTF8.GetBytes( message ) );
+        IUnknownMsg actualLazyLoadedUnknownMsg = new UnknownMsg( rawMessage );
 
-        Assert.That( actualLazyLoadedUnknownMessage.MessageType, Is.EqualTo( MessageType.Unknown ) );
+        Assert.That( actualLazyLoadedUnknownMsg.MessageType, Is.EqualTo( MessageType.Unknown ) );
     }
 
     internal static IEnumerable<TestCaseData> UnknownMessageMessages() {

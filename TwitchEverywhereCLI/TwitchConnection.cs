@@ -98,9 +98,8 @@ internal class TwitchConnection(
         switch( message.MessageType ) {
             case MessageType.PrivMsg:
                 IPrivMsg lazyLoadedPrivMsg = (IPrivMsg) message;
-                Console.WriteLine(lazyLoadedPrivMsg);
                 // PrivMessageCallback( lazyLoadedPrivMsg );
-                // Console.WriteLine( $"PrivMsg: {lazyLoadedPrivMsg.DisplayName}, {lazyLoadedPrivMsg.Text}" );
+                Console.WriteLine( $"PrivMsg: {lazyLoadedPrivMsg.DisplayName}, {lazyLoadedPrivMsg.Text}" );
 
                 // PrivMsg reply = new(
                 //     channel: "pureooze",
@@ -123,8 +122,8 @@ internal class TwitchConnection(
                 Console.WriteLine( $"ClearChat: {lazyLoadedClearMsg.Login}, {lazyLoadedClearMsg.Timestamp}, {lazyLoadedClearMsg.RoomId}" );
                 break;
             case MessageType.GlobalUserState:
-                IGlobalUserState lazyLoadedGlobalUserStateMsg = (IGlobalUserState) message;
-                Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsg.UserId}, {lazyLoadedGlobalUserStateMsg.UserType}, {lazyLoadedGlobalUserStateMsg.DisplayName}" );
+                IGlobalUserStateMsg lazyLoadedGlobalUserStateMsgMsg = (IGlobalUserStateMsg) message;
+                Console.WriteLine( $"GlobalUserState: {lazyLoadedGlobalUserStateMsgMsg.UserId}, {lazyLoadedGlobalUserStateMsgMsg.UserType}, {lazyLoadedGlobalUserStateMsgMsg.DisplayName}" );
                 break;
             case MessageType.Notice:
                 INoticeMsg lazyLoadedNoticeMsg = (INoticeMsg) message;
@@ -157,7 +156,7 @@ internal class TwitchConnection(
                 Console.WriteLine( $"{lazyLoadedPartMsg.User} leaving {lazyLoadedPartMsg.Channel}" );
                 break;
             case MessageType.Unknown:
-                IUnknownMessage lazyLoadedUnknownMsg = (IUnknownMessage) message;
+                IUnknownMsg lazyLoadedUnknownMsg = (IUnknownMsg) message;
                 Console.WriteLine( $"UnknownMessage: {lazyLoadedUnknownMsg}" );
                 break;
             case MessageType.HostTarget:
