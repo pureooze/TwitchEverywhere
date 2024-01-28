@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types.RestApi.Users;
-using TwitchEverywhere.Core.Types.RestApi.Videos;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 
 namespace TwitchEverywhere.Rest.Implementation;

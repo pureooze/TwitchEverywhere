@@ -119,4 +119,17 @@ public class RestClient( TwitchConnectionOptions options ) {
     ) {
         return await m_restService.GetVideosForUsersById( userId );
     }
+
+    /// <summary>
+    /// <para>
+    /// Gets information about one channel.
+    /// </para>
+    /// </summary>
+    /// <param name="broadcasterId"></param>
+    /// <returns></returns>
+    public async Task<GetChannelInfoResponse> GetChannelInfo(
+        string broadcasterId
+    ) {
+        return await m_restService.GetChannelInfo( broadcasterId );
+    }
 }

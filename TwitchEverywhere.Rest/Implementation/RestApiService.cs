@@ -10,6 +10,7 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
     private readonly IHttpClientWrapper m_httpClientWrapper = new HttpClientWrapper();
     private readonly IUsersApiService m_usersApiService = new UsersApiService( option );
     private readonly IVideosApiService m_videosApiService = new VideosApiService( option );
+    private readonly IChannelApiService m_channelApiService = new ChannelApiService( option );
 
     async Task<GetUsersResponse> IRestApiService.GetUsersById(
         string[] userIds
@@ -60,6 +61,14 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
             targetUserId, 
             sourceContext.ToString()?.ToLower(), 
             reason.ToString()?.ToLower()
+        );
+    }
+    async Task<GetChannelInfoResponse> IRestApiService.GetChannelInfo(
+        string broadcasterId
+    ) {
+        return await m_channelApiService.GetChannelInfo(
+            httpClient: m_httpClientWrapper,
+            broadcasterId: broadcasterId
         );
     }
 

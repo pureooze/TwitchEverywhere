@@ -34,7 +34,7 @@ internal class TwitchConnection(
 
     public async Task ConnectToRestClient() {
         GetUsersResponse users = await m_restClient.GetUsersByLogin(
-            logins: [ "pureooze" ] 
+            logins: [ "dumbdog" ] 
         );
         
         if (users.StatusCode != HttpStatusCode.OK) {
@@ -45,26 +45,39 @@ internal class TwitchConnection(
         foreach (UserEntry userEntry in users.ApiResponse.Data) {
             Console.WriteLine( userEntry );
             
-            GetUsersResponse updatedUser = await m_restClient.UpdateUser(
-                description: "Did it work"
+            // GetUsersResponse updatedUser = await m_restClient.UpdateUser(
+            //     description: "Did it work"
+            // );
+            //
+            // if (updatedUser.StatusCode != HttpStatusCode.OK) {
+            //     Console.WriteLine( "Error in UpdateUser request with status code: " + updatedUser.StatusCode );
+            //     return;
+            // }
+            
+            // GetVideosResponse response = await m_restClient.GetVideosForUsersById( 
+            //     userId: userEntry.Id
+            // );
+            //
+            // if (response.StatusCode != HttpStatusCode.OK) {
+            //     Console.WriteLine( "Error in GetVideos request with status code: " + response.StatusCode );
+            //     return;
+            // }
+            //
+            // foreach (VideoEntry videoEntry in response.ApiResponse.Data) {
+            //     Console.WriteLine( videoEntry );
+            // }
+            
+            GetChannelInfoResponse channelResponse = await m_restClient.GetChannelInfo( 
+                broadcasterId: userEntry.Id
             );
             
-            if (updatedUser.StatusCode != HttpStatusCode.OK) {
-                Console.WriteLine( "Error in UpdateUser request with status code: " + updatedUser.StatusCode );
+            if (channelResponse.StatusCode != HttpStatusCode.OK) {
+                Console.WriteLine( "Error in GetChannelInfo request with status code: " + channelResponse.StatusCode );
                 return;
             }
-            
-            GetVideosResponse response = await m_restClient.GetVideosForUsersById( 
-                userId: userEntry.Id
-            );
-            
-            if (response.StatusCode != HttpStatusCode.OK) {
-                Console.WriteLine( "Error in GetVideos request with status code: " + response.StatusCode );
-                return;
-            }
-         
-            foreach (VideoEntry videoEntry in response.ApiResponse.Data) {
-                Console.WriteLine( videoEntry );
+
+            foreach (string tag in channelResponse.ApiResponse.Data[0].Tags) {
+                Console.WriteLine( tag );
             }
         }
         
@@ -111,7 +124,6 @@ internal class TwitchConnection(
                 //
                 // Console.WriteLine( sendMessage ? $"Sent message SUCCEEDED!" : $"Sent message FAILED!" );
 
-                m_ircClient.Disconnect();
                 break;
             case MessageType.ClearChat:
                 IClearChatMsg lazyLoadedClearChatMsgMsg = (IClearChatMsg) message;
