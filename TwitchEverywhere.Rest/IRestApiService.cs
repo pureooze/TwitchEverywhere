@@ -32,4 +32,8 @@ public interface IRestApiService {
         SourceContext? sourceContext,
         Reason? reason
     );
+
+    Task<GetChannelInfoResponse> GetChannelInfo(
+        string broadcasterId
+    );
 }
