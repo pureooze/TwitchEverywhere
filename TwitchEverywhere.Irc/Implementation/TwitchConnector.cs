@@ -9,11 +9,11 @@ namespace TwitchEverywhere.Irc.Implementation;
 
 internal sealed class TwitchConnector(
     IAuthorizer authorizer,
-    IWebSocketConnection webSocketConnection,
     IMessageProcessor messageProcessor
 ) : ITwitchConnector {
     
     private TwitchConnectionOptions m_options;
+    private readonly ClientWebSocket m_webSocketConnection = new();
     
     async Task<bool> ITwitchConnector.TryConnect( 
         TwitchConnectionOptions options, 
@@ -24,7 +24,6 @@ internal sealed class TwitchConnector(
         m_options = options;
 
         bool result = await ConnectToWebsocket( 
-            ws: webSocketConnection, 
             token: token, 
             callback: messageCallback 
         );
@@ -35,7 +34,7 @@ internal sealed class TwitchConnector(
         IMessage message,
         MessageType messageType
     ) {
-        if( webSocketConnection.State != WebSocketState.Open ) {
+        if( m_webSocketConnection.State != WebSocketState.Open ) {
             return false;
         }
 
@@ -43,43 +42,43 @@ internal sealed class TwitchConnector(
             case MessageType.PrivMsg:
                 // Console.WriteLine( $"@reply-parent-msg-id={lazyLoadedPrivMsg.ReplyParentMsgId} PRIVMSG #{m_options.Channel} :{lazyLoadedPrivMsg.Text}" );
                 Console.WriteLine( message.RawMessage );
-                await SendMessage( webSocketConnection, message.RawMessage.Replace( $":{m_options.Channel}!{m_options.Channel}@{m_options.Channel}.tmi.twitch.tv", "" ) );
+                await SendMessage( message.RawMessage.Replace( $":{m_options.Channel}!{m_options.Channel}@{m_options.Channel}.tmi.twitch.tv", "" ) );
                 break;
             case MessageType.ClearChat:
-                await SendMessage( webSocketConnection, $"CLEARCHAT #${m_options.Channel}" );
+                await SendMessage( $"CLEARCHAT #${m_options.Channel}" );
                 break;
             case MessageType.ClearMsg:
-                await SendMessage( webSocketConnection, $"CLEARMSG ${m_options.Channel}" );
+                await SendMessage( $"CLEARMSG ${m_options.Channel}" );
                 break;
             case MessageType.GlobalUserState:
-                await SendMessage( webSocketConnection, $"GLOBALUSERSTATE ${m_options.Channel}" );
+                await SendMessage( $"GLOBALUSERSTATE ${m_options.Channel}" );
                 break;
             case MessageType.Notice:
-                await SendMessage( webSocketConnection, $"NOTICE ${m_options.Channel}" );
+                await SendMessage( $"NOTICE ${m_options.Channel}" );
                 break;
             case MessageType.RoomState:
-                await SendMessage( webSocketConnection, $"ROOMSTATE ${m_options.Channel}" );
+                await SendMessage( $"ROOMSTATE ${m_options.Channel}" );
                 break;
             case MessageType.UserNotice:
-                await SendMessage( webSocketConnection, $"USERNOTICE ${m_options.Channel}" );
+                await SendMessage( $"USERNOTICE ${m_options.Channel}" );
                 break;
             case MessageType.UserState:
-                await SendMessage( webSocketConnection, $"USERSTATE ${m_options.Channel}" );
+                await SendMessage( $"USERSTATE ${m_options.Channel}" );
                 break;
             case MessageType.Whisper:
-                await SendMessage( webSocketConnection, $"WHISPER ${m_options.Channel}" );
+                await SendMessage( $"WHISPER ${m_options.Channel}" );
                 break;
             case MessageType.Join:
-                await SendMessage( webSocketConnection, $"JOIN ${m_options.Channel}" );
+                await SendMessage( $"JOIN ${m_options.Channel}" );
                 break;
             case MessageType.Part:
-                await SendMessage( webSocketConnection, $"PART ${m_options.Channel}" );
+                await SendMessage( $"PART ${m_options.Channel}" );
                 break;
             case MessageType.HostTarget:
-                await SendMessage( webSocketConnection, $"HOSTTARGET ${m_options.Channel}" );
+                await SendMessage( $"HOSTTARGET ${m_options.Channel}" );
                 break;
             case MessageType.Reconnect:
-                await SendMessage( webSocketConnection, $"RECONNECT ${m_options.Channel}" );
+                await SendMessage( $"RECONNECT ${m_options.Channel}" );
                 break;
             case MessageType.Unknown:
             default:
@@ -90,8 +89,8 @@ internal sealed class TwitchConnector(
     }
 
     async Task<bool> ITwitchConnector.Disconnect() {
-        await SendMessage( webSocketConnection, $"PART ${m_options.Channel}" );
-        await webSocketConnection.CloseAsync( 
+        await SendMessage( $"PART ${m_options.Channel}" );
+        await m_webSocketConnection.CloseAsync( 
             closeStatus: WebSocketCloseStatus.NormalClosure, 
             statusDescription: "Disconnect requested", 
             cancellationToken: CancellationToken.None 
@@ -106,73 +105,60 @@ internal sealed class TwitchConnector(
     }
 
     private async Task<bool> ConnectToWebsocket(
-        IWebSocketConnection ws,
         string token,
         Action<IMessage> callback
     ) {
-        await ws.ConnectAsync(
-            uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"), 
-            cancellationToken: CancellationToken.None
-        );
-        byte[] buffer = new byte[4096];
-
-        await SendMessage( 
-            socketConnection: ws, 
-            message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" 
-        );
-        await SendMessage( socketConnection: ws, message: $"PASS oauth:{token}" );
-        await SendMessage( socketConnection: ws, message: $"NICK {m_options.ClientName}" );
-        await SendMessage( socketConnection: ws, message: $"JOIN #{m_options.Channel}" );
-        
-        while (ws.State == WebSocketState.Open) {
-            await ReceiveWebSocketResponse( 
-                ws: ws, 
-                buffer: buffer, 
-                callback: callback 
+        try {
+            await m_webSocketConnection.ConnectAsync(
+                uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"), 
+                cancellationToken: CancellationToken.None
             );
-        }
+            byte[] buffer = new byte[4096];
 
-        return true;
+            await SendMessage(
+                message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands" 
+            );
+            await SendMessage( message: $"PASS oauth:{token}" );
+            await SendMessage( message: $"NICK {m_options.ClientName}" );
+            await SendMessage( message: $"JOIN #{m_options.Channel}" );
+        
+            while (m_webSocketConnection.State == WebSocketState.Open) {
+                await ReceiveWebSocketResponse( 
+                    buffer: buffer, 
+                    callback: callback 
+                );
+            }
+
+            return true;
+        }
+        catch (Exception e) {
+            Console.Error.WriteLine( e );
+            return false;
+        }
+        finally {
+            if (m_webSocketConnection.State == WebSocketState.Open) {
+                await m_webSocketConnection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+            }
+        }
     }
 
     private async Task ReceiveWebSocketResponse(
-        IWebSocketConnection ws,
         byte[] buffer,
         Action<IMessage> callback
     ) {
-        WebSocketReceiveResult result = await ws.ReceiveAsync(
+        WebSocketReceiveResult result = await m_webSocketConnection.ReceiveAsync(
             buffer: buffer, 
             cancellationToken: CancellationToken.None
         );
             
         if ( result.MessageType == WebSocketMessageType.Close ) {
-            await ws.CloseAsync(
+            await m_webSocketConnection.CloseAsync(
                 closeStatus: WebSocketCloseStatus.NormalClosure, 
                 statusDescription: null, 
                 cancellationToken: CancellationToken.None
             );
         } else {
-            
             Parse( data: buffer, callback: callback );
-            // string twitchResponse = Encoding.ASCII.GetString( 
-            //     bytes: buffer, 
-            //     index: 0, 
-            //     count: result.Count 
-            // );
-            //
-            // string[] responses = twitchResponse.Trim().Split( "\r\n" );
-            // foreach (string response in responses) {
-            //     // keep alive, let twitch know we are still listening
-            //     if( response.Contains( "PING :tmi.twitch.tv" ) ) {
-            //         await SendMessage( ws, "PONG :tmi.twitch.tv" );
-            //     } else {
-            //         messageProcessor.ProcessMessage(
-            //             response: response,
-            //             channel: m_options.Channel, 
-            //             callback: callback
-            //         );
-            //     }
-            // }
         }
     }
     
@@ -180,7 +166,7 @@ internal sealed class TwitchConnector(
         RawMessage message = new(data);
         
         if( message.Type == MessageType.Ping ) {
-            await SendMessage( webSocketConnection, "PONG :tmi.twitch.tv" );
+            await SendMessage( "PONG :tmi.twitch.tv" );
         } else {
             messageProcessor.ProcessMessage(
                 response: message,
@@ -188,18 +174,12 @@ internal sealed class TwitchConnector(
                 callback: callback
             );
         }
-        
-        
-        // if (message.HasMoreMessages) {
-        //     Parse(data[message.NextMessageStartIndex..], callback);
-        // }
     }
 
-    private async static Task SendMessage(
-        IWebSocketConnection socketConnection,
+    private async Task SendMessage(
         string message
     ) {
-        await socketConnection.SendAsync(
+        await m_webSocketConnection.SendAsync(
             buffer: Encoding.ASCII.GetBytes(message), 
             messageType: WebSocketMessageType.Text, 
             endOfMessage: true, 

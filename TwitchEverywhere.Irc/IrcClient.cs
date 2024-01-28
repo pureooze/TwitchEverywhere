@@ -22,7 +22,6 @@ public sealed class IrcClient {
         
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer,
-            webSocketConnection: new WebSocketConnection(),
             messageProcessor: new MessageProcessor()
         );
     }

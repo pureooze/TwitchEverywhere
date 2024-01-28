@@ -110,6 +110,8 @@ internal class TwitchConnection(
                 // bool sendMessage = await m_ircClient.SendMessage( reply, MessageType.PrivMsg );
                 //
                 // Console.WriteLine( sendMessage ? $"Sent message SUCCEEDED!" : $"Sent message FAILED!" );
+
+                m_ircClient.Disconnect();
                 break;
             case MessageType.ClearChat:
                 IClearChatMsg lazyLoadedClearChatMsgMsg = (IClearChatMsg) message;
