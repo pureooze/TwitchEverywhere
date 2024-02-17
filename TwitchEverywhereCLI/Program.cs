@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.Configuration;
 using TwitchEverywhere.Core;
+using TwitchEverywhere.Irc;
 using TwitchConnection = TwitchEverywhereCLI.TwitchConnection;
 
 Console.WriteLine( "Hello, World!" );
@@ -42,4 +43,3 @@ if( ircClient ) {
 } else {
     await twitchConnection.ConnectToRestClient();
 }
-

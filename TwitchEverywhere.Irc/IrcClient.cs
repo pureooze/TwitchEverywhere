@@ -34,6 +34,12 @@ public sealed class IrcClient {
             messageCallback: messageCallback
         );
     }
+    
+    public async Task<IObservable<IMessage>> ConnectToChannelRx() {
+        return await m_twitchConnector.TryConnectRx(
+            options: m_options
+        );
+    }
 
     public async Task<bool> SendMessage(
         IMessage message,

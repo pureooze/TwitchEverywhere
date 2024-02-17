@@ -29,7 +29,7 @@ internal class TwitchConnection(
     private DateTime m_startTimestamp = DateTime.UtcNow;
 
     public async Task ConnectToIrcClient() {
-        await m_ircClient.ConnectToChannel( MessageCallback );
+        await m_ircClient.ConnectToChannelRx();
     }
 
     public async Task ConnectToRestClient() {

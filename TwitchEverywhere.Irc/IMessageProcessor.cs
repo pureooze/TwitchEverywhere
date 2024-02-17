@@ -10,4 +10,10 @@ public interface IMessageProcessor {
         string channel,
         Action<IMessage> callback
     );
+    
+    void ProcessMessageRx(
+        RawMessage response,
+        string channel,
+        IObserver<IMessage> observer
+    );
 }

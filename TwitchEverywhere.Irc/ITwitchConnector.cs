@@ -9,6 +9,10 @@ public interface ITwitchConnector {
         TwitchConnectionOptions options,
         Action<IMessage> messageCallback
     );
+    
+    internal Task<IObservable<IMessage>> TryConnectRx(
+        TwitchConnectionOptions options
+    );
 
     internal Task<bool> SendMessage(
         IMessage message,
@@ -16,7 +20,5 @@ public interface ITwitchConnector {
     );
 
     internal Task<bool> Disconnect();
-    Task<GetUsersResponse>? GetUsers(
-        IEnumerable<string> users
-    );
+
 }

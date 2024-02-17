@@ -45,4 +45,20 @@ public class MessageProcessor : IMessageProcessor {
             break;
         }
     }
+    
+    public void ProcessMessageRx(
+        RawMessage response,
+        string channel,
+        IObserver<IMessage> observer
+    ) {
+        foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
+            if( !messagePlugin.CanHandle( response.Type ) ) {
+                continue;
+            }
+
+            IMessage message = messagePlugin.GetMessageData( response );
+            observer.OnNext( message );
+            break;
+        }
+    }
 }
