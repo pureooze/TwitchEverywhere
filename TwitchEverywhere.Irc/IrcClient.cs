@@ -35,8 +35,8 @@ public sealed class IrcClient {
         );
     }
     
-    public async Task<IObservable<IMessage>> ConnectToChannelRx() {
-        return await m_twitchConnector.TryConnectRx(
+    public IObservable<IMessage> ConnectToChannelRx() {
+        return m_twitchConnector.TryConnectRx(
             options: m_options
         );
     }

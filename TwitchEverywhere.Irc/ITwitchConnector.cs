@@ -10,7 +10,7 @@ public interface ITwitchConnector {
         Action<IMessage> messageCallback
     );
     
-    internal Task<IObservable<IMessage>> TryConnectRx(
+    internal IObservable<IMessage> TryConnectRx(
         TwitchConnectionOptions options
     );
 

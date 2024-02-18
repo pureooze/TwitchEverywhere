@@ -29,8 +29,28 @@ internal class TwitchConnection(
     private DateTime m_startTimestamp = DateTime.UtcNow;
 
     public async Task ConnectToIrcClient() {
-        await m_ircClient.ConnectToChannelRx();
+        await m_ircClient.ConnectToChannel( MessageCallback );
     }
+    
+    public void ConnectToIrcClientRx() {
+        ManualResetEvent resetEvent = new(false);
+
+        IObservable<IMessage> observable = m_ircClient.ConnectToChannelRx();
+        observable.Subscribe( 
+            MessageCallback,
+            ex => {
+                Console.WriteLine(ex);
+                resetEvent.Set();
+            },
+            () => {
+                Console.WriteLine("Completed");
+                resetEvent.Set();
+            }
+        );
+
+        resetEvent.WaitOne();
+    }
+    
 
     public async Task ConnectToRestClient() {
         GetUsersResponse users = await m_restClient.GetUsersByLogin(
