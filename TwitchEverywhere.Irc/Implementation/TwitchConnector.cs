@@ -1,9 +1,12 @@
 ﻿using System.Net.WebSockets;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
+using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc.Implementation;
 
@@ -29,13 +32,13 @@ internal sealed class TwitchConnector(
         return result;
     }
 
-    IObservable<IMessage> ITwitchConnector.TryConnectRx(
+    async Task<IrcClientObservable> ITwitchConnector.TryConnectRx(
         TwitchConnectionOptions options
     ) {
         m_options = options;
         string token = options.AccessToken;
 
-        return ConnectToWebsocketRx(token);
+        return await ConnectToWebsocketRx(token);
     }
 
     async Task<bool> ITwitchConnector.SendMessage(
@@ -107,50 +110,71 @@ internal sealed class TwitchConnector(
         return true;
     }
 
-    private IObservable<IMessage> ConnectToWebsocketRx(
+    private async Task<IrcClientObservable> ConnectToWebsocketRx(
         string token
     ) {
-        return Observable.Create<IMessage>(
-            async observer => {
-                try {
-                    await m_webSocketConnection.ConnectAsync(
-                        uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"),
-                        cancellationToken: CancellationToken.None
-                    );
-                    byte[] buffer = new byte[4096];
 
-                    await SendMessage(
-                        message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands"
-                    );
-                    await SendMessage(message: $"PASS oauth:{token}");
-                    await SendMessage(message: $"NICK {m_options.ClientName}");
-                    await SendMessage(message: $"JOIN #{m_options.Channel}");
-
-                    while (m_webSocketConnection.State == WebSocketState.Open) {
-                        await ReceiveWebSocketResponseRx(
-                            buffer: buffer,
-                            observer: observer
-                        );
-                    }
-                }
-                catch (Exception e) {
-                    Console.Error.WriteLine(e);
-                    observer.OnError(e);
-                }
-                finally {
-                    if (m_webSocketConnection.State == WebSocketState.Open) {
-                        await m_webSocketConnection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing",
-                            CancellationToken.None);
-                        observer.OnCompleted();
-                    }
-                }
-            }
+        var x = new Subject<ICapReq>();
+        var y = new Subject<IJoinMsg>();
+        IrcClientObservable observable = new(
+            CapReqSubject: x,
+            CapReqObservable: x.AsObservable(),
+            ClearChatObservable: new Subject<IClearChatMsg>().AsObservable(),
+            ClearMsgObservable: new Subject<IClearMsg>().AsObservable(),
+            GlobalUserStateObservable: new Subject<IGlobalUserStateMsg>().AsObservable(),
+            HostTargetObservable: new Subject<IHostTargetMsg>().AsObservable(),
+            JoinCountObservable: new Subject<IJoinCountMsg>().AsObservable(),
+            JoinEndObservable: new Subject<IJoinEndMsg>().AsObservable(),
+            JoinSubject: y,
+            JoinObservable: y.AsObservable(),
+            NoticeObservable: new Subject<INoticeMsg>().AsObservable(),
+            PartObservable: new Subject<IPartMsg>().AsObservable(),
+            PrivMsgObservable: new Subject<IPrivMsg>().AsObservable(),
+            ReconnectObservable: new Subject<IReconnectMsg>().AsObservable(),
+            RoomStateObservable: new Subject<IRoomStateMsg>().AsObservable(),
+            UnknownObservable: new Subject<IUnknownMsg>().AsObservable(),
+            UserNoticeObservable: new Subject<IUserNoticeMsg>().AsObservable(),
+            UserStateObservable: new Subject<IUserStateMsg>().AsObservable(),
+            WhisperObservable: new Subject<IWhisperMsg>().AsObservable()
         );
+        
+        try {
+            await m_webSocketConnection.ConnectAsync(
+                uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"),
+                cancellationToken: CancellationToken.None
+            );
+            byte[] buffer = new byte[4096];
+
+            await SendMessage(
+                message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands"
+            );
+            await SendMessage(message: $"PASS oauth:{token}");
+            await SendMessage(message: $"NICK {m_options.ClientName}");
+            await SendMessage(message: $"JOIN #{m_options.Channel}");
+
+            while (m_webSocketConnection.State == WebSocketState.Open) {
+                await ReceiveWebSocketResponseRx(
+                    buffer: buffer,
+                    observer: observable
+                );
+            }
+        }
+        catch (Exception e) {
+            Console.Error.WriteLine(e);
+        }
+        finally {
+            if (m_webSocketConnection.State == WebSocketState.Open) {
+                await m_webSocketConnection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing",
+                    CancellationToken.None);
+            }
+        }
+
+        return observable;
     }
 
     private async Task ReceiveWebSocketResponseRx(
         byte[] buffer,
-        IObserver<IMessage> observer
+        IrcClientObservable observer
     ) {
         WebSocketReceiveResult result = await m_webSocketConnection.ReceiveAsync(
             buffer: buffer,
@@ -163,7 +187,6 @@ internal sealed class TwitchConnector(
                 statusDescription: null,
                 cancellationToken: CancellationToken.None
             );
-            observer.OnCompleted();
         } else {
             ParseRx(data: buffer, observer: observer);
         }
@@ -171,7 +194,7 @@ internal sealed class TwitchConnector(
 
     private async Task ParseRx(
         byte[] data,
-        IObserver<IMessage> observer
+        IrcClientObservable observer
     ) {
         RawMessage message = new(data);
 

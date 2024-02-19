@@ -10,6 +10,7 @@ using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Videos;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Irc;
+using TwitchEverywhere.Irc.Types;
 using TwitchEverywhere.Rest;
 using TwitchEverywhereCLI.Implementation;
 
@@ -32,23 +33,25 @@ internal class TwitchConnection(
         await m_ircClient.ConnectToChannel( MessageCallback );
     }
     
-    public void ConnectToIrcClientRx() {
-        ManualResetEvent resetEvent = new(false);
+    public async Task ConnectToIrcClientRx() {
+        TaskCompletionSource<bool> tcs = new();
 
-        IObservable<IMessage> observable = m_ircClient.ConnectToChannelRx();
-        observable.Subscribe( 
-            MessageCallback,
+        IrcClientObservable observable = await m_ircClient.ConnectToChannelRx();
+        IDisposable? subscription = observable.JoinObservable.Subscribe( 
+            msg => Console.WriteLine(msg),
             ex => {
-                Console.WriteLine(ex);
-                resetEvent.Set();
+                tcs.TrySetException(ex);
             },
             () => {
-                Console.WriteLine("Completed");
-                resetEvent.Set();
+                tcs.TrySetResult(true);
             }
         );
 
-        resetEvent.WaitOne();
+        try {
+            await tcs.Task;
+        } finally{
+            subscription?.Dispose();
+        }
     }
     
 

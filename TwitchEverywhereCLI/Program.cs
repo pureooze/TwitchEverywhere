@@ -39,7 +39,7 @@ TwitchConnectionOptions options = new(
 TwitchConnection twitchConnection = new( options );
 
 if( ircClient ) {
-    twitchConnection.ConnectToIrcClientRx();
+    await twitchConnection.ConnectToIrcClientRx();
 } else {
     await twitchConnection.ConnectToRestClient();
 }

@@ -1,6 +1,7 @@
 ﻿using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Irc.Implementation;
+using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc;
 
@@ -35,8 +36,8 @@ public sealed class IrcClient {
         );
     }
     
-    public IObservable<IMessage> ConnectToChannelRx() {
-        return m_twitchConnector.TryConnectRx(
+    public async Task<IrcClientObservable> ConnectToChannelRx() {
+        return await m_twitchConnector.TryConnectRx(
             options: m_options
         );
     }
