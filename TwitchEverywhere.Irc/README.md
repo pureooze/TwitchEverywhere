@@ -2,6 +2,7 @@
 `TwitchEverywhere.Irc` is a .NET library that allows connecting to a Twitch chat using IRC and subscribing to messages in that chat.
 
 The goal of this library is to provide a lightweight, strongly typed API for clients so they can avoid parsing raw strings as much as possible.
+`TwitchEverywhere.Irc` uses Rx.NET to provide a reactive API for handling messages from Twitch.
 
 The library will support the latest LTS version of .NET and non LTS versions IF it is newer than the LTS version.
 So for example before .NET 8, the library supported .NET 6 (LTS) and 7 but once .NET 8 was released support for 6 and 7 was dropped.
@@ -50,33 +51,43 @@ TwitchConnectionOptions options = new(
 );
 ```
 
-Next define a `MessageCallback` method that will handle any messages that `TwitchEverywhere` sends to your application.
-The input will be of type `TwitchEverywhere.Core.Types.Message` and return type `void`.
+Next create an instance of the IrcClient and pass in the options to the constructor.
+```csharp
+internal class TwitchConnection(
+    TwitchConnectionOptions options
+) {
+    private readonly IrcClient m_ircClient = new( options );
+    
+    // implementation
+}
+```
+
+Then define a method that will consume the observables returned from `TwitchEverywhere`.
+Each message type has its own observable that you can subscribe to and it will return a strong type.
 ```csharp
 
-// This example only handles MessageType.PrivMsg but you should handle other types here too
-private async void MessageCallback( Message message ) {
-    switch( message.MessageType ) {
-        case MessageType.PrivMsg: {
-            PrivMsg privMsg = (PrivMsg) message;
-            PrivMessageCallback( privMsg );
-            break;
-        }
-        default:
-            // This is just an example, you can handle this case however you wish
-            throw new ArgumentOutOfRangeException();
+// This example only handles MessageType.PrivMsg but you can handle other types here too
+public async Task ConnectToIrcClientRx() {
+    
+    // TaskCompletionSource is only needed for the CLI app to prevent it from exiting early
+    TaskCompletionSource<bool> tcs = new();
+
+    IrcClientObservable observable = m_ircClient.ConnectToChannelRx();
+
+    IDisposable privObservable = observable.PrivMsgObservable.Subscribe( 
+        msg => PrivMessageCallback(msg)
+    );
+
+    try {
+        await tcs.Task;
+    } finally{
+        joinObservable.Dispose();
+        privObservable.Dispose();
     }
 }
 ```
 
-Then initialize `IrcClient` and pass in the options to the constructor.
-Finally call the `TwitchEverywhere.ConnectToChannel` method and pass in your callback as a parameter.
-```csharp
-IrcClient ircClient = new( options );
-await ircClient.ConnectToChannel( MessageCallback );
-```
-
-Now whenever `TwitchEverywhere` receives a message it will pass it to your callback! 🎉
+Now whenever `TwitchEverywhere` receives a message it will pass it to the appropriate observable 🎉
 
 ## Sample CLI App
 There is a [sample CLI application here](https://github.com/pureooze/TwitchEverywhere/tree/main/TwitchEverywhereCLI) that is included as an example in this repo and you can use it to connect with Twitch – give it a try!
