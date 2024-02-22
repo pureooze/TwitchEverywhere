@@ -1,5 +1,6 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc; 
 
@@ -9,7 +10,8 @@ public interface IMessagePlugin {
         MessageType messageType
     );
 
-    IMessage GetMessageData(
+    void ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     );
 }

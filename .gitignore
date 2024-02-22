@@ -13,3 +13,4 @@ riderModule.iml
 # config
 appsettings.json
 TwitchEverywhere.sln.DotSettings.user
+TwitchEverywhereCLI/Properties/launchSettings.json

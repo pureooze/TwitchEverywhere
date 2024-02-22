@@ -2,6 +2,7 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
 
@@ -13,9 +14,10 @@ public class RoomStateMsgPlugin : IMessagePlugin {
         return messageType == MessageType.RoomState;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new RoomStateMsg( response );
+        subjects.RoomStateSubject.OnNext( new RoomStateMsg( response ) );
     }
 }

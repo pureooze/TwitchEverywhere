@@ -1,6 +1,7 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Irc.Implementation.MessagePlugins;
+using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc.Implementation; 
 
@@ -30,18 +31,17 @@ public class MessageProcessor : IMessageProcessor {
         new UnknownMsgPlugin()
     };
 
-    public void ProcessMessage(
+    void IMessageProcessor.ProcessMessageRx(
         RawMessage response,
         string channel,
-        Action<IMessage> callback
+        IrcClientSubject subjects
     ) {
         foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
             if( !messagePlugin.CanHandle( response.Type ) ) {
                 continue;
             }
 
-            IMessage message = messagePlugin.GetMessageData( response );
-            callback( message );
+            messagePlugin.ProcessMessage( subjects, response );
             break;
         }
     }

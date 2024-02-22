@@ -1,6 +1,7 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
+using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
 
@@ -12,9 +13,10 @@ public class PrivMsgPlugin : IMessagePlugin {
         return messageType == MessageType.PrivMsg;
     }
     
-    IMessage IMessagePlugin.GetMessageData(
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new PrivMsg( response );
+        subjects.PrivMsgSubject.OnNext( new PrivMsg( response ) );
     }
 }

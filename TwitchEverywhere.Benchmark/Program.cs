@@ -3,6 +3,6 @@
 using BenchmarkDotNet.Running;
 using TwitchEverywhere.Benchmark;
 
-// BenchmarkRunner.Run<RegexBenchmark>();
+BenchmarkRunner.Run<RegexBenchmark>();
 // BenchmarkRunner.Run<Bandwidth>();
-BenchmarkRunner.Run<AccessBenchmark>();
+// BenchmarkRunner.Run<AccessBenchmark>();

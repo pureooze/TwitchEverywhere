@@ -10,6 +10,7 @@ using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Videos;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Irc;
+using TwitchEverywhere.Irc.Types;
 using TwitchEverywhere.Rest;
 using TwitchEverywhereCLI.Implementation;
 
@@ -27,10 +28,26 @@ internal class TwitchConnection(
     private readonly RestClient m_restClient = new( options );
     private const int BUFFER_SIZE = 3;
     private DateTime m_startTimestamp = DateTime.UtcNow;
+    
+    public async Task ConnectToIrcClientRx() {
+        TaskCompletionSource<bool> tcs = new();
 
-    public async Task ConnectToIrcClient() {
-        await m_ircClient.ConnectToChannel( MessageCallback );
+        IrcClientObservable observable = m_ircClient.ConnectToChannelRx();
+        IDisposable joinObservable = observable.JoinObservable.Subscribe( 
+            msg => Console.WriteLine(msg)
+        );
+        IDisposable privObservable = observable.PrivMsgObservable.Subscribe( 
+            msg => PrivMessageCallback(msg)
+        );
+
+        try {
+            await tcs.Task;
+        } finally{
+            joinObservable.Dispose();
+            privObservable.Dispose();
+        }
     }
+    
 
     public async Task ConnectToRestClient() {
         GetUsersResponse users = await m_restClient.GetUsersByLogin(
