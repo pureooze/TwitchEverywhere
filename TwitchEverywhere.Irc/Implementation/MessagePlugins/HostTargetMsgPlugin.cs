@@ -14,10 +14,10 @@ public class HostTargetMsgPlugin : IMessagePlugin {
         return messageType == MessageType.HostTarget;
     }
     
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new HostTargetMsg( response );
+        subjects.HostTargetSubject.OnNext( new HostTargetMsg( response ) );
     }
 }

@@ -5,7 +5,6 @@ using TwitchEverywhere.Core.Types.Messages.Interfaces;
 namespace TwitchEverywhere.Irc.Types;
 
 public sealed record IrcClientObservable(
-        Subject<ICapReq> CapReqSubject,
         IObservable<ICapReq> CapReqObservable,
         IObservable<IClearChatMsg> ClearChatObservable,
         IObservable<IClearMsg> ClearMsgObservable,
@@ -13,7 +12,6 @@ public sealed record IrcClientObservable(
         IObservable<IHostTargetMsg> HostTargetObservable,
         IObservable<IJoinCountMsg> JoinCountObservable,
         IObservable<IJoinEndMsg> JoinEndObservable,
-        Subject<IJoinMsg> JoinSubject,
         IObservable<IJoinMsg> JoinObservable,
         IObservable<INoticeMsg> NoticeObservable,
         IObservable<IPartMsg> PartObservable,

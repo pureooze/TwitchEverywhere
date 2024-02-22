@@ -40,7 +40,7 @@ public class Bandwidth {
     public void Create()
     {
         foreach (byte[] line in utf8Lines.AsSpan()) {
-            processor.ProcessMessage( new RawMessage(line), "", _ => { } );
+            processor.ProcessMessageRx( new RawMessage(line), "", null );
         }
     }
 }

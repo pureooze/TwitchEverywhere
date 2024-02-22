@@ -14,10 +14,10 @@ public class RoomStateMsgPlugin : IMessagePlugin {
         return messageType == MessageType.RoomState;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new RoomStateMsg( response );
+        subjects.RoomStateSubject.OnNext( new RoomStateMsg( response ) );
     }
 }

@@ -14,10 +14,10 @@ public class ReconnectMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Reconnect;
     }
     
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new ReconnectMsg( response );
+        subjects.ReconnectSubject.OnNext( new ReconnectMsg( response ) );
     }
 }

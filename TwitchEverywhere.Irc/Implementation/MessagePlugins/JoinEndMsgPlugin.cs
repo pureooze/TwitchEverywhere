@@ -13,10 +13,10 @@ public class JoinEndMsgPlugin : IMessagePlugin {
         return messageType == MessageType.JoinEnd;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new JoinEndMsg( response );
+        subjects.JoinEndSubject.OnNext( new JoinEndMsg( response ) );
     }
 }

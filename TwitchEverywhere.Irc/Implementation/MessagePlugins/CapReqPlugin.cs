@@ -13,11 +13,10 @@ public class CapReqPlugin : IMessagePlugin {
         return messageType == MessageType.CapReq;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject observer,
         RawMessage response
     ) {
         observer.CapReqSubject.OnNext(new CapReq( response ));
-        return new CapReq(response);
     }
 }

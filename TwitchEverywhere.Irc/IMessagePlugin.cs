@@ -10,8 +10,8 @@ public interface IMessagePlugin {
         MessageType messageType
     );
 
-    IMessage GetMessageData(
-        IrcClientObservable observer,
+    void ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     );
 }

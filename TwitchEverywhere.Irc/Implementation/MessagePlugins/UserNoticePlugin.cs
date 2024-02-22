@@ -14,10 +14,10 @@ public class UserNoticePlugin : IMessagePlugin {
         return messageType == MessageType.UserNotice;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new UserNoticeMsg( response );
+        subjects.UserNoticeSubject.OnNext( new UserNoticeMsg( response ) );
     }
 }

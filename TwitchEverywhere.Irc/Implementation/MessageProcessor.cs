@@ -31,33 +31,17 @@ public class MessageProcessor : IMessageProcessor {
         new UnknownMsgPlugin()
     };
 
-    void IMessageProcessor.ProcessMessage(
-        RawMessage response,
-        string channel,
-        Action<IMessage> callback
-    ) {
-        foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
-            if( !messagePlugin.CanHandle( response.Type ) ) {
-                continue;
-            }
-
-            IMessage message = messagePlugin.GetMessageData( null, response );
-            callback( message );
-            break;
-        }
-    }
-
     void IMessageProcessor.ProcessMessageRx(
         RawMessage response,
         string channel,
-        IrcClientObservable observer
+        IrcClientSubject subjects
     ) {
         foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
             if( !messagePlugin.CanHandle( response.Type ) ) {
                 continue;
             }
 
-            IMessage message = messagePlugin.GetMessageData( observer, response );
+            messagePlugin.ProcessMessage( subjects, response );
             break;
         }
     }

@@ -6,12 +6,8 @@ using TwitchEverywhere.Irc.Types;
 namespace TwitchEverywhere.Irc; 
 
 public interface ITwitchConnector {
-    internal Task<bool> TryConnect(
-        TwitchConnectionOptions options,
-        Action<IMessage> messageCallback
-    );
     
-    internal Task<IrcClientObservable> TryConnectRx(
+    internal IrcClientObservable TryConnectRx(
         TwitchConnectionOptions options
     );
 

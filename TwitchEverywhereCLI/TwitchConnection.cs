@@ -28,29 +28,23 @@ internal class TwitchConnection(
     private readonly RestClient m_restClient = new( options );
     private const int BUFFER_SIZE = 3;
     private DateTime m_startTimestamp = DateTime.UtcNow;
-
-    public async Task ConnectToIrcClient() {
-        await m_ircClient.ConnectToChannel( MessageCallback );
-    }
     
     public async Task ConnectToIrcClientRx() {
         TaskCompletionSource<bool> tcs = new();
 
-        IrcClientObservable observable = await m_ircClient.ConnectToChannelRx();
-        IDisposable? subscription = observable.JoinObservable.Subscribe( 
-            msg => Console.WriteLine(msg),
-            ex => {
-                tcs.TrySetException(ex);
-            },
-            () => {
-                tcs.TrySetResult(true);
-            }
+        IrcClientObservable observable = m_ircClient.ConnectToChannelRx();
+        IDisposable joinObservable = observable.JoinObservable.Subscribe( 
+            msg => Console.WriteLine(msg)
+        );
+        IDisposable privObservable = observable.PrivMsgObservable.Subscribe( 
+            msg => PrivMessageCallback(msg)
         );
 
         try {
             await tcs.Task;
         } finally{
-            subscription?.Dispose();
+            joinObservable.Dispose();
+            privObservable.Dispose();
         }
     }
     

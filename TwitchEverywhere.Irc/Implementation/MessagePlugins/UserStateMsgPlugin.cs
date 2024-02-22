@@ -14,10 +14,10 @@ public class UserStateMsgPlugin : IMessagePlugin {
         return messageType == MessageType.UserState;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new UserStateMsg( response );
+        subjects.UserStateSubject.OnNext( new UserStateMsg( response ) );
     }
 }

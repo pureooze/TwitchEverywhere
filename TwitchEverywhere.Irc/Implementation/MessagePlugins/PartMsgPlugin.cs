@@ -14,10 +14,10 @@ public class PartMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Part;
     }
     
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new PartMsg( response );
+        subjects.PartSubject.OnNext( new PartMsg( response ) );
     }
 }

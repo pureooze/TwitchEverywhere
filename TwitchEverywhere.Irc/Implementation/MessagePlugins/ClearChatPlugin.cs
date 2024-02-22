@@ -13,10 +13,10 @@ public class ClearChatPlugin : IMessagePlugin {
         return messageType == MessageType.ClearChat;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new ClearChatMsg( response );
+        subjects.ClearChatSubject.OnNext( new ClearChatMsg( response ) );
     }
 }

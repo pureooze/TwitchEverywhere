@@ -27,17 +27,8 @@ public sealed class IrcClient {
         );
     }
 
-    public async Task ConnectToChannel(
-        Action<IMessage> messageCallback
-    ) {
-        await m_twitchConnector.TryConnect(
-            options: m_options,
-            messageCallback: messageCallback
-        );
-    }
-    
-    public async Task<IrcClientObservable> ConnectToChannelRx() {
-        return await m_twitchConnector.TryConnectRx(
+    public IrcClientObservable ConnectToChannelRx() {
+        return m_twitchConnector.TryConnectRx(
             options: m_options
         );
     }

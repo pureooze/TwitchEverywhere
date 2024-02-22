@@ -1,5 +1,6 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
@@ -13,10 +14,10 @@ public class JoinCountMsgPlugin : IMessagePlugin {
     }
 
  
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        throw new NotImplementedException();
+        subjects.JoinCountSubject.OnNext( new JoinCount( response ) );
     }
 }

@@ -14,10 +14,10 @@ public class WhisperMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Whisper;
     }
  
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new WhisperMsg( response );
+        subjects.WhisperSubject.OnNext( new WhisperMsg( response ) );
     }
 }

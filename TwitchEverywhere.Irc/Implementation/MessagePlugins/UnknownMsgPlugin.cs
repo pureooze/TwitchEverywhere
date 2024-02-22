@@ -13,10 +13,10 @@ public class UnknownMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Unknown;
     }
 
-    IMessage IMessagePlugin.GetMessageData(
-        IrcClientObservable observer,
+    void IMessagePlugin.ProcessMessage(
+        IrcClientSubject subjects,
         RawMessage response
     ) {
-        return new UnknownMsg( response );
+        subjects.UnknownSubject.OnNext( new UnknownMsg( response ) );
     }
 }
