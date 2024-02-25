@@ -17,7 +17,7 @@ public class StreamApiService(
     ) {
         using HttpRequestMessage request = new (
             method: HttpMethod.Get,
-            requestUri: $"{Globals.HelixPrefix}/streams?user_login={string.Join("&id=", logins)}"
+            requestUri: $"{Globals.HelixPrefix}/streams?user_login={string.Join("&user_login=", logins)}"
         );
         
         request.Headers.Add( 
