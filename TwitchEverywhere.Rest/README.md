@@ -1,5 +1,5 @@
 # TwitchEverywhere.Irc
-`TwitchEverywhere.Rest` is a .NET library that allows connecting to the Twitch Helix API and making REST calls to it.
+`TwitchEverywhere.Rest` is a .NET library that allows connecting to the Twitch Helix API and making REST calls to it using `System.Text.Json`.
 
 The goal of this library is to provide a lightweight, strongly typed API for clients so they can avoid parsing raw strings as much as possible.
 
@@ -81,3 +81,13 @@ Note that currently there are no benchmarks for `TwitchEverywhere.Rest` but they
 | Endpoint    | Supported | API Link                                              |
 |-------------|-----------|-------------------------------------------------------|
 | Get Videos  | ✅         | https://dev.twitch.tv/docs/api/reference/#get-videos  |
+
+#### Channels
+| Endpoint         | Supported | API Link                                                          |
+|------------------|-----------|-------------------------------------------------------------------|
+| Get Channel Info | ✅         | https://dev.twitch.tv/docs/api/reference/#get-channel-information |
+
+#### Streams
+| Endpoint    | Supported | API Link                                              |
+|-------------|-----------|-------------------------------------------------------|
+| Get Streams | ✅         | https://dev.twitch.tv/docs/api/reference/#get-streams |
