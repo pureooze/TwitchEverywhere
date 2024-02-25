@@ -135,6 +135,23 @@ public class RestClient( TwitchConnectionOptions options ) {
     
     /// <summary>
     /// <para>
+    /// Gets the channels that match the specified query and have streamed content within the past 6 months.
+    /// <br/><br/>
+    /// <b>API: https://dev.twitch.tv/docs/api/reference/#search-channels</b>
+    /// </para>
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    public async Task<GetChannelSearchResponse> SearchForChannel(
+        string query,
+        int pageSize
+    ) {
+        return await m_restService.SearchForChannel( query, pageSize );
+    }
+    
+    /// <summary>
+    /// <para>
     /// Gets a list of all streams for the specified logins. Can be used to determine if a channel is live.
     /// If the user is live they will be included in the response.
     /// </para>

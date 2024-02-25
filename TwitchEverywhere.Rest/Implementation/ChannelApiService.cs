@@ -42,4 +42,37 @@ public class ChannelApiService(
             StatusCode: response.StatusCode
         );
     }
+    
+    async Task<GetChannelSearchResponse> IChannelApiService.SearchForChannel(
+        IHttpClientWrapper httpClientWrapper,
+        string query,
+        int pageSize
+    ) {
+        using HttpRequestMessage request = new (
+            method: HttpMethod.Get,
+            requestUri: $"{Globals.HelixPrefix}/search/channels?query={query}&first={pageSize}"
+        );
+        
+        request.Headers.Add( 
+            name: "Client-ID", value: option.ClientId
+        );
+        
+        request.Headers.Add(
+            name: "Authorization", value: "Bearer " + option.AccessToken 
+        );
+        
+        using HttpResponseMessage response = await httpClientWrapper.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+        JsonSerializerOptions options = new() {
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+            PropertyNameCaseInsensitive = true
+        };
+        
+        GetChannelSearchApiResponse? serializedResponse = await response.Content.ReadFromJsonAsync<GetChannelSearchApiResponse>( options );
+        
+        return new GetChannelSearchResponse(
+            ApiResponse: serializedResponse ?? new GetChannelSearchApiResponse( Array.Empty<ChannelSearchResultEntry>() ),
+            StatusCode: response.StatusCode
+        );
+    }
 }
