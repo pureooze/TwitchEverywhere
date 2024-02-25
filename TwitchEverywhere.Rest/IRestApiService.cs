@@ -36,4 +36,8 @@ public interface IRestApiService {
     Task<GetChannelInfoResponse> GetChannelInfo(
         string broadcasterId
     );
+    
+    Task<GetStreamsResponse> GetStreams(
+        string[] logins
+    );
 }

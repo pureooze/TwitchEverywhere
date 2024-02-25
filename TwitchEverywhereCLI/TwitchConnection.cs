@@ -6,6 +6,7 @@ using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.RestApi.Streams;
 using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Videos;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
@@ -51,7 +52,7 @@ internal class TwitchConnection(
 
     public async Task ConnectToRestClient() {
         GetUsersResponse users = await m_restClient.GetUsersByLogin(
-            logins: [ "dumbdog" ] 
+            logins: [ "pureooze" ] 
         );
         
         if (users.StatusCode != HttpStatusCode.OK) {
@@ -95,6 +96,19 @@ internal class TwitchConnection(
 
             foreach (string tag in channelResponse.ApiResponse.Data[0].Tags) {
                 Console.WriteLine( tag );
+            }
+            
+            GetStreamsResponse streamResponse = await m_restClient.GetStreams( 
+                logins: [ userEntry.Login ]
+            );
+            
+            if (streamResponse.StatusCode != HttpStatusCode.OK) {
+                Console.WriteLine( "Error in GetStreams request with status code: " + streamResponse.StatusCode );
+                return;
+            }
+            
+            foreach (StreamEntry streamEntry in streamResponse.ApiResponse.Data) {
+                Console.WriteLine( streamEntry );
             }
         }
         

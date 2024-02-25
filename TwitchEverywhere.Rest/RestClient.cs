@@ -132,4 +132,18 @@ public class RestClient( TwitchConnectionOptions options ) {
     ) {
         return await m_restService.GetChannelInfo( broadcasterId );
     }
+    
+    /// <summary>
+    /// <para>
+    /// Gets a list of all streams for the specified logins. Can be used to determine if a channel is live.
+    /// If the user is live they will be included in the response.
+    /// </para>
+    /// </summary>
+    /// <param name="logins">The login IDs of the users to get.</param>
+    /// <returns></returns>
+    public async Task<GetStreamsResponse> GetStreams(
+        string[] logins
+    ) {
+        return await m_restService.GetStreams( logins );
+    }
 }
