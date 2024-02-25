@@ -6,6 +6,7 @@ using TwitchEverywhere.Core.Types.Messages.ImmediateLoadedMessages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+using TwitchEverywhere.Core.Types.RestApi.Channel;
 using TwitchEverywhere.Core.Types.RestApi.Streams;
 using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Videos;
@@ -109,6 +110,20 @@ internal class TwitchConnection(
             
             foreach (StreamEntry streamEntry in streamResponse.ApiResponse.Data) {
                 Console.WriteLine( streamEntry );
+            }
+            
+            GetChannelSearchResponse searchResponse = await m_restClient.SearchForChannel( 
+                query: "cohh",
+                pageSize: 3
+            );
+            
+            if (searchResponse.StatusCode != HttpStatusCode.OK) {
+                Console.WriteLine( "Error in SearchForChannel request with status code: " + searchResponse.StatusCode );
+                return;
+            }
+            
+            foreach (ChannelSearchResultEntry channelInfoEntry in searchResponse.ApiResponse.Data) {
+                Console.WriteLine( channelInfoEntry );
             }
         }
         

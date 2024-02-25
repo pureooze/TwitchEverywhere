@@ -72,6 +72,17 @@ public class RestApiService( TwitchConnectionOptions option ) : IRestApiService 
             broadcasterId: broadcasterId
         );
     }
+    
+    async Task<GetChannelSearchResponse> IRestApiService.SearchForChannel(
+        string query,
+        int pageSize
+    ) {
+        return await m_channelApiService.SearchForChannel(
+            httpClient: m_httpClientWrapper,
+            query: query,
+            pageSize: pageSize
+        );
+    }
 
     async Task<GetVideosResponse> IRestApiService.GetVideosForUsersById(
         string userId
