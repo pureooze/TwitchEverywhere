@@ -1,4 +1,4 @@
-# TwitchEverywhere.Irc
+# TwitchEverywhere.Rest
 `TwitchEverywhere.Rest` is a .NET library that allows connecting to the Twitch Helix API and making REST calls to it using `System.Text.Json`.
 
 The goal of this library is to provide a lightweight, strongly typed API for clients so they can avoid parsing raw strings as much as possible.
