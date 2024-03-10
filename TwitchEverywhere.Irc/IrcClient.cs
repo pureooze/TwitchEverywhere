@@ -6,8 +6,8 @@ using TwitchEverywhere.Irc.Types;
 namespace TwitchEverywhere.Irc;
 
 public sealed class IrcClient {
-    private readonly ITwitchConnector m_twitchConnector;
     private readonly TwitchConnectionOptions m_options;
+    private static ITwitchConnector m_twitchConnector;
 
     public IrcClient(
         TwitchConnectionOptions options

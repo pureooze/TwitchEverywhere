@@ -1,5 +1,4 @@
 ﻿using System.Net.WebSockets;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
@@ -15,16 +14,34 @@ internal sealed class TwitchConnector(
     IAuthorizer authorizer,
     IMessageProcessor messageProcessor
 ) : ITwitchConnector {
+    
+    private readonly static ClientWebSocket m_webSocketConnection = new();
     private TwitchConnectionOptions m_options;
-    private readonly ClientWebSocket m_webSocketConnection = new();
-
+    private IrcClientObservable? m_observable;
+    private IrcClientSubject? m_subjects;
+    
     IrcClientObservable ITwitchConnector.TryConnectRx(
         TwitchConnectionOptions options
     ) {
         m_options = options;
         string token = options.AccessToken;
 
-        IrcClientSubject subjects = new(
+        InitializeObservables();
+        
+        if (m_subjects == null) {
+            throw new Exception("Subjects not initialized");
+        }
+        
+        if (m_observable == null) {
+            throw new Exception("Observable not initialized");
+        }
+        
+        ConnectToWebsocketRx(token, m_subjects);
+        return m_observable;
+    }
+    private void InitializeObservables() {
+
+        m_subjects ??= new IrcClientSubject(
             CapReqSubject: new Subject<ICapReq>(),
             ClearChatSubject: new Subject<IClearChatMsg>(),
             ClearMsgSubject: new Subject<IClearMsg>(),
@@ -44,28 +61,25 @@ internal sealed class TwitchConnector(
             WhisperSubject: new Subject<IWhisperMsg>()
         );
         
-        IrcClientObservable observable = new(
-            CapReqObservable: subjects.CapReqSubject.AsObservable(),
-            ClearChatObservable: subjects.ClearChatSubject.AsObservable(),
-            ClearMsgObservable: subjects.ClearMsgSubject.AsObservable(),
-            GlobalUserStateObservable: subjects.GlobalUserStateSubject.AsObservable(),
-            HostTargetObservable: subjects.HostTargetSubject.AsObservable(),
-            JoinCountObservable: subjects.JoinCountSubject.AsObservable(),
-            JoinEndObservable: subjects.JoinEndSubject.AsObservable(),
-            JoinObservable: subjects.JoinSubject.AsObservable(),
-            NoticeObservable: subjects.NoticeSubject.AsObservable(),
-            PartObservable: subjects.PartSubject.AsObservable(),
-            PrivMsgObservable: subjects.PrivMsgSubject.AsObservable(),
-            ReconnectObservable: subjects.ReconnectSubject.AsObservable(),
-            RoomStateObservable: subjects.RoomStateSubject.AsObservable(),
-            UnknownObservable: subjects.UnknownSubject.AsObservable(),
-            UserNoticeObservable: subjects.UserNoticeSubject.AsObservable(),
-            UserStateObservable: subjects.UserStateSubject.AsObservable(),
-            WhisperObservable: subjects.WhisperSubject.AsObservable()
+        m_observable ??= new IrcClientObservable(
+            CapReqObservable: m_subjects.CapReqSubject.AsObservable(),
+            ClearChatObservable: m_subjects.ClearChatSubject.AsObservable(),
+            ClearMsgObservable: m_subjects.ClearMsgSubject.AsObservable(),
+            GlobalUserStateObservable: m_subjects.GlobalUserStateSubject.AsObservable(),
+            HostTargetObservable: m_subjects.HostTargetSubject.AsObservable(),
+            JoinCountObservable: m_subjects.JoinCountSubject.AsObservable(),
+            JoinEndObservable: m_subjects.JoinEndSubject.AsObservable(),
+            JoinObservable: m_subjects.JoinSubject.AsObservable(),
+            NoticeObservable: m_subjects.NoticeSubject.AsObservable(),
+            PartObservable: m_subjects.PartSubject.AsObservable(),
+            PrivMsgObservable: m_subjects.PrivMsgSubject.AsObservable(),
+            ReconnectObservable: m_subjects.ReconnectSubject.AsObservable(),
+            RoomStateObservable: m_subjects.RoomStateSubject.AsObservable(),
+            UnknownObservable: m_subjects.UnknownSubject.AsObservable(),
+            UserNoticeObservable: m_subjects.UserNoticeSubject.AsObservable(),
+            UserStateObservable: m_subjects.UserStateSubject.AsObservable(),
+            WhisperObservable: m_subjects.WhisperSubject.AsObservable()
         );
-        
-        ConnectToWebsocketRx(token, subjects);
-        return observable;
     }
 
     async Task<bool> ITwitchConnector.SendMessage(
@@ -127,6 +141,11 @@ internal sealed class TwitchConnector(
     }
 
     async Task<bool> ITwitchConnector.Disconnect() {
+        
+        if (m_webSocketConnection.State == WebSocketState.Closed) {
+            return true;
+        }
+        
         await SendMessage($"PART ${m_options.Channel}");
         await m_webSocketConnection.CloseAsync(
             closeStatus: WebSocketCloseStatus.NormalClosure,
@@ -136,7 +155,7 @@ internal sealed class TwitchConnector(
 
         return true;
     }
-
+    
     private async Task ConnectToWebsocketRx(
         string token,
         IrcClientSubject subjects
