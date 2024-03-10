@@ -28,7 +28,6 @@ string? clientName = config["ClientName"];
 string? channel = config["Channel"] ?? "";
 
 TwitchConnectionOptions options = new(
-    Channel: channel,
     AccessToken: accessToken,
     RefreshToken: refreshToken,
     ClientId: clientId,

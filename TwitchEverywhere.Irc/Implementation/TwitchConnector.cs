@@ -12,18 +12,19 @@ namespace TwitchEverywhere.Irc.Implementation;
 
 internal sealed class TwitchConnector(
     IAuthorizer authorizer,
-    IMessageProcessor messageProcessor
+    IMessageProcessor messageProcessor,
+    TwitchConnectionOptions options
 ) : ITwitchConnector {
     
     private readonly static ClientWebSocket m_webSocketConnection = new();
-    private TwitchConnectionOptions m_options;
     private IrcClientObservable? m_observable;
     private IrcClientSubject? m_subjects;
+    private string m_channel;
     
     IrcClientObservable ITwitchConnector.TryConnectRx(
-        TwitchConnectionOptions options
+        string channel
     ) {
-        m_options = options;
+        m_channel = channel;
         string token = options.AccessToken;
 
         InitializeObservables();
@@ -94,43 +95,43 @@ internal sealed class TwitchConnector(
             case MessageType.PrivMsg:
                 Console.WriteLine(message.RawMessage);
                 await SendMessage(message.RawMessage.Replace(
-                    $":{m_options.Channel}!{m_options.Channel}@{m_options.Channel}.tmi.twitch.tv", ""));
+                    $":{m_channel}!{m_channel}@{m_channel}.tmi.twitch.tv", ""));
                 break;
             case MessageType.ClearChat:
-                await SendMessage($"CLEARCHAT #${m_options.Channel}");
+                await SendMessage($"CLEARCHAT #${m_channel}");
                 break;
             case MessageType.ClearMsg:
-                await SendMessage($"CLEARMSG ${m_options.Channel}");
+                await SendMessage($"CLEARMSG ${m_channel}");
                 break;
             case MessageType.GlobalUserState:
-                await SendMessage($"GLOBALUSERSTATE ${m_options.Channel}");
+                await SendMessage($"GLOBALUSERSTATE ${m_channel}");
                 break;
             case MessageType.Notice:
-                await SendMessage($"NOTICE ${m_options.Channel}");
+                await SendMessage($"NOTICE ${m_channel}");
                 break;
             case MessageType.RoomState:
-                await SendMessage($"ROOMSTATE ${m_options.Channel}");
+                await SendMessage($"ROOMSTATE ${m_channel}");
                 break;
             case MessageType.UserNotice:
-                await SendMessage($"USERNOTICE ${m_options.Channel}");
+                await SendMessage($"USERNOTICE ${m_channel}");
                 break;
             case MessageType.UserState:
-                await SendMessage($"USERSTATE ${m_options.Channel}");
+                await SendMessage($"USERSTATE ${m_channel}");
                 break;
             case MessageType.Whisper:
-                await SendMessage($"WHISPER ${m_options.Channel}");
+                await SendMessage($"WHISPER ${m_channel}");
                 break;
             case MessageType.Join:
-                await SendMessage($"JOIN ${m_options.Channel}");
+                await SendMessage($"JOIN ${m_channel}");
                 break;
             case MessageType.Part:
-                await SendMessage($"PART ${m_options.Channel}");
+                await SendMessage($"PART ${m_channel}");
                 break;
             case MessageType.HostTarget:
-                await SendMessage($"HOSTTARGET ${m_options.Channel}");
+                await SendMessage($"HOSTTARGET ${m_channel}");
                 break;
             case MessageType.Reconnect:
-                await SendMessage($"RECONNECT ${m_options.Channel}");
+                await SendMessage($"RECONNECT ${m_channel}");
                 break;
             case MessageType.Unknown:
             default:
@@ -146,7 +147,7 @@ internal sealed class TwitchConnector(
             return true;
         }
         
-        await SendMessage($"PART ${m_options.Channel}");
+        await SendMessage($"PART ${m_channel}");
         await m_webSocketConnection.CloseAsync(
             closeStatus: WebSocketCloseStatus.NormalClosure,
             statusDescription: "Disconnect requested",
@@ -173,8 +174,8 @@ internal sealed class TwitchConnector(
                 message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands"
             );
             await SendMessage(message: $"PASS oauth:{token}");
-            await SendMessage(message: $"NICK {m_options.ClientName}");
-            await SendMessage(message: $"JOIN #{m_options.Channel}");
+            await SendMessage(message: $"NICK {options.ClientName}");
+            await SendMessage(message: $"JOIN #{m_channel}");
 
             while (m_webSocketConnection.State == WebSocketState.Open) {
                 await ReceiveWebSocketResponseRx(
@@ -225,7 +226,7 @@ internal sealed class TwitchConnector(
         } else {
             messageProcessor.ProcessMessageRx(
                 response: message,
-                channel: m_options.Channel,
+                channel: m_channel,
                 subjects: subjects
             );
         }

@@ -30,7 +30,9 @@ internal class TwitchConnection(
     public async Task ConnectToIrcClientRx() {
         TaskCompletionSource<bool> tcs = new();
 
-        IrcClientObservable observable = m_ircClient.ConnectToChannelRx();
+        IrcClientObservable observable = m_ircClient.ConnectToChannelRx(
+            channel: "pureooze"
+        );
         IDisposable joinObservable = observable.JoinObservable.Subscribe( 
             msg => Console.WriteLine(msg)
         );
