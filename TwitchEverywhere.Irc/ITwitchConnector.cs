@@ -1,7 +1,5 @@
-using System.Net.WebSockets;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
-using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Irc.Types;
 
 namespace TwitchEverywhere.Irc; 
