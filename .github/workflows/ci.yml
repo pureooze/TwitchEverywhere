@@ -25,8 +25,12 @@ jobs:
         run: dotnet build --no-restore --configuration Release
       - name: Test
         run: dotnet test --no-build --verbosity normal --configuration Release
-      - name: Pack
-        run: dotnet pack --no-build --configuration Release -o nupkg
+      - name: Pack (Core)
+        run: dotnet pack TwitchEverywhere.Core --no-build --configuration Release -o nupkg
+      - name: Pack (IRC)
+        run: dotnet pack TwitchEverywhere.Irc --no-build --configuration Release -o nupkg
+      - name: Pack (Rest)
+        run: dotnet pack TwitchEverywhere.Rest --no-build --configuration Release -o nupkg
       - name: Publish
         if: github.ref == 'refs/heads/main'
         run: dotnet nuget push nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
