@@ -13,7 +13,6 @@ namespace TwitchEverywhere.Benchmark;
 public class Bandwidth {
     
     private readonly TwitchConnectionOptions m_options = new(
-        "channel",
         "access_token",
         "refresh_token",
         "client_id",

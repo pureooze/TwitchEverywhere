@@ -11,7 +11,6 @@ namespace TwitchEverywhere.Benchmark;
 
 public class AccessBenchmark {
     private readonly TwitchConnectionOptions m_options = new(
-        "channel",
         "access_token",
         "refresh_token",
         "client_id",

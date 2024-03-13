@@ -15,7 +15,6 @@ public class BlockUserTests {
     [SetUp]
     public void Setup() {
         m_options = new TwitchConnectionOptions(
-            Channel: "test",
             AccessToken: "test",
             RefreshToken: "test",
             ClientId: "test",

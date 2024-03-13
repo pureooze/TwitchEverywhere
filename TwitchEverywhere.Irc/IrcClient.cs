@@ -23,13 +23,14 @@ public sealed class IrcClient {
         
         m_twitchConnector = new TwitchConnector( 
             authorizer: authorizer,
-            messageProcessor: new MessageProcessor()
+            messageProcessor: new MessageProcessor(),
+            m_options
         );
     }
 
-    public IrcClientObservable ConnectToChannelRx() {
+    public IrcClientObservable ConnectToChannelRx( string channel ) {
         return m_twitchConnector.TryConnectRx(
-            options: m_options
+            channel: channel
         );
     }
 

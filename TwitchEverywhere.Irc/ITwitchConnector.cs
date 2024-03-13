@@ -7,7 +7,7 @@ namespace TwitchEverywhere.Irc;
 public interface ITwitchConnector {
     
     internal IrcClientObservable TryConnectRx(
-        TwitchConnectionOptions options
+        string channel
     );
 
     internal Task<bool> SendMessage(
