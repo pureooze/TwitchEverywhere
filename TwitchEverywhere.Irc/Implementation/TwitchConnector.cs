@@ -26,6 +26,11 @@ internal sealed class TwitchConnector(
     ) {
         m_channel = channel;
         string token = options.AccessToken;
+        
+        if (m_webSocketConnection?.State == WebSocketState.Open) {
+            throw new InvalidOperationException("Already connected to a channel, invoke Disconnect before attempting to connect.");
+        }
+        
         m_webSocketConnection = new ClientWebSocket();
 
         InitializeObservables();
