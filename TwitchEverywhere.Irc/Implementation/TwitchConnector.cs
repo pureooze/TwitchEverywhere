@@ -16,7 +16,7 @@ internal sealed class TwitchConnector(
     TwitchConnectionOptions options
 ) : ITwitchConnector {
     
-    private readonly static ClientWebSocket m_webSocketConnection = new();
+    private ClientWebSocket m_webSocketConnection;
     private IrcClientObservable? m_observable;
     private IrcClientSubject? m_subjects;
     private string m_channel;
@@ -26,6 +26,7 @@ internal sealed class TwitchConnector(
     ) {
         m_channel = channel;
         string token = options.AccessToken;
+        m_webSocketConnection = new ClientWebSocket();
 
         InitializeObservables();
         

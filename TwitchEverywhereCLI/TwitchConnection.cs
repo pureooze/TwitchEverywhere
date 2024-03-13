@@ -251,6 +251,9 @@ internal class TwitchConnection(
         
         Console.WriteLine( $"{lazyLoadedPrivMsg.DisplayName}: {lazyLoadedPrivMsg.Text}" );
         m_messageBuffer.AddToBuffer( lazyLoadedPrivMsg.Text );
+
+        m_ircClient?.Disconnect();
+        m_ircClient?.ConnectToChannelRx( "pureooze" );
     }
     
     private async void ClearChatCallback(
