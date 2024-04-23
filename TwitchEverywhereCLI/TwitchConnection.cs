@@ -30,21 +30,16 @@ internal class TwitchConnection(
     public async Task ConnectToIrcClientRx() {
         TaskCompletionSource<bool> tcs = new();
 
-        IrcClientObservable observable = m_ircClient.ConnectToChannelRx(
+        IObservable<IMessage> observable = m_ircClient.ConnectToChannel(
             channel: "pureooze"
         );
-        IDisposable joinObservable = observable.JoinObservable.Subscribe( 
-            msg => Console.WriteLine(msg)
-        );
-        IDisposable privObservable = observable.PrivMsgObservable.Subscribe( 
-            msg => PrivMessageCallback(msg)
-        );
+        IDisposable joinObservable = observable.Subscribe( MessageCallback );
 
         try {
             await tcs.Task;
         } finally{
             joinObservable.Dispose();
-            privObservable.Dispose();
+            // privObservable.Dispose();
         }
     }
     
@@ -252,8 +247,7 @@ internal class TwitchConnection(
         Console.WriteLine( $"{lazyLoadedPrivMsg.DisplayName}: {lazyLoadedPrivMsg.Text}" );
         m_messageBuffer.AddToBuffer( lazyLoadedPrivMsg.Text );
 
-        m_ircClient?.Disconnect();
-        m_ircClient?.ConnectToChannelRx( "pureooze" );
+        await m_ircClient.Disconnect();
     }
     
     private async void ClearChatCallback(

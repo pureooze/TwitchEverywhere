@@ -14,10 +14,8 @@ public class ClearMsgPlugin : IMessagePlugin {
         return messageType == MessageType.ClearMsg;
     }
 
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.ClearMsgSubject.OnNext( new ClearMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new ClearMsg( response ) );
     }
 }

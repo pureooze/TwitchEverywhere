@@ -14,10 +14,8 @@ public class ReconnectMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Reconnect;
     }
     
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.ReconnectSubject.OnNext( new ReconnectMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new ReconnectMsg( response ) );
     }
 }

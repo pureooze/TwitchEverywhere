@@ -14,10 +14,8 @@ public class RoomStateMsgPlugin : IMessagePlugin {
         return messageType == MessageType.RoomState;
     }
 
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.RoomStateSubject.OnNext( new RoomStateMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new RoomStateMsg( response ) );
     }
 }

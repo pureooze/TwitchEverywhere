@@ -14,10 +14,8 @@ public class UserStateMsgPlugin : IMessagePlugin {
         return messageType == MessageType.UserState;
     }
 
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.UserStateSubject.OnNext( new UserStateMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new UserStateMsg( response ) );
     }
 }

@@ -28,12 +28,12 @@ public sealed class IrcClient {
         );
     }
 
-    public IrcClientObservable ConnectToChannelRx( string channel ) {
-        return m_twitchConnector.TryConnectRx(
-            channel: channel
-        );
+    public IObservable<IMessage> ConnectToChannel(
+        string channel
+    ) {
+        return m_twitchConnector.TryConnect( channel, m_options );
     }
-
+    
     public async Task<bool> SendMessage(
         IMessage message,
         MessageType messageType

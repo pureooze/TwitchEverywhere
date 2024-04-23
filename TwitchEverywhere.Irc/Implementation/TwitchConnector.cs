@@ -1,4 +1,6 @@
 ﻿using System.Net.WebSockets;
+using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
@@ -15,39 +17,14 @@ internal sealed class TwitchConnector(
     IMessageProcessor messageProcessor,
     TwitchConnectionOptions options
 ) : ITwitchConnector {
+    private readonly static ClientWebSocket m_webSocketConnection = new();
+    private TwitchConnectionOptions m_options;
     
-    private ClientWebSocket m_webSocketConnection;
     private IrcClientObservable? m_observable;
     private IrcClientSubject? m_subjects;
     private string m_channel;
     
-    IrcClientObservable ITwitchConnector.TryConnectRx(
-        string channel
-    ) {
-        m_channel = channel;
-        string token = options.AccessToken;
-        
-        if (m_webSocketConnection?.State == WebSocketState.Open) {
-            throw new InvalidOperationException("Already connected to a channel, invoke Disconnect before attempting to connect.");
-        }
-        
-        m_webSocketConnection = new ClientWebSocket();
-
-        InitializeObservables();
-        
-        if (m_subjects == null) {
-            throw new Exception("Subjects not initialized");
-        }
-        
-        if (m_observable == null) {
-            throw new Exception("Observable not initialized");
-        }
-        
-        ConnectToWebsocketRx(token, m_subjects);
-        return m_observable;
-    }
     private void InitializeObservables() {
-
         m_subjects ??= new IrcClientSubject(
             CapReqSubject: new Subject<ICapReq>(),
             ClearChatSubject: new Subject<IClearChatMsg>(),
@@ -88,7 +65,7 @@ internal sealed class TwitchConnector(
             WhisperObservable: m_subjects.WhisperSubject.AsObservable()
         );
     }
-
+    
     async Task<bool> ITwitchConnector.SendMessage(
         IMessage message,
         MessageType messageType
@@ -96,7 +73,7 @@ internal sealed class TwitchConnector(
         if (m_webSocketConnection.State != WebSocketState.Open) {
             return false;
         }
-
+        
         switch (messageType) {
             case MessageType.PrivMsg:
                 Console.WriteLine(message.RawMessage);
@@ -143,12 +120,11 @@ internal sealed class TwitchConnector(
             default:
                 throw new ArgumentOutOfRangeException(nameof(messageType), messageType, null);
         }
-
+        
         return true;
     }
-
+    
     async Task<bool> ITwitchConnector.Disconnect() {
-        
         if (m_webSocketConnection.State == WebSocketState.Closed) {
             return true;
         }
@@ -159,85 +135,75 @@ internal sealed class TwitchConnector(
             statusDescription: "Disconnect requested",
             cancellationToken: CancellationToken.None
         );
-
+        
         return true;
     }
     
-    private async Task ConnectToWebsocketRx(
-        string token,
-        IrcClientSubject subjects
+    IObservable<IMessage> ITwitchConnector.TryConnect(
+        string channel,
+        TwitchConnectionOptions options
     ) {
-        await m_webSocketConnection.ConnectAsync(
-            uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"),
-            cancellationToken: CancellationToken.None
-        );
+        m_channel = channel;
         
-        byte[] buffer = new byte[4096];
-        
-        try {
-
-            await SendMessage(
-                message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands"
-            );
-            await SendMessage(message: $"PASS oauth:{token}");
-            await SendMessage(message: $"NICK {options.ClientName}");
-            await SendMessage(message: $"JOIN #{m_channel}");
-
-            while (m_webSocketConnection.State == WebSocketState.Open) {
-                await ReceiveWebSocketResponseRx(
-                    buffer: buffer,
-                    subjects: subjects
-                );
-            }
-        }
-        catch (Exception e) {
-            Console.Error.WriteLine(e);
-        }
-        finally {
-            if (m_webSocketConnection.State == WebSocketState.Open) {
-                await m_webSocketConnection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing",
-                    CancellationToken.None);
-            }
-        }
-    }
-
-    private async Task ReceiveWebSocketResponseRx(
-        byte[] buffer,
-        IrcClientSubject subjects
-    ) {
-        WebSocketReceiveResult result = await m_webSocketConnection.ReceiveAsync(
-            buffer: buffer,
-            cancellationToken: CancellationToken.None
-        );
-
-        if (result.MessageType == WebSocketMessageType.Close) {
-            await m_webSocketConnection.CloseAsync(
-                closeStatus: WebSocketCloseStatus.NormalClosure,
-                statusDescription: null,
+        return Observable.Create<IMessage>(async observer => {
+            await m_webSocketConnection.ConnectAsync(
+                uri: new Uri(uriString: "ws://irc-ws.chat.twitch.tv:80"),
                 cancellationToken: CancellationToken.None
             );
-        } else {
-            ParseRx(data: buffer, subjects: subjects);
-        }
+            
+            byte[] buffer = new byte[1024 * 4];
+            
+            try {
+                await SendMessage(
+                    message: "CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands"
+                );
+                await SendMessage(message: $"PASS oauth:{options.AccessToken}");
+                await SendMessage(message: $"NICK {options.ClientName}");
+                await SendMessage(message: $"JOIN #{channel}");
+                while (m_webSocketConnection.State == WebSocketState.Open) {
+                    Console.WriteLine("Waiting for message...");
+                    var result = await m_webSocketConnection.ReceiveAsync(
+                        new ArraySegment<byte>(buffer),
+                        CancellationToken.None
+                    );
+                    
+                    Console.WriteLine(result.MessageType);
+                    if (result.MessageType == WebSocketMessageType.Close) {
+                        await m_webSocketConnection.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty,
+                            CancellationToken.None);
+                        observer.OnCompleted();
+                    } else {
+                        await ParseRx(
+                            data: buffer, channel: channel, options: options, observer: observer
+                        );
+                    }
+                }
+            }
+            catch (Exception ex) {
+                observer.OnError(ex);
+            }
+        });
     }
-
+    
     private async Task ParseRx(
         byte[] data,
-        IrcClientSubject subjects
+        string channel,
+        TwitchConnectionOptions options,
+        IObserver<IMessage> observer
     ) {
         RawMessage message = new(data);
-
+        
         if (message.Type == MessageType.Ping) {
             await SendMessage("PONG :tmi.twitch.tv");
         } else {
             messageProcessor.ProcessMessageRx(
                 response: message,
-                channel: m_channel,
-                subjects: subjects
+                channel: channel,
+                observer: observer
             );
         }
     }
-
+    
     private async Task SendMessage(
         string message
     ) {

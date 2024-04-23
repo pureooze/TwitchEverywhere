@@ -14,10 +14,8 @@ public class JoinCountMsgPlugin : IMessagePlugin {
     }
 
  
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.JoinCountSubject.OnNext( new JoinCount( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new JoinCount( response ) );
     }
 }

@@ -2,16 +2,15 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Irc.Types;
 
-namespace TwitchEverywhere.Irc; 
+namespace TwitchEverywhere.Irc;
 
 public interface IMessagePlugin {
-    
     bool CanHandle(
         MessageType messageType
     );
 
     void ProcessMessage(
-        IrcClientSubject subjects,
+        IObserver<IMessage> observer,
         RawMessage response
     );
 }

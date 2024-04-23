@@ -34,14 +34,14 @@ public class MessageProcessor : IMessageProcessor {
     void IMessageProcessor.ProcessMessageRx(
         RawMessage response,
         string channel,
-        IrcClientSubject subjects
+        IObserver<IMessage> observer
     ) {
         foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
             if( !messagePlugin.CanHandle( response.Type ) ) {
                 continue;
             }
 
-            messagePlugin.ProcessMessage( subjects, response );
+            messagePlugin.ProcessMessage( observer, response );
             break;
         }
     }

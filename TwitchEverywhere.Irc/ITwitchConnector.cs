@@ -5,10 +5,6 @@ using TwitchEverywhere.Irc.Types;
 namespace TwitchEverywhere.Irc; 
 
 public interface ITwitchConnector {
-    
-    internal IrcClientObservable TryConnectRx(
-        string channel
-    );
 
     internal Task<bool> SendMessage(
         IMessage message,
@@ -17,4 +13,8 @@ public interface ITwitchConnector {
 
     internal Task<bool> Disconnect();
 
+    IObservable<IMessage> TryConnect(
+        string channel,
+        TwitchConnectionOptions options
+    );
 }

@@ -14,10 +14,8 @@ public class WhisperMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Whisper;
     }
  
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.WhisperSubject.OnNext( new WhisperMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new WhisperMsg( response ) );
     }
 }

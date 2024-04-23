@@ -14,10 +14,8 @@ public class UserNoticePlugin : IMessagePlugin {
         return messageType == MessageType.UserNotice;
     }
 
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.UserNoticeSubject.OnNext( new UserNoticeMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new UserNoticeMsg( response ) );
     }
 }

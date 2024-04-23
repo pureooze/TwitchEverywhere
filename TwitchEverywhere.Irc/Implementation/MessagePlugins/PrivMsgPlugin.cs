@@ -13,10 +13,8 @@ public class PrivMsgPlugin : IMessagePlugin {
         return messageType == MessageType.PrivMsg;
     }
     
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.PrivMsgSubject.OnNext( new PrivMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new PrivMsg( response ) );
     }
 }

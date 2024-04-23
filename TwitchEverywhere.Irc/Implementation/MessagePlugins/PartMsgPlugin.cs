@@ -14,10 +14,8 @@ public class PartMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Part;
     }
     
-    void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
-        RawMessage response
-    ) {
-        subjects.PartSubject.OnNext( new PartMsg( response ) );
+    void IMessagePlugin.ProcessMessage(IObserver<IMessage> observer,
+        RawMessage response) {
+        observer.OnNext( new PartMsg( response ) );
     }
 }

@@ -9,6 +9,6 @@ public interface IMessageProcessor {
     void ProcessMessageRx(
         RawMessage response,
         string channel,
-        IrcClientSubject subjects
+        IObserver<IMessage> observer
     );
 }
