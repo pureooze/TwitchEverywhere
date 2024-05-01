@@ -3,13 +3,13 @@ using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
 
 namespace TwitchEverywhere.Core.Types.Messages.Implementation;
 
-public class JoinCount : IJoinCountMsg {
+public class JoinCountMsg : IJoinCountMsg {
     private MessageType m_messageType;
     private string m_rawMessage;
     private string m_channel;
     private readonly IJoinCountMsg m_inner;
 
-    public JoinCount(
+    public JoinCountMsg(
         RawMessage message
     ) {
         m_inner = new LazyLoadedJoinCountMsg( message );

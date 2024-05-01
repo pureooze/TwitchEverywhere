@@ -1,47 +1,35 @@
 ﻿using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
-using TwitchEverywhere.Irc.Implementation;
-using TwitchEverywhere.Irc.Types;
+using TwitchEverywhere.Irc.Rx;
 
 namespace TwitchEverywhere.Irc;
 
-public sealed class IrcClient {
-    private readonly TwitchConnectionOptions m_options;
-    private static ITwitchConnector m_twitchConnector;
+public sealed class IrcClient(
+    TwitchConnectionOptions options
+) {
 
-    public IrcClient(
-        TwitchConnectionOptions options
+    private readonly MessageProcessor m_messageProcessor = new();
+    private TwitchConnectorRx m_twitchConnectorRx;
+    
+    public void ConnectToChannelRx(
+        string channel,
+        IrcClientObserver observer
     ) {
-        m_options = options;
-
-        IAuthorizer authorizer = new Authorizer(
-            accessToken: m_options.AccessToken ?? "",
-            refreshToken: m_options.RefreshToken ?? "",
-            clientId: m_options.ClientId ?? "",
-            clientSecret: m_options.ClientSecret ?? ""
+        m_twitchConnectorRx = new TwitchConnectorRx(
+            messageProcessor: m_messageProcessor,
+            channel: channel, 
+            options: options, 
+            ircClientObserver: observer
         );
-        
-        m_twitchConnector = new TwitchConnector( 
-            authorizer: authorizer,
-            messageProcessor: new MessageProcessor(),
-            m_options
-        );
-    }
-
-    public IObservable<IMessage> ConnectToChannel(
-        string channel
-    ) {
-        return m_twitchConnector.TryConnect( channel, m_options );
     }
     
-    public async Task<bool> SendMessage(
-        IMessage message,
-        MessageType messageType
+    public async Task SendMessage(
+        IMessage message
     ) {
-        return await m_twitchConnector.SendMessage( message, messageType );
+        await m_twitchConnectorRx.SendMessage(message);
     }
-
+    
     public Task<bool> Disconnect() {
-        return m_twitchConnector.Disconnect();
+        return m_twitchConnectorRx.Disconnect();
     }
 }
