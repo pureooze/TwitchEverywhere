@@ -34,6 +34,6 @@ jobs:
       - name: Publish
         if: github.ref == 'refs/heads/main'
         run: 
-          dotnet nuget push nupkg/VodOnDemand.TwitchEverywhere.Rest*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-          dotnet nuget push nupkg/VodOnDemand.TwitchEverywhere.Irc*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-          dotnet nuget push nupkg/VodOnDemand.TwitchEverywhere.Core*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+          dotnet nuget push nupkg/VodOnDemand.TwitchEverywhere.Rest*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json;
+          dotnet nuget push nupkg/VodOnDemand.TwitchEverywhere.Irc*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json;
+          dotnet nuget push nupkg/VodOnDemand.TwitchEverywhere.Core*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json;
