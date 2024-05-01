@@ -1,9 +1,10 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
-using TwitchEverywhere.Irc.Types;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
+using TwitchEverywhere.Irc.Rx;
 
-namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
+namespace TwitchEverywhere.Irc.MessagePlugins; 
 
 public class JoinMsgPlugin : IMessagePlugin {
 
@@ -14,9 +15,15 @@ public class JoinMsgPlugin : IMessagePlugin {
     }
 
     void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
+        IrcClientObserver observer,
         RawMessage response
     ) {
-        subjects.JoinSubject.OnNext(new JoinMsg( response ));
+        if (observer.JoinObservables == null) {
+            return;
+        }
+        
+        foreach (IObserver<IJoinMsg> observable in observer.JoinObservables) {
+            observable.OnNext(new JoinMsg(response));
+        }
     }
 }

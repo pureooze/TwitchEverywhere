@@ -1,14 +1,16 @@
 using System.Net;
+using System.Reactive;
 using System.Text;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
+using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
 using TwitchEverywhere.Core.Types.RestApi.Channel;
 using TwitchEverywhere.Core.Types.RestApi.Streams;
 using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Irc;
-using TwitchEverywhere.Irc.Types;
+using TwitchEverywhere.Irc.Rx;
 using TwitchEverywhere.Rest;
 using TwitchEverywhereCLI.Implementation;
 
@@ -28,27 +30,41 @@ internal class TwitchConnection(
     private DateTime m_startTimestamp = DateTime.UtcNow;
     
     public async Task ConnectToIrcClientRx() {
-        TaskCompletionSource<bool> tcs = new();
-
-        IrcClientObservable observable = m_ircClient.ConnectToChannelRx(
-            channel: "pureooze"
+        TaskCompletionSource<bool> tcs = new(); //this is just to stop the app from exiting early
+        
+        IObserver<IPrivMsg> privMsgObservable = Observer.Create<IPrivMsg>(PrivMessageCallback);
+        
+        List<IObserver<IPrivMsg>> privMsgObservables = [privMsgObservable];
+        
+        m_ircClient.ConnectToChannelRx(
+            channel: "pureooze",
+            observer: new IrcClientObserver( 
+                PrivMsgObservables: privMsgObservables,
+                NoticeObservables: [Observer.Create<INoticeMsg>(NoticeMsgCallback)]
+            )
         );
-        IDisposable joinObservable = observable.JoinObservable.Subscribe( 
-            msg => Console.WriteLine(msg)
-        );
-        IDisposable privObservable = observable.PrivMsgObservable.Subscribe( 
-            msg => PrivMessageCallback(msg)
-        );
-
+        
+        privMsgObservables.Add(Observer.Create<IPrivMsg>(OnNextRx));
+        
         try {
-            await tcs.Task;
-        } finally{
-            joinObservable.Dispose();
-            privObservable.Dispose();
+            await tcs.Task; //this is just to stop the app from exiting early
+        } catch (Exception e) {
+            Console.Error.WriteLine(e);
         }
     }
     
-
+    private async void OnNextRx(
+        IPrivMsg privMsg
+    ) {
+        Console.WriteLine($"From the second observable: {privMsg.Text}");
+        Console.WriteLine("Sending a response now!");
+        
+        IPrivMsg response = new PrivMsg(channel: "pureooze", replyParentMsgId: privMsg.Id, text: "Hmm maybe this will work 🤔");
+        
+        await m_ircClient.SendMessage(response);
+    }
+    
+    
     public async Task ConnectToRestClient() {
         GetUsersResponse users = await m_restClient.GetUsersByLogin(
             logins: [ "pureooze" ] 
@@ -252,8 +268,7 @@ internal class TwitchConnection(
         Console.WriteLine( $"{lazyLoadedPrivMsg.DisplayName}: {lazyLoadedPrivMsg.Text}" );
         m_messageBuffer.AddToBuffer( lazyLoadedPrivMsg.Text );
 
-        m_ircClient?.Disconnect();
-        m_ircClient?.ConnectToChannelRx( "pureooze" );
+        await m_ircClient.Disconnect();
     }
     
     private async void ClearChatCallback(

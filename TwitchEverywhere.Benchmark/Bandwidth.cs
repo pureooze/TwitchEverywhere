@@ -5,7 +5,6 @@ using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Irc;
-using TwitchEverywhere.Irc.Implementation;
 
 namespace TwitchEverywhere.Benchmark;
 

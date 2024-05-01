@@ -1,10 +1,10 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
-using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
-using TwitchEverywhere.Irc.Types;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
+using TwitchEverywhere.Irc.Rx;
 
-namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
+namespace TwitchEverywhere.Irc.MessagePlugins; 
 
 public class PartMsgPlugin : IMessagePlugin {
 
@@ -15,9 +15,15 @@ public class PartMsgPlugin : IMessagePlugin {
     }
     
     void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
+        IrcClientObserver observer,
         RawMessage response
     ) {
-        subjects.PartSubject.OnNext( new PartMsg( response ) );
+        if (observer.PartObservables == null) {
+            return;
+        }
+        
+        foreach (IObserver<IPartMsg> observable in observer.PartObservables) {
+            observable.OnNext(new PartMsg(response));
+        }
     }
 }

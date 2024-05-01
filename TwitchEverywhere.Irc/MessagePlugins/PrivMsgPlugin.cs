@@ -1,9 +1,10 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
-using TwitchEverywhere.Irc.Types;
+using TwitchEverywhere.Core.Types.Messages.Interfaces;
+using TwitchEverywhere.Irc.Rx;
 
-namespace TwitchEverywhere.Irc.Implementation.MessagePlugins; 
+namespace TwitchEverywhere.Irc.MessagePlugins; 
 
 public class PrivMsgPlugin : IMessagePlugin {
 
@@ -14,9 +15,15 @@ public class PrivMsgPlugin : IMessagePlugin {
     }
     
     void IMessagePlugin.ProcessMessage(
-        IrcClientSubject subjects,
+        IrcClientObserver observer,
         RawMessage response
     ) {
-        subjects.PrivMsgSubject.OnNext( new PrivMsg( response ) );
+        if (observer.PrivMsgObservables == null) {
+            return;
+        }
+        
+        foreach (IObserver<IPrivMsg> observable in observer.PrivMsgObservables) {
+            observable.OnNext(new PrivMsg(response));
+        }
     }
 }
