@@ -2,7 +2,7 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Irc.Rx;
+
 
 namespace TwitchEverywhere.Irc.MessagePlugins; 
 
@@ -14,16 +14,9 @@ public class CapReqPlugin : IMessagePlugin {
         return messageType == MessageType.CapReq;
     }
 
-    void IMessagePlugin.ProcessMessage(
-        IrcClientObserver observer,
+    IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        if (observer.CapReqObservables == null) {
-            return;
-        }
-        
-        foreach (IObserver<ICapReq> observable in observer.CapReqObservables) {
-            observable.OnNext(new CapReq(response));
-        }
+        return new CapReq( response );
     }
 }

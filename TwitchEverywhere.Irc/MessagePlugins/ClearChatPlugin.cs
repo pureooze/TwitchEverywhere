@@ -2,7 +2,7 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Irc.Rx;
+
 
 namespace TwitchEverywhere.Irc.MessagePlugins; 
 
@@ -14,16 +14,9 @@ public class ClearChatPlugin : IMessagePlugin {
         return messageType == MessageType.ClearChat;
     }
 
-    void IMessagePlugin.ProcessMessage(
-        IrcClientObserver observer,
+    IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        if (observer.ClearChatObservables == null) {
-            return;
-        }
-        
-        foreach (IObserver<IClearChatMsg> observable in observer.ClearChatObservables) {
-            observable.OnNext(new ClearChatMsg(response));
-        }
+        return new ClearChatMsg( response );
     }
 }

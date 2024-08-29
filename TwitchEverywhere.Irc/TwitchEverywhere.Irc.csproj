@@ -10,7 +10,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
-        <Version>0.9.0</Version>
+        <Version>0.10.0</Version>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackRelease>true</PackRelease>
         <TargetFramework>net8.0</TargetFramework>
@@ -22,10 +22,6 @@
     
     <ItemGroup>
       <ProjectReference Include="..\TwitchEverywhere.Core\TwitchEverywhere.Core.csproj" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <PackageReference Include="System.Reactive" Version="6.0.0" />
     </ItemGroup>
 
 </Project>

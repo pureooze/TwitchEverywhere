@@ -1,14 +1,13 @@
 using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
-using TwitchEverywhere.Irc.Rx;
 
-namespace TwitchEverywhere.Irc; 
+
+namespace TwitchEverywhere.Irc;
 
 public interface IMessageProcessor {
-    
-    void ProcessMessageRx(
+    void ProcessMessage(
         RawMessage response,
         string channel,
-        IrcClientObserver observer
+        Action<IMessage> callback
     );
 }

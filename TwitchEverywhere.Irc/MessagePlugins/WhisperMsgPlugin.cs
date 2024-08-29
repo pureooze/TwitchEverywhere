@@ -2,7 +2,8 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Irc.Rx;
+using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+
 
 namespace TwitchEverywhere.Irc.MessagePlugins; 
 
@@ -13,17 +14,12 @@ public class WhisperMsgPlugin : IMessagePlugin {
     ) {
         return messageType == MessageType.Whisper;
     }
- 
-    void IMessagePlugin.ProcessMessage(
-        IrcClientObserver observer,
+
+    IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        if (observer.WhisperObservables == null) {
-            return;
-        }
-        
-        foreach (IObserver<IWhisperMsg> observable in observer.WhisperObservables) {
-            observable.OnNext(new WhisperMsg(response));
-        }
+        return new LazyLoadedWhisperMsg(
+            response
+        );
     }
 }

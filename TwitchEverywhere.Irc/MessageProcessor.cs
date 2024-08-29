@@ -1,11 +1,12 @@
+using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Irc.MessagePlugins;
-using TwitchEverywhere.Irc.Rx;
+
 
 namespace TwitchEverywhere.Irc; 
 
 public class MessageProcessor : IMessageProcessor {
-    private readonly IEnumerable<IMessagePlugin> m_messagePlugins = new IMessagePlugin[] {
+    private readonly IEnumerable<IMessagePlugin> _messagePlugins = [
         // Membership
         new JoinMsgPlugin(),
         new PartMsgPlugin(),
@@ -28,19 +29,20 @@ public class MessageProcessor : IMessageProcessor {
             
         // Nothing worked, just give the raw message
         new UnknownMsgPlugin()
-    };
+    ];
 
-    void IMessageProcessor.ProcessMessageRx(
+    void IMessageProcessor.ProcessMessage(
         RawMessage response,
         string channel,
-        IrcClientObserver observer
+        Action<IMessage> callback
     ) {
-        foreach (IMessagePlugin messagePlugin in m_messagePlugins) {
+        foreach (IMessagePlugin messagePlugin in _messagePlugins) {
             if( !messagePlugin.CanHandle( response.Type ) ) {
                 continue;
             }
 
-            messagePlugin.ProcessMessage( observer, response );
+            IMessage message = messagePlugin.GetMessageData( response );
+            callback( message );
             break;
         }
     }
