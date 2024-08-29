@@ -23,9 +23,5 @@
     <ItemGroup>
       <ProjectReference Include="..\TwitchEverywhere.Core\TwitchEverywhere.Core.csproj" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <PackageReference Include="System.Reactive" Version="6.0.0" />
-    </ItemGroup>
 
 </Project>

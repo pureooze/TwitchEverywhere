@@ -2,7 +2,8 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Irc.Rx;
+using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+
 
 namespace TwitchEverywhere.Irc.MessagePlugins; 
 
@@ -14,16 +15,9 @@ public class ReconnectMsgPlugin : IMessagePlugin {
         return messageType == MessageType.Reconnect;
     }
     
-    void IMessagePlugin.ProcessMessage(
-        IrcClientObserver observer,
+    IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        if (observer.ReconnectObservables == null) {
-            return;
-        }
-        
-        foreach (IObserver<IReconnectMsg> observable in observer.ReconnectObservables) {
-            observable.OnNext(new ReconnectMsg(response));
-        }
+        return new LazyLoadedReconnectMsg( response );
     }
 }

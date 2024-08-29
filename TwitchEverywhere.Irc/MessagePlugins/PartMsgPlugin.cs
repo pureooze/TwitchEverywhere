@@ -2,7 +2,8 @@ using TwitchEverywhere.Core.Types;
 using TwitchEverywhere.Core.Types.Messages;
 using TwitchEverywhere.Core.Types.Messages.Implementation;
 using TwitchEverywhere.Core.Types.Messages.Interfaces;
-using TwitchEverywhere.Irc.Rx;
+using TwitchEverywhere.Core.Types.Messages.LazyLoadedMessages;
+
 
 namespace TwitchEverywhere.Irc.MessagePlugins; 
 
@@ -13,17 +14,12 @@ public class PartMsgPlugin : IMessagePlugin {
     ) {
         return messageType == MessageType.Part;
     }
-    
-    void IMessagePlugin.ProcessMessage(
-        IrcClientObserver observer,
+
+    IMessage IMessagePlugin.GetMessageData(
         RawMessage response
     ) {
-        if (observer.PartObservables == null) {
-            return;
-        }
-        
-        foreach (IObserver<IPartMsg> observable in observer.PartObservables) {
-            observable.OnNext(new PartMsg(response));
-        }
+        return new LazyLoadedPartMsg( 
+            response
+        );
     }
 }

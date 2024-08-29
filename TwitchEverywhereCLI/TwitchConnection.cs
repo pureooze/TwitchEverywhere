@@ -1,5 +1,4 @@
 using System.Net;
-using System.Reactive;
 using System.Text;
 using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
@@ -10,7 +9,7 @@ using TwitchEverywhere.Core.Types.RestApi.Streams;
 using TwitchEverywhere.Core.Types.RestApi.Users;
 using TwitchEverywhere.Core.Types.RestApi.Wrappers;
 using TwitchEverywhere.Irc;
-using TwitchEverywhere.Irc.Rx;
+
 using TwitchEverywhere.Rest;
 using TwitchEverywhereCLI.Implementation;
 
@@ -24,28 +23,21 @@ internal class TwitchConnection(
     private readonly MessageBuffer m_clearChat = new( buffer: new StringBuilder() );
     private readonly MessageBuffer m_clearMsg = new( buffer: new StringBuilder() );
     private readonly ICompressor m_compressor = new BrotliCompressor();
-    private readonly IrcClient m_ircClient = new( options );
     private readonly RestClient m_restClient = new( options );
+    private const string Channel = "pureooze";
     private const int BUFFER_SIZE = 3;
+    private IrcClient m_ircClient = null;
     private DateTime m_startTimestamp = DateTime.UtcNow;
     
     public async Task ConnectToIrcClientRx() {
         TaskCompletionSource<bool> tcs = new(); //this is just to stop the app from exiting early
-        
-        IObserver<IPrivMsg> privMsgObservable = Observer.Create<IPrivMsg>(PrivMessageCallback);
-        
-        List<IObserver<IPrivMsg>> privMsgObservables = [privMsgObservable];
-        
-        m_ircClient.ConnectToChannelRx(
+ 
+        m_ircClient = new IrcClient(
+            options: options,
             channel: "pureooze",
-            observer: new IrcClientObserver( 
-                PrivMsgObservables: privMsgObservables,
-                NoticeObservables: [Observer.Create<INoticeMsg>(NoticeMsgCallback)]
-            )
+            messageCallback: MessageCallback
         );
-        
-        privMsgObservables.Add(Observer.Create<IPrivMsg>(OnNextRx));
-        
+
         try {
             await tcs.Task; //this is just to stop the app from exiting early
         } catch (Exception e) {
@@ -59,9 +51,9 @@ internal class TwitchConnection(
         Console.WriteLine($"From the second observable: {privMsg.Text}");
         Console.WriteLine("Sending a response now!");
         
-        IPrivMsg response = new PrivMsg(channel: "pureooze", replyParentMsgId: privMsg.Id, text: "Hmm maybe this will work 🤔");
+        IPrivMsg response = new PrivMsg(channel: Channel, replyParentMsgId: privMsg.Id, text: "Hmm maybe this will work 🤔");
         
-        await m_ircClient.SendMessage(response);
+        await m_ircClient.SendMessage(response, MessageType.PrivMsg);
     }
     
     
@@ -175,7 +167,7 @@ internal class TwitchConnection(
                 Console.WriteLine( $"PrivMsg: {lazyLoadedPrivMsg.DisplayName}, {lazyLoadedPrivMsg.Text}" );
 
                 // PrivMsg reply = new(
-                //     channel: "pureooze",
+                //     channel: Channel,
                 //     replyParentMsgId: lazyLoadedPrivMsg.Id,
                 //     text: lazyLoadedPrivMsg.Text + "? hmm maybe..."
                 // );
@@ -268,7 +260,7 @@ internal class TwitchConnection(
         Console.WriteLine( $"{lazyLoadedPrivMsg.DisplayName}: {lazyLoadedPrivMsg.Text}" );
         m_messageBuffer.AddToBuffer( lazyLoadedPrivMsg.Text );
 
-        await m_ircClient.Disconnect();
+        await m_ircClient.Disconnect(Channel);
     }
     
     private async void ClearChatCallback(

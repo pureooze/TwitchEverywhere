@@ -1,35 +1,45 @@
 ﻿using TwitchEverywhere.Core;
 using TwitchEverywhere.Core.Types;
-using TwitchEverywhere.Irc.Rx;
 
 namespace TwitchEverywhere.Irc;
 
-public sealed class IrcClient(
-    TwitchConnectionOptions options
-) {
+public sealed class IrcClient {
 
     private readonly MessageProcessor m_messageProcessor = new();
-    private TwitchConnectorRx m_twitchConnectorRx;
-    
-    public void ConnectToChannelRx(
+    private TwitchConnector _twitchConnector;
+    private readonly TwitchConnectionOptions _options;
+    private readonly string _channel;
+
+    public IrcClient(
+        TwitchConnectionOptions options,
         string channel,
-        IrcClientObserver observer
+        Action<IMessage> messageCallback
     ) {
-        m_twitchConnectorRx = new TwitchConnectorRx(
+        _options = options;
+        _channel = channel;
+        _twitchConnector = new TwitchConnector(
             messageProcessor: m_messageProcessor,
-            channel: channel, 
-            options: options, 
-            ircClientObserver: observer
+            options: _options,
+            channel: _channel,
+            messageCallback: messageCallback
         );
     }
     
     public async Task SendMessage(
-        IMessage message
+        IMessage message,
+        MessageType messageType
     ) {
-        await m_twitchConnectorRx.SendMessage(message);
+        await _twitchConnector.SendMessage(
+            message,
+            messageType,
+            _channel,
+            _options
+        );
     }
     
-    public Task<bool> Disconnect() {
-        return m_twitchConnectorRx.Disconnect();
+    public Task<bool> Disconnect(
+        string channel
+    ) {
+        return _twitchConnector.Disconnect(channel);
     }
 }
